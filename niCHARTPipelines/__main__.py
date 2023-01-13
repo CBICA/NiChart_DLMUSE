@@ -10,30 +10,30 @@ import os, sys
 import Structural
 
 def main():
-    parser = argparse.ArgumentParser(description='niCHART Data Pre-Preprocessing Pipelines')
-    parser.add_argument('--input_image_file', type=str, help='Data file containing data frame.', default=None, required=False)
-    parser.add_argument('--DLICV_model_file', type=str, help='Harmonization model file.', default=None, required=False)
-    parser.add_argument('--DLMUSE_model_file', type=str, help='Model file for SPARE-scores.', default=None, required=False)
-    parser.add_argument('--pipeline_type', type=str, help='Specify type of pipeline[structural, dti, fmri].', default=None, required=True)
-    parser.add_argument('--output_file_name', type=str, help='Name of the output file with extension.', default=None, required=False)
+    parser = argparse.ArgumentParser(description='niCHART Data Preprocessing Pipelines')
+    parser.add_argument('--inImg', type=str, help='Input T1 image file path.', default=None, required=False)
+    parser.add_argument('--DLICVmdl', type=str, help='DLICV model path.', default=None, required=False)
+    parser.add_argument('--DLMUSEmdl', type=str, help='DLMUSE Model path.', default=None, required=False)
+    parser.add_argument('--pipelineType', type=str, help='Specify type of pipeline[structural, dti, fmri].', default=None, required=True)
+    parser.add_argument('--outImg', type=str, help='Output file name with extension.', default=None, required=False)
     
     args = parser.parse_args(sys.argv[1:])
 
-    input_image_file = args.input_image_file
-    DLICV_model_file = args.DLICV_model_file
-    DLMUSE_model_file = args.DLMUSE_model_file
-    pipeline_type = args.pipeline_type
-    output_file = args.output_file_name
+    inImg = args.inImg
+    DLICVmdl = args.DLICVmdl
+    DLMUSEmdl = args.DLMUSEmdl
+    pipelineType = args.pipelineType
+    outImg = args.outImg
 
-    if(pipeline_type == "structural"):
+    if(pipelineType == "structural"):
         # if((DLICV_model_file == None) or (DLMUSE_model_file == None)):
         #print("Please provide '--DLICV_model_file','--DLMUSE_model_file' to run the pipeline.")
         #exit()
         Structural.run_structural_pipeline()
-    elif(pipeline_type == "fmri"):
+    elif(pipelineType == "fmri"):
         print("Coming soon.")
         exit()
-    elif(pipeline_type == "dti"):
+    elif(pipelineType == "dti"):
         print("Coming soon.")
         exit()
     else:
