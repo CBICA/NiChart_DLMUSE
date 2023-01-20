@@ -2,6 +2,7 @@ from nipype import Node, Workflow
 
 import DeepMRSegInterface
 import MaskImageInterface
+import CalculateROIVolumeInterface
 
 # Create DLICV Node
 dlicv = Node(DeepMRSegInterface.DeepMRSegInference(), name='dlicv')
@@ -25,10 +26,17 @@ muse.inputs.out_file = '/nichart/data/F1/muse-nipype.nii.gz'
 muse.inputs.batch_size = 4
 # muse.inputs.nJobs = 1
 
+# Create roi csv creation Node
+roi_csv = Node(CalculateROIVolumeInterface.CalculateROIVolume(), name='roi-volume-csv')
+roi_csv.inputs.map_csv_file = '/nichart/data/F1/MUSE_DerivedROIs_Mappings.csv'
+roi_csv.inputs.scan_id = 'AABB'
+roi_csv.inputs.out_file = '/nichart/data/F1/muse_rois.csv'
+
 # Initiation of a workflow
 wf = Workflow(name="structural", base_dir="/nichart/working_dir")
 wf.connect(dlicv, "out_file", maskImage, "mask_file")
 wf.connect(maskImage, "out_file", muse, "in_file")
+wf.connect(muse,"out_file", roi_csv, "mask_file")
 
 wf.base_dir = "/nichart/working_dir"
 wf.run()
