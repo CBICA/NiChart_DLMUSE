@@ -11,7 +11,7 @@ import Structural
 
 def main():
     parser = argparse.ArgumentParser(description='niCHART Data Preprocessing Pipelines')
-    parser.add_argument('--inImg', type=str, help='Input T1 image file path.', default=None, required=False)
+    parser.add_argument('--inImg', type=str, help='Input T1 image file path.', default=None, required=True)
     parser.add_argument('--DLICVmdl', type=str, help='DLICV model path.', default=None, required=False)
     parser.add_argument('--DLMUSEmdl', type=str, help='DLMUSE Model path.', default=None, required=False)
     parser.add_argument('--pipelineType', type=str, help='Specify type of pipeline[structural, dti, fmri].', default=None, required=True)
@@ -26,10 +26,7 @@ def main():
     outImg = args.outImg
 
     if(pipelineType == "structural"):
-        # if((DLICV_model_file == None) or (DLMUSE_model_file == None)):
-        #print("Please provide '--DLICV_model_file','--DLMUSE_model_file' to run the pipeline.")
-        #exit()
-        Structural.run_structural_pipeline()
+        Structural.run_structural_pipeline(inImg,DLICVmdl,DLMUSEmdl,outImg)
     elif(pipelineType == "fmri"):
         print("Coming soon.")
         exit()
