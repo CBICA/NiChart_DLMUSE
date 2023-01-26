@@ -1,5 +1,6 @@
 from nipype import Node, Workflow
 from pathlib import Path
+import os
 
 import DeepMRSegInterface
 import MaskImageInterface
@@ -9,7 +10,9 @@ def run_structural_pipeline(inImg,DLICVmdl,DLMUSEmdl,outImg):
     # Create DLICV Node
     dlicv = Node(DeepMRSegInterface.DeepMRSegInference(), name='dlicv')
     dlicv.inputs.in_file = Path(inImg)
-    dlicv.inputs.mdl_dir1 = '/nichart/models/DLICV/LPS'
+    lps_mdl_path = os.path.join(DLICVmdl,'LPS')
+    if(os.path.isdir(lps_mdl_path)):
+        dlicv.inputs.mdl_dir1 = lps_mdl_path
     dlicv.inputs.out_file = '/nichart/data/F1/dlicv-nipype.nii.gz'
     dlicv.inputs.batch_size = 4
     dlicv.inputs.nJobs = 1

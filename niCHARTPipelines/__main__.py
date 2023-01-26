@@ -12,7 +12,7 @@ import Structural
 def main():
     parser = argparse.ArgumentParser(description='niCHART Data Preprocessing Pipelines')
     parser.add_argument('--inImg', type=str, help='Input T1 image file path.', default=None, required=True)
-    parser.add_argument('--DLICVmdl', type=str, help='DLICV model path.', default=None, required=False)
+    parser.add_argument('--DLICVmdl', type=str, help='DLICV model path.', default=None, required=True)
     parser.add_argument('--DLMUSEmdl', type=str, help='DLMUSE Model path.', default=None, required=False)
     parser.add_argument('--pipelineType', type=str, help='Specify type of pipeline[structural, dti, fmri].', default=None, required=True)
     parser.add_argument('--outImg', type=str, help='Output file name with extension.', default=None, required=False)
