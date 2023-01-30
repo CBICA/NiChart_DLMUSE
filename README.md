@@ -7,25 +7,27 @@
 conda create --name sMRI python=3.6.9
 conda activate sMRI
 ```
-2) Clone niCHARTPipelines github repository
-```
-git clone  https://github.com/CBICA/niCHARTPipelines.git
-cd niCHARTPipelines
-```
-
-3) Install dependencies
-```
-pip install -r requirements.txt
-```
-4) Clone and install DeepMRSeg 
+2) Clone and install DeepMRSeg 
 ```
 git clone  https://github.com/CBICA/DeepMRSeg.git
 cd DeepMRSeg
-python setup.py install #install DeepMRSeg and its dependencies
+python setup.py install
+cd ..
 ```
 
-5) Run niCHARTPipelines. Example usage below-
+2) Clone and install niCHARTPipelines
 ```
-python __main__.py --pipelineType structural --inImg /nichart/data/F1/2.16.840.1.114362.1.12066432.24920037488.604832115.605.168.nii.gz --DLICVmdl /nichart/models/DLICV --DLMUSEmdl /nichart/models/MUSE --scanID AABB --derivedROIMappingsFile /nichart/csv/MUSE_DerivedROIs_Mappings.csv --outFile /nichart/data/F1/muse_rois.csv
+git clone  https://github.com/CBICA/niCHARTPipelines.git
+cd niCHARTPipelines
+pip install -r requirements.txt
+cd ..
+```
+
+5) Run niCHARTPipelines. Example usage below
+```
+cd niCHARTPipelines/niCHARTPipelines
+./test1_Tmp.sh
+
+python __main__.py --pipelineType structural --inImg $t1 --DLICVmdl $mdlDLICV --DLMUSEmdl $mdlMUSE --scanID $mrid --derivedROIMappingsFile $rois --outFile $outcsv
 ```
 
