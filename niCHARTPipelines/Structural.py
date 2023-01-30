@@ -30,10 +30,10 @@ def run_structural_pipeline(inImg,DLICVmdl,DLMUSEmdl,outFile,scanID,roiMappingsF
     #muse_slp_mdl_path = os.path.join(DLMUSEmdl,'SLP')
     if(os.path.isdir(muse_lps_mdl_path)):
         muse.inputs.mdl_dir1 = muse_lps_mdl_path
-    if(os.path.isdir(muse_psl_mdl_path)):
-        muse.inputs.mdl_dir2 = muse_psl_mdl_path
-    if(os.path.isdir(muse_slp_mdl_path)):
-        muse.inputs.mdl_dir3 = muse_slp_mdl_path        
+    #if(os.path.isdir(muse_psl_mdl_path)):
+        #muse.inputs.mdl_dir2 = muse_psl_mdl_path
+    #if(os.path.isdir(muse_slp_mdl_path)):
+        #muse.inputs.mdl_dir3 = muse_slp_mdl_path        
     muse.inputs.out_file = os.path.join(outDir,'muse.nii.gz')
     muse.inputs.batch_size = 4
     muse.inputs.nJobs = 1
