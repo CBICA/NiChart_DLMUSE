@@ -26,8 +26,8 @@ def run_structural_pipeline(inImg,DLICVmdl,DLMUSEmdl,outFile,scanID,roiMappingsF
     # Create MUSE Node
     muse = Node(DeepMRSegInterface.DeepMRSegInference(), name='muse')
     muse_lps_mdl_path = os.path.join(DLMUSEmdl,'LPS')
-    muse_psl_mdl_path = os.path.join(DLMUSEmdl,'PSL')
-    muse_slp_mdl_path = os.path.join(DLMUSEmdl,'SLP')
+    #muse_psl_mdl_path = os.path.join(DLMUSEmdl,'PSL')      ## We run all in one orientation in tests
+    #muse_slp_mdl_path = os.path.join(DLMUSEmdl,'SLP')
     if(os.path.isdir(muse_lps_mdl_path)):
         muse.inputs.mdl_dir1 = muse_lps_mdl_path
     if(os.path.isdir(muse_psl_mdl_path)):
@@ -46,7 +46,7 @@ def run_structural_pipeline(inImg,DLICVmdl,DLMUSEmdl,outFile,scanID,roiMappingsF
 
     #create working dir in output dir for now
     basedir = os.path.join(outDir,'working_dir')
-    os.makedirs(bdir)
+    os.makedirs(basedir)
 
     # Workflow
     wf = Workflow(name="structural", base_dir=basedir)
