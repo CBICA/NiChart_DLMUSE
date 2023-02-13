@@ -1,5 +1,5 @@
 Bootstrap: docker
-From: tensorflow/tensorflow:2.3.3-gpu-jupyter
+From: tensorflow/tensorflow:2.9.0-gpu
 Stage: build
 
 %labels
@@ -13,14 +13,16 @@ Stage: build
     . /opt/app
 
 %post
+    apt-get update
+    apt-get install --fix-missing -y git
     cd /opt
     git clone https://github.com/CBICA/DeepMRSeg.git
     cd DeepMRSeg
-    python setup.py install
+    pip install -e .
     
     cd /opt/app
     pip install -r requirements.txt
 
 %runscript
-    python __main__.py "$*"
+    python /opt/app/niCHARTPipelines/__main__.py "$*"
 
