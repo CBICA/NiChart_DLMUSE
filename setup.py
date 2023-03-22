@@ -33,7 +33,8 @@ setup(name='niCHARTPipelines',
 		'resource==0.2.1',
 		'networkx==2.5.1',
 		'pandas==1.2.5',
-		'pathlib'
+		'pathlib',
+                'DeepMRSeg @ git+https://github.com/CBICA/DeepMRSeg.git@main'
     ],
     entry_points={
         'console_scripts': [

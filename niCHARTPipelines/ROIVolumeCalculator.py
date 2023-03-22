@@ -1,7 +1,7 @@
 import SimpleITK as sitk
 import csv as _csv
 import pandas as pd
-import ImageIO
+from . import ImageIO
 
 ###---------calculate ROI volumes-----------
 def calculate_volume(maskfile, mapcsv, scanID, output_file):
