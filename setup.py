@@ -16,6 +16,7 @@ setup(name='niCHARTPipelines',
       url="https://github.com/CBICA/niCHARTPipelines",
 	  install_requires=[
 		'setuptools',
+    'DeepMRSeg @ git+https://github.com/CBICA/DeepMRSeg.git@main',
 		'nipype',
 		'SimpleITK',
 		'scipy==1.5.4',
