@@ -25,4 +25,3 @@ Stage: build
 
 %runscript
     python /opt/app/niCHARTPipelines/__main__.py "$*"
-
