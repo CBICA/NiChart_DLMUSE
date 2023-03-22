@@ -7,7 +7,7 @@ Use of this source code is governed by license located in license file: https://
 
 import argparse
 import os, sys
-import Structural
+from . import Structural
 
 def main():
     parser = argparse.ArgumentParser(description='niCHART Data Preprocessing Pipelines')

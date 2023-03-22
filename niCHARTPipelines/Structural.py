@@ -2,9 +2,9 @@ from nipype import Node, Workflow
 from pathlib import Path
 import os
 
-import DeepMRSegInterface
-import MaskImageInterface
-import CalculateROIVolumeInterface
+from . import DeepMRSegInterface
+from . import MaskImageInterface
+from . import CalculateROIVolumeInterface
 
 def run_structural_pipeline(inImg,DLICVmdl,DLMUSEmdl,outFile,scanID,roiMappingsFile):
     outDir = os.path.dirname(outFile)
@@ -46,7 +46,7 @@ def run_structural_pipeline(inImg,DLICVmdl,DLMUSEmdl,outFile,scanID,roiMappingsF
 
     #create working dir in output dir for now
     basedir = os.path.join(outDir,'working_dir')
-    os.makedirs(basedir)
+    os.mkdir(basedir)
 
     # Workflow
     wf = Workflow(name="structural", base_dir=basedir)
