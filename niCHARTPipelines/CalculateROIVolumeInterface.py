@@ -1,5 +1,5 @@
 from nipype.interfaces.base import BaseInterfaceInputSpec, BaseInterface, File, TraitedSpec, traits
-import ROIVolumeCalculator as volCalculator
+from . import ROIVolumeCalculator as volCalculator
 
 ###---------Interface------------
 

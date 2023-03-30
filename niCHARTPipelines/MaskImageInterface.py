@@ -1,5 +1,5 @@
 from nipype.interfaces.base import BaseInterfaceInputSpec, BaseInterface, File, TraitedSpec
-import MaskImage as masker
+from . import MaskImage as masker
 
 ###---------Interface------------
 
