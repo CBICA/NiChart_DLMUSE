@@ -46,7 +46,7 @@ def run_structural_pipeline(inImg,DLICVmdl,DLMUSEmdl,outFile,scanID,roiMappingsF
 
     #create working dir in output dir for now
     basedir = os.path.join(outDir,'working_dir')
-    os.mkdir(basedir)
+    os.makedirs(basedir, exist_ok=True)
 
     # Workflow
     wf = Workflow(name="structural", base_dir=basedir)
