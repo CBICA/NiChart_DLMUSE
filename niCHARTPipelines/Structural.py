@@ -1,6 +1,6 @@
 from nipype import Node, Workflow
 from pathlib import Path
-import os
+import os, shutil
 
 from . import DeepMRSegInterface
 from . import MaskImageInterface
