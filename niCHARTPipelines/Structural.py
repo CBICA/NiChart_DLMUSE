@@ -20,6 +20,7 @@ def run_structural_pipeline(inImg,DLICVmdl,DLMUSEmdl,outFile,scanID,roiMappingsF
     muse.m_val = "3d_fullres"
     muse.gpu_val = True
     muse.out_dir = Path(outDir)
+    muse.run()
 
     # Create DLICV Node
     # dlicv = Node(DeepMRSegInterface.DeepMRSegInference(), name='dlicv')
@@ -58,14 +59,14 @@ def run_structural_pipeline(inImg,DLICVmdl,DLMUSEmdl,outFile,scanID,roiMappingsF
     # roi_csv.inputs.out_file = Path(outFile)
 
     #create working dir in output dir for now
-    basedir = os.path.join(outDir,'working_dir')
-    os.mkdir(basedir)
+    # basedir = os.path.join(outDir,'working_dir')
+    # os.mkdir(basedir)
 
     # Workflow
-    wf = Workflow(name="structural", base_dir=basedir)
+    #wf = Workflow(name="structural", base_dir=basedir)
     # wf.connect(dlicv, "out_file", maskImage, "mask_file")
     # wf.connect(maskImage, "out_file", muse, "in_file")
     # wf.connect(muse,"out_file", roi_csv, "mask_file")
 
-    wf.base_dir = basedir
-    wf.run()
+    # wf.base_dir = basedir
+    # wf.run()
