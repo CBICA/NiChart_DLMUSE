@@ -3,6 +3,14 @@ import MaskImage as masker
 from pathlib import Path
 import os
 
+###---------utils----------------
+def get_file_basename_without_extension(filepath):
+    return os.path.basename(filepath).split('.', 1)[0]
+
+def get_split_filename(basename):
+    what_i_want, the_rest = basename.rsplit("_", 1)
+    return what_i_want
+
 ###---------Interface------------
 
 class MaskImageInputSpec(BaseInterfaceInputSpec):
@@ -33,11 +41,19 @@ class MaskImage(BaseInterface):
         print(maskfiles)
         print(infiles)
         for in_file in infiles:
+          basename_without_ext = get_file_basename_without_extension(in_file)
+          print('basename_without_ext: ', basename_without_ext)
+          in_file_split_name_ = get_split_filename(basename_without_ext)
+          print('needed_name: ', in_file_split_name_)
           print('in_file: ', in_file)
+
           for mask_file in maskfiles:
             print('mask_file: ', mask_file)
-            if(in_file == mask_file):
-                out_file = os.path.join(self.inputs.out_dir,in_file)
+            mask_file_name_without_ext = get_file_basename_without_extension(mask_file)
+
+            ##TODO compare basenames only. make sure that DLICV output names match input names first
+            if(in_file_split_name_ == mask_file_name_without_ext):
+                out_file = os.path.join(self.inputs.out_dir,basename_without_ext) + '.nii.gz'
                 print('out-file: ',out_file)
                 masker.apply_mask(
                     in_file,
