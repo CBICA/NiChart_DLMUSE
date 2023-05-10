@@ -5,19 +5,20 @@ import os,  shutil
 # from . import DeepMRSegInterface
 import nnUNetInterface
 import MaskImageInterface
+import ROIRelabelInterface
 # from . import CalculateROIVolumeInterface
 
 #def run_structural_pipeline(inImg,DLICVmdl,DLMUSEmdl,outFile,scanID,roiMappingsFile):
-def run_structural_pipeline(inImg,DLICVmdl,outFile):
+def run_structural_pipeline(inImg,DLICVmdl,DLMUSEmdl,outFile, MuseMappingFile):
     print("Entering function")
     outDir = os.path.dirname(outFile)
     inDir = os.path.dirname(inImg)
 
-    # Create MUSE Node
+    # Create DLICV Node
     dlicv = Node(nnUNetInterface.nnUNetInference(), name='dlicv')
     dlicv.inputs.in_dir = Path(inDir)
-    #dlicv.inputs.mdl_dir = Path(DLICVmdl)
-    os.environ['RESULTS_FOLDER'] = str(Path(DLICVmdl))
+    dlicv.inputs.mdl_dir = str(DLICVmdl)
+    #os.environ['RESULTS_FOLDER'] = str(Path(DLICVmdl))
     dlicv.inputs.f_val = 1
     dlicv.inputs.t_val = 802
     dlicv.inputs.m_val = "3d_fullres"
@@ -51,6 +52,22 @@ def run_structural_pipeline(inImg,DLICVmdl,outFile):
 
     print('mask-dir: ', maskImage.inputs.out_dir)
     print("masking done")
+    
+    # Create MUSE Node
+    muse = Node(nnUNetInterface.nnUNetInference(), name='muse')
+    muse.inputs.mdl_dir = str(DLMUSEmdl)
+    #os.environ['RESULTS_FOLDER'] = str(Path(DLMUSEmdl))
+    muse.inputs.f_val = 0#2
+    muse.inputs.t_val = 803#903
+    muse.inputs.m_val = "3d_fullres"
+    muse.inputs.out_dir = os.path.join(outDir,'muse_out')
+    if os.path.exists(muse.inputs.out_dir):
+        shutil.rmtree(muse.inputs.out_dir)
+    os.mkdir(muse.inputs.out_dir)
+    print('outdir: ', muse.inputs.out_dir)
+    print("MUSE done")
+    
+    
     # Create MUSE Node
     # muse = Node(DeepMRSegInterface.DeepMRSegInference(), name='muse')
     # muse_lps_mdl_path = os.path.join(DLMUSEmdl,'LPS')
@@ -65,12 +82,24 @@ def run_structural_pipeline(inImg,DLICVmdl,outFile):
     # muse.inputs.out_file = os.path.join(outDir,'muse.nii.gz')
     # muse.inputs.batch_size = 4
     # muse.inputs.nJobs = 1
+    
+    #create muse relabel Node
+    relabel = Node(ROIRelabelInterface.ROIRelabel(), name='relabel')
+    relabel.inputs.in_dir = Path(inDir)
+    relabel.inputs.map_csv_file = Path(MuseMappingFile)
+    relabel.inputs.out_dir = os.path.join(outDir,'relabeled_out')
+    if os.path.exists(relabel.inputs.out_dir):
+        shutil.rmtree(relabel.inputs.out_dir)
+    os.mkdir(relabel.inputs.out_dir)
+
+    print('relabeled-dir: ', relabel.inputs.out_dir)
+    print("relabeling done")
 
     # Create roi csv creation Node
-    # roi_csv = Node(CalculateROIVolumeInterface.CalculateROIVolume(), name='roi-volume-csv')
-    # roi_csv.inputs.map_csv_file = Path(roiMappingsFile)
-    # roi_csv.inputs.scan_id = str(scanID)
-    # roi_csv.inputs.out_file = Path(outFile)
+    roi_csv = Node(CalculateROIVolumeInterface.CalculateROIVolume(), name='roi-volume-csv')
+    roi_csv.inputs.map_csv_file = Path(roiMappingsFile)
+    roi_csv.inputs.scan_id = str(scanID)
+    roi_csv.inputs.out_file = Path(outFile)
 
     #create working dir in output dir for now
     basedir = os.path.join(outDir,'working_dir')
@@ -82,7 +111,8 @@ def run_structural_pipeline(inImg,DLICVmdl,outFile):
     # Workflow
     wf = Workflow(name="structural", base_dir=basedir)
     wf.connect(dlicv, "out_dir", maskImage, "mask_dir")
-    # wf.connect(maskImage, "out_file", muse, "in_file")
+    wf.connect(maskImage, "out_dir", muse, "in_dir")
+    wf.connect(muse, "out_dir", relabel, "in_dir")
     # wf.connect(muse,"out_file", roi_csv, "mask_file")
     
     #wf.write_graph(dotfilename='graph.dot', graph2use='hierarchical', format='png', simple_form=True)
