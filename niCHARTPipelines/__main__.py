@@ -16,8 +16,8 @@ def main():
     parser.add_argument('--DLMUSEmdl', type=str, help='DLMUSE Model path.', default=None, required=True)
     #parser.add_argument('--pipelineType', type=str, help='Specify type of pipeline[structural, dti, fmri].', default=None, required=True)
     parser.add_argument('--outFile', type=str, help='Output file name with extension.', default=None, required=True)
-    #parser.add_argument('--scanID', type=str, help='scan id.', default=None, required=True)
-    #parser.add_argument('--derivedROIMappingsFile', type=str, help='derived MUSE ROI mappings file.', default=None, required=True)
+    parser.add_argument('--scanID', type=str, help='scan id.', default=None, required=True)
+    parser.add_argument('--derivedROIMappingsFile', type=str, help='derived MUSE ROI mappings file.', default=None, required=True)
     parser.add_argument('--MuseROIMappingsFile', type=str, help='MUSE ROI mappings file.', default=None, required=True)
     
     args = parser.parse_args(sys.argv[1:])
@@ -27,8 +27,8 @@ def main():
     DLMUSEmdl = args.DLMUSEmdl
     #pipelineType = args.pipelineType
     outFile = args.outFile
-    #scanID = args.scanID
-    #roiMappingsFile = args.derivedROIMappingsFile
+    scanID = args.scanID
+    roiMappingsFile = args.derivedROIMappingsFile
     MuseroiMappingsFile = args.MuseROIMappingsFile
 
     # if(pipelineType == "structural"):
@@ -42,7 +42,7 @@ def main():
     # else:
     #     print("Only [structural, dti and fmri] pipelines are supported.")
     #     exit()
-    Structural.run_structural_pipeline(inImg,DLICVmdl,DLMUSEmdl,outFile,MuseroiMappingsFile)
+    Structural.run_structural_pipeline(inImg,DLICVmdl,DLMUSEmdl,outFile,MuseroiMappingsFile,scanID,roiMappingsFile)
 
 
 
