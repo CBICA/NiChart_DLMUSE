@@ -6,10 +6,10 @@ import os,  shutil
 import nnUNetInterface
 import MaskImageInterface
 import ROIRelabelInterface
-# from . import CalculateROIVolumeInterface
+import CalculateROIVolumeInterface
 
 #def run_structural_pipeline(inImg,DLICVmdl,DLMUSEmdl,outFile,scanID,roiMappingsFile):
-def run_structural_pipeline(inImg,DLICVmdl,DLMUSEmdl,outFile, MuseMappingFile):
+def run_structural_pipeline(inImg,DLICVmdl,DLMUSEmdl,outFile, MuseMappingFile,scanID,roiMappingsFile):
     print("Entering function")
     outDir = os.path.dirname(outFile)
     inDir = os.path.dirname(inImg)
@@ -60,7 +60,7 @@ def run_structural_pipeline(inImg,DLICVmdl,DLMUSEmdl,outFile, MuseMappingFile):
      
     #create muse relabel Node
     relabel = Node(ROIRelabelInterface.ROIRelabel(), name='relabel')
-    relabel.inputs.in_dir = Path(inDir)
+    #relabel.inputs.in_dir = Path(inDir)
     relabel.inputs.map_csv_file = Path(MuseMappingFile)
     relabel.inputs.out_dir = os.path.join(outDir,'relabeled_out')
     if os.path.exists(relabel.inputs.out_dir):
@@ -71,10 +71,14 @@ def run_structural_pipeline(inImg,DLICVmdl,DLMUSEmdl,outFile, MuseMappingFile):
     print("relabeling done")
 
     # Create roi csv creation Node
-    #roi_csv = Node(CalculateROIVolumeInterface.CalculateROIVolume(), name='roi-volume-csv')
-    #roi_csv.inputs.map_csv_file = Path(roiMappingsFile)
-    #roi_csv.inputs.scan_id = str(scanID)
+    roi_csv = Node(CalculateROIVolumeInterface.CalculateROIVolume(), name='roi-volume-csv')
+    roi_csv.inputs.map_csv_file = Path(roiMappingsFile)
+    roi_csv.inputs.scan_id = str(scanID)
     #roi_csv.inputs.out_file = Path(outFile)
+    roi_csv.inputs.out_dir = os.path.join(outDir,'csv_out')
+    if os.path.exists(roi_csv.inputs.out_dir):
+        shutil.rmtree(roi_csv.inputs.out_dir)
+    os.mkdir(roi_csv.inputs.out_dir)
 
     #create working dir in output dir for now
     basedir = os.path.join(outDir,'working_dir')
@@ -88,7 +92,7 @@ def run_structural_pipeline(inImg,DLICVmdl,DLMUSEmdl,outFile, MuseMappingFile):
     wf.connect(dlicv, "out_dir", maskImage, "mask_dir")
     wf.connect(maskImage, "out_dir", muse, "in_dir")
     wf.connect(muse, "out_dir", relabel, "in_dir")
-    # wf.connect(muse,"out_file", roi_csv, "mask_file")
+    wf.connect(relabel,"out_dir", roi_csv, "in_dir")
     
     #wf.write_graph(dotfilename='graph.dot', graph2use='hierarchical', format='png', simple_form=True)
 
