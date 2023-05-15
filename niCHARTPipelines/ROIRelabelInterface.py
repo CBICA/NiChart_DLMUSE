@@ -1,39 +1,39 @@
 from nipype.interfaces.base import BaseInterfaceInputSpec, BaseInterface, File, Directory, TraitedSpec, traits
-import ROIVolumeCalculator as volCalculator
 from pathlib import Path
+import ROIRelabeler as relabeler
 import os
-
-###---------utils----------------
-def get_file_basename_without_extension(filepath):
-    return os.path.basename(filepath).split('.', 1)[0]
 
 ###---------Interface------------
 
-class CalculateROIVolumeInputSpec(BaseInterfaceInputSpec):
+class ROIRelabelInputSpec(BaseInterfaceInputSpec):
     map_csv_file = File(exists=True, mandatory=True, desc='the map csv file')
-    scan_id = traits.Str(mandatory=True,desc='scan ID')
     in_dir = Directory(mandatory=True, desc='the input dir')
     out_dir = Directory(mandatory=True, desc='the output dir') 
 
-class CalculateROIVolumeOutputSpec(TraitedSpec):
+class ROIRelabelOutputSpec(TraitedSpec):
     out_dir = File(desc='the output image')
 
-class CalculateROIVolume(BaseInterface):
-    input_spec = CalculateROIVolumeInputSpec
-    output_spec = CalculateROIVolumeOutputSpec
+class ROIRelabel(BaseInterface):
+    input_spec = ROIRelabelInputSpec
+    output_spec = ROIRelabelOutputSpec
 
     def _run_interface(self, runtime):
 
         # Call our python code here:
+        label_from = 'IndexConsecutive'
+        label_to = 'IndexMUSE'
+        
         infiles = Path(self.inputs.in_dir).glob('*.nii.gz')
+
         for in_file in infiles:
-          basename_without_ext = get_file_basename_without_extension(in_file)
-          out_file = os.path.join(self.inputs.out_dir,basename_without_ext) + '.csv'
-          
-          volCalculator.calculate_volume(
+          basename = os.path.basename(in_file)
+          out_file = os.path.join(self.inputs.out_dir,basename)
+
+          relabeler.relabel_roi_img(
               in_file,
               self.inputs.map_csv_file,
-              self.inputs.scan_id,
+              label_from,
+              label_to,
               out_file
           )
         # And we are done
