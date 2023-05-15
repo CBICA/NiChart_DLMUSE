@@ -6,14 +6,11 @@ import os
 ###---------Interface------------
 
 class ROIRelabelInputSpec(BaseInterfaceInputSpec):
-    #in_file = File(exists=True, mandatory=True, desc='the input mask image')
     map_csv_file = File(exists=True, mandatory=True, desc='the map csv file')
-    #out_file = File(mandatory=True, desc='the output csv file')
     in_dir = Directory(mandatory=True, desc='the input dir')
     out_dir = Directory(mandatory=True, desc='the output dir') 
 
 class ROIRelabelOutputSpec(TraitedSpec):
-    #out_file = File(desc='the output csv file')
     out_dir = File(desc='the output image')
 
 class ROIRelabel(BaseInterface):
