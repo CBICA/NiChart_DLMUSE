@@ -10,15 +10,12 @@ def get_file_basename_without_extension(filepath):
 ###---------Interface------------
 
 class CalculateROIVolumeInputSpec(BaseInterfaceInputSpec):
-    #mask_file = File(exists=True, mandatory=True, desc='the input mask image')
     map_csv_file = File(exists=True, mandatory=True, desc='the map csv file')
     scan_id = traits.Str(mandatory=True,desc='scan ID')
-    #out_file = File(mandatory=True, desc='the output csv file')
     in_dir = Directory(mandatory=True, desc='the input dir')
     out_dir = Directory(mandatory=True, desc='the output dir') 
 
 class CalculateROIVolumeOutputSpec(TraitedSpec):
-    #out_file = File(desc='the output csv file')
     out_dir = File(desc='the output image')
 
 class CalculateROIVolume(BaseInterface):
