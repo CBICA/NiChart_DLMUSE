@@ -14,7 +14,7 @@ def main():
     parser.add_argument('--inImg', type=str, help='Input T1 image file path.', default=None, required=True)
     parser.add_argument('--DLICVmdl', type=str, help='DLICV model path.', default=None, required=True)
     parser.add_argument('--DLMUSEmdl', type=str, help='DLMUSE Model path.', default=None, required=True)
-    #parser.add_argument('--pipelineType', type=str, help='Specify type of pipeline[structural, dti, fmri].', default=None, required=True)
+    parser.add_argument('--pipelineType', type=str, help='Specify type of pipeline[structural, dti, fmri].', default=None, required=True)
     parser.add_argument('--outFile', type=str, help='Output file name with extension.', default=None, required=True)
     parser.add_argument('--scanID', type=str, help='scan id.', default=None, required=True)
     parser.add_argument('--derivedROIMappingsFile', type=str, help='derived MUSE ROI mappings file.', default=None, required=True)
@@ -25,25 +25,23 @@ def main():
     inImg = args.inImg
     DLICVmdl = args.DLICVmdl
     DLMUSEmdl = args.DLMUSEmdl
-    #pipelineType = args.pipelineType
+    pipelineType = args.pipelineType
     outFile = args.outFile
     scanID = args.scanID
     roiMappingsFile = args.derivedROIMappingsFile
     MuseroiMappingsFile = args.MuseROIMappingsFile
 
-    # if(pipelineType == "structural"):
-    #     Structural.run_structural_pipeline(inImg,DLICVmdl,DLMUSEmdl,outFile,scanID,roiMappingsFile)
-    # elif(pipelineType == "fmri"):
-    #     print("Coming soon.")
-    #     exit()
-    # elif(pipelineType == "dti"):
-    #     print("Coming soon.")
-    #     exit()
-    # else:
-    #     print("Only [structural, dti and fmri] pipelines are supported.")
-    #     exit()
-    Structural.run_structural_pipeline(inImg,DLICVmdl,DLMUSEmdl,outFile,MuseroiMappingsFile,scanID,roiMappingsFile)
-
+    if(pipelineType == "structural"):
+        Structural.run_structural_pipeline(inImg,DLICVmdl,DLMUSEmdl,outFile,MuseroiMappingsFile,scanID,roiMappingsFile)
+    elif(pipelineType == "fmri"):
+        print("Coming soon.")
+        exit()
+    elif(pipelineType == "dti"):
+        print("Coming soon.")
+        exit()
+    else:
+        print("Only [structural, dti and fmri] pipelines are supported.")
+        exit()
 
 
 if __name__ == '__main__':
