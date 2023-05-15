@@ -8,11 +8,10 @@ import MaskImageInterface
 import ROIRelabelInterface
 import CalculateROIVolumeInterface
 
-#def run_structural_pipeline(inImg,DLICVmdl,DLMUSEmdl,outFile,scanID,roiMappingsFile):
-def run_structural_pipeline(inImg,DLICVmdl,DLMUSEmdl,outFile, MuseMappingFile,scanID,roiMappingsFile):
+def run_structural_pipeline(inDir,DLICVmdl,DLMUSEmdl,outDir, MuseMappingFile,scanID,roiMappingsFile):
     print("Entering function")
-    outDir = os.path.dirname(outFile)
-    inDir = os.path.dirname(inImg)
+    outDir = os.path.dirname(outDir)
+    inDir = os.path.dirname(inDir)
 
     # Create DLICV Node
     dlicv = Node(nnUNetInterface.nnUNetInference(), name='dlicv')
