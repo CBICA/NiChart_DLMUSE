@@ -131,3 +131,5 @@ dmypy.json
 # Containerization related artifacts
 *.sif
 *.simg
+
+temp/
