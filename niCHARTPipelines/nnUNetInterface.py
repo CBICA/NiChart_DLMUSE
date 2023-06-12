@@ -7,6 +7,7 @@ class nnUNetInferenceInputSpec(CommandLineInputSpec):
     f_val = traits.Int( argstr='-f %d', desc="f val: default 0")
     t_val = traits.Int(argstr='-t %d', desc="t val: default 803")
     m_val = traits.Str(argstr='-m %s',desc="m val: default 3d_fullres")
+    tr_val = traits.Str(argstr='-tr %s',desc="tr val: default nnUNetTrainerV2")
     out_dir = Directory(mandatory=True,argstr='-o %s', position=-1, desc='the output folder')
 
 class nnUNetInferenceOutputSpec(TraitedSpec):

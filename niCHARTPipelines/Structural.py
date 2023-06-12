@@ -41,9 +41,10 @@ def run_structural_pipeline(inDir,DLICVmdl,DLMUSEmdl,outDir, MuseMappingFile,sca
     # Create MUSE Node
     muse = Node(nnUNetInterface.nnUNetInference(), name='muse')
     os.environ['RESULTS_FOLDER'] = str(Path(DLMUSEmdl))
-    muse.inputs.f_val = 0#2
-    muse.inputs.t_val = 803#903
+    muse.inputs.f_val = 2
+    muse.inputs.t_val = 903
     muse.inputs.m_val = "3d_fullres"
+    muse.inputs.tr_val = "nnUNetTrainerV2_noMirroring"
     muse.inputs.out_dir = os.path.join(outDir,'muse_out')
     if os.path.exists(muse.inputs.out_dir):
         shutil.rmtree(muse.inputs.out_dir)
