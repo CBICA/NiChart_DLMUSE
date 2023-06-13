@@ -6,13 +6,12 @@ Use of this source code is governed by license located in license file: https://
 """
 
 import argparse
-import os
 import sys
 
 import pkg_resources  # part of setuptools
 import Structural
 
-VERSION = pkg_resources.require("spare_scores")[0].version
+VERSION = pkg_resources.require("niCHARTPipelines")[0].version
 
 def main():
     prog = "niCHARTPipelines"
@@ -21,6 +20,7 @@ def main():
     niCHARTPipelines v{VERSION}
     ICV calculation, brain segmentation, and ROI extraction pipelines for 
     structural MRI data.
+
     required arguments:
         [INDIR]         The filepath of the directory containing the input. The 
         [-i, --inDir]   input can be a single .nii.gz (or .nii) file or a  
@@ -29,61 +29,76 @@ def main():
         [OUTDIR]        The filepath of the directory where the output will be
         [-o, --outdir]  saved.
 
+        [PIPELINETYPE]  Specify type of pipeline[structural, dti, fmri]. 
+        [-p,            Currently only structural pipeline is supported.
+        --pipelinetype]
+
+        [SCANID]        Scan ID of the subject, if only one scan is given. If
+        [-s, --scanID]  multiple scans are given, this argument will be 
+                        ignored, and the scan ID will be extracted from the
+                        filename of the input file(s).
+
+        [DERIVED_ROI_MAPPINGS_FILE]     The filepath of the derived MUSE ROI 
+        [--derived_ROI_mappings_file]   mappings file.
+
+        [MUSE_ROI_MAPPINGS_FILE]    The filepath of the MUSE ROI mappings file.
+        [--MUSE_ROI_mappings_file]
+    
+    optional arguments: 
         [DLICVMDL]      The filepath of the DLICV model will be. In case the
-                        model to be used is an nnUNet model, the filepath of
+        [--DLICVmdl]    model to be used is an nnUNet model, the filepath of
                         the model's parent directory should be given. Example: 
                         /path/to/nnUNetTrainedModels/nnUNet/
         
         [DLMUSEMDL]     The filepath of the DLMUSE model will be. In case the
-                        model to be used is an nnUNet model, the filepath of
+        [--DLMUSEmdl]   model to be used is an nnUNet model, the filepath of
                         the model's parent directory should be given. Example:
                         /path/to/nnUNetTrainedModels/nnUNet/
 
-        [PIPELINETYPE]  Specify type of pipeline[structural, dti, fmri]. 
-                        Currently only structural pipeline is supported.
+        [NNUNET_RAW_DATA_BASE]   The filepath of the base directory where the 
+        [--nnUNet_raw_data_base] raw data of are saved.  This argument is only 
+                                 required if the DLICVMDL and DLMUSEMDL 
+                                 arguments are corresponding to a  nnUNet model 
+                                 (v1 needs this currently).
 
-        [SCANID]        Scan ID of the subject, if only one scan is given. If
-                        multiple scans are given, this argument will be 
-                        ignored, and the scan ID will be extracted from the
-                        filename of the input file(s).
+        [NNUNET_PREPROCESSED]    The filepath of the directory where the 
+        [--nnUNet_preprocessed]  intermediate preprocessed data are saved. This
+                                 argument is only required if the DLICVMDL and
+                                 DLMUSEMDL arguments are corresponding to a
+                                 nnUNet model (v1 needs this currently).
 
-        [DERIVED_ROI_MAPPINGS_FILE] The filepath of the derived MUSE ROI 
-                                    mappings file.
+        [RESULTS_FOLDER]         THIS IS ONLY NEEDED IF BOTH DLICV AND DLMUSE 
+        [--results_folder]       MODELS ARE NNUNET MODELS. The filepath of the
+                                 directory where the models are saved. The path
+                                 given should be up to (without) the nnUNet/ 
+                                 directory. Example:
+                                 /path/to/nnUNetTrainedModels/          correct
+                                 /path/to/nnUNetTrainedModels/nnUNet/   wrong
+                                 This is a temporary fix, and will be removed 
+                                 in the future. Both models should be saved in 
+                                 the same directory. Example:
+                                 /path/to/nnUNetTrainedModels/nnUNet/Task_001/
+                                 /path/to/nnUNetTrainedModels/nnUNet/Task_002/
 
-        [MUSE_ROI_MAPPINGS_FILE]    The filepath of the MUSE ROI mappings file.
-                        
-    optional arguments: 
-        [NNUNET_RAW_DATA_BASE]  The filepath of the base directory where the 
-                                raw data of are saved.  This argument is only 
-                                required if the DLICVMDL and DLMUSEMDL 
-                                arguments are corresponding to a  nnUNet model 
-                                (v1 needs this currently).
+        [DLICV_TASK]             The task number of the DLICV model. This 
+        [--DLICV_task]           argument is only required if the DLICVMDL is a 
+                                 nnUNet model.
 
-        [NNUNET_PREPROCESSED]   The filepath of the directory where the 
-                                intermediate preprocessed data are saved. This
-                                argument is only required if the DLICVMDL and
-                                DLMUSEMDL arguments are corresponding to a
-                                nnUNet model (v1 needs this currently).
+        [DLMUSE_TASK]            The task number of the DLMUSE model. This 
+        [--DLMUSE_task]          argument is only required if the DLMUSEMDL is a 
+                                 nnUNet model.
 
-        [DLICV_TASK]            The task number of the DLICV model. This 
-                                argument is only required if the DLICVMDL is a 
-                                nnUNet model.
+        [DLICV_FOLD]             The fold number of the DLICV model. This 
+        [--DLICV_fold]           argument is only required if the DLICVMDL is a
+                                 nnUNet model.
 
-        [DLMUSE_TASK]           The task number of the DLMUSE model. This 
-                                argument is only required if the DLMUSEMDL is a 
-                                nnUNet model.
-
-        [DLICV_FOLD]            The fold number of the DLICV model. This 
-                                argument is only required if the DLICVMDL is a
-                                nnUNet model.
-
-        [DLMUSE_FOLD]           The fold number of the DLMUSE model. This
-                                argument is only required if the DLMUSEMDL is a
-                                nnUNet model.
+        [DLMUSE_FOLD]            The fold number of the DLMUSE model. This
+        [--DLMUSE_fold]          argument is only required if the DLMUSEMDL is a
+                                 nnUNet model.
     
         [-h, --help]    Show this help message and exit.
         
-        [-v, --version] Show program's version number and exit.
+        [-V, --version] Show program's version number and exit.
     """.format(VERSION=VERSION)
 
     parser = argparse.ArgumentParser(prog=prog,
@@ -91,6 +106,7 @@ def main():
                                      description=description,
                                      add_help=False)
     
+    ################# Required Arguments #################
     # INDIR argument
     parser.add_argument('-i',
                         '--indir', 
@@ -106,19 +122,6 @@ def main():
                         help='Output file name with extension.', 
                         default=None, required=True)
     
-    # DLICVMDL argument
-    parser.add_argument('--DLICVmdl', 
-                        type=str, 
-                        help='DLICV model path.', 
-                        default=None, 
-                        required=True)
-    
-    # DLMUSEMDL argument
-    parser.add_argument('--DLMUSEmdl', 
-                        type=str, 
-                        help='DLMUSE Model path.', 
-                        default=None, 
-                        required=True)
     
     # PIPELINETYPE argument
     parser.add_argument('-p',
@@ -151,41 +154,57 @@ def main():
                         default=None, 
                         required=True)
 
+    ################# Optional Arguments #################
+    # DLICVMDL argument
+    parser.add_argument('--DLICVmdl', 
+                        '--DLICVMDL',
+                        type=str, 
+                        help='DLICV model path.', 
+                        default=None, 
+                        required=False)
+    
+    # DLMUSEMDL argument
+    parser.add_argument('--DLMUSEmdl', 
+                        '--DLMUSEMDL',
+                        type=str, 
+                        help='DLMUSE Model path.', 
+                        default=None, 
+                        required=False)
+
     # NNUNET_RAW_DATA_BASE argument
     parser.add_argument('--nnUNet_raw_data_base',
                         type=str, 
-                        help='nnUNet raw data base.', 
-                        default=None)
+                        help='nnUNet raw data base.')
     
     # NNUNET_PREPROCESSED argument
     parser.add_argument('--nnUNet_preprocessed',
                         type=str, 
-                        help='nnUNet preprocessed.', 
-                        default=None)
+                        help='nnUNet preprocessed.')
+    
+    # RESULTS_FOLDER argument
+    parser.add_argument('--results_folder',
+                        type=str,
+                        help='Results folder.')
     
     # DLICV_TASK argument
     parser.add_argument('--DLICV_task',
                         type=int, 
-                        help='DLICV task.', 
-                        default=None)
+                        help='DLICV task.')
     
     # DLMUSE_TASK argument
     parser.add_argument('--DLMUSE_task',
                         type=int, 
-                        help='DLMUSE task.', 
-                        default=None)
+                        help='DLMUSE task.')
     
     # DLICV_FOLD argument
     parser.add_argument('--DLICV_fold',
                         type=int, 
-                        help='DLICV fold.', 
-                        default=None)
+                        help='DLICV fold.')
     
     # DLMUSE_FOLD argument
     parser.add_argument('--DLMUSE_fold',
                         type=int, 
-                        help='DLMUSE fold.', 
-                        default=None)
+                        help='DLMUSE fold.')
         
     # VERSION argument
     help = "Show the version and exit"
@@ -207,14 +226,15 @@ def main():
 
     indir = args.indir
     outdir = args.outdir
-    DLICVmdl = args.DLICVmdl
-    DLMUSEmdl = args.DLMUSEmdl
     pipelinetype = args.pipelinetype
     scanID = args.scanID
     derived_ROI_mappings_file = args.derived_ROI_mappings_file
     MUSE_ROI_mappings_file = args.MUSE_ROI_mappings_file
+    DLMUSEmdl = args.DLMUSEmdl
+    DLICVmdl = args.DLICVmdl
     nnUNet_raw_data_base = args.nnUNet_raw_data_base
     nnUNet_preprocessed = args.nnUNet_preprocessed
+    results_folder = args.results_folder
     DLICV_task = args.DLICV_task
     DLMUSE_task = args.DLMUSE_task
     DLICV_fold = args.DLICV_fold
@@ -232,6 +252,7 @@ def main():
                                            derived_ROI_mappings_file,
                                            nnUNet_raw_data_base,
                                            nnUNet_preprocessed,
+                                           results_folder,
                                            DLICV_task,
                                            DLMUSE_task,
                                            DLICV_fold,

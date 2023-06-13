@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip install --upgrade pip
 
-RUN git clone  https://github.com/CBICA/niCHARTPipelines.git
+RUN git clone  https://github.com/georgeaidinis/niCHARTPipelines.git
 
 RUN cd /niCHARTPipelines && pip install .
 
