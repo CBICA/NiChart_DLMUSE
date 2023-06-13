@@ -8,11 +8,27 @@ import MaskImageInterface
 import ROIRelabelInterface
 import CalculateROIVolumeInterface
 
-def run_structural_pipeline(inDir,DLICVmdl,DLMUSEmdl,outDir, MuseMappingFile,scanID,roiMappingsFile):
+def run_structural_pipeline(inDir,
+                            DLICVmdl,
+                            DLMUSEmdl,
+                            outDir, 
+                            MuseMappingFile,
+                            scanID,
+                            roiMappingsFile,
+                            nnUNet_raw_data_base,
+                            nnUNet_preprocessed,
+                            DLICV_task,
+                            DLMUSE_task,
+                            DLICV_fold,
+                            DLMUSE_fold):
+    
     print("Entering function")
     outDir = os.path.dirname(outDir)
     inDir = os.path.dirname(inDir)
 
+    os.environ['nnUNet_raw_data_base'] = str(Path(nnUNet_raw_data_base))
+    os.environ['nnUNet_preprocessed'] = str(Path(nnUNet_preprocessed))
+    
     # Create DLICV Node
     dlicv = Node(nnUNetInterface.nnUNetInference(), name='dlicv')
     dlicv.inputs.in_dir = Path(inDir)
@@ -45,6 +61,7 @@ def run_structural_pipeline(inDir,DLICVmdl,DLMUSEmdl,outDir, MuseMappingFile,sca
     muse.inputs.t_val = 903
     muse.inputs.m_val = "3d_fullres"
     muse.inputs.tr_val = "nnUNetTrainerV2_noMirroring"
+    muse.inputs.disable_tta = True
     muse.inputs.out_dir = os.path.join(outDir,'muse_out')
     if os.path.exists(muse.inputs.out_dir):
         shutil.rmtree(muse.inputs.out_dir)
