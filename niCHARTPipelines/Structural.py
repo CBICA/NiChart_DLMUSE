@@ -3,10 +3,10 @@ from pathlib import Path
 import os,  shutil
 
 # from . import DeepMRSegInterface
-import nnUNetInterface
-import MaskImageInterface
-import ROIRelabelInterface
-import CalculateROIVolumeInterface
+from niCHARTPipelines import nnUNetInterface
+from niCHARTPipelines import MaskImageInterface
+from niCHARTPipelines import ROIRelabelInterface
+from niCHARTPipelines import CalculateROIVolumeInterface
 
 def run_structural_pipeline(inDir,
                             DLICVmdl_path,

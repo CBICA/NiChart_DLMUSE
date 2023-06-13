@@ -1,6 +1,8 @@
 import pandas as pd
-import ImageIO as ImageIO
 import SimpleITK as sitk
+
+from niCHARTPipelines import ImageIO as ImageIO
+
 
 def relabel_roi_img(in_img_file, roi_map_file, label_from, label_to, out_img_file):
     '''Convert labels in input roi image to new labels based on the mapping

@@ -9,7 +9,7 @@ import argparse
 import sys
 
 import pkg_resources  # part of setuptools
-import Structural
+from niCHARTPipelines import Structural
 
 VERSION = pkg_resources.require("niCHARTPipelines")[0].version
 

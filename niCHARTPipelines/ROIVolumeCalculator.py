@@ -1,7 +1,9 @@
-import SimpleITK as sitk
 import csv as _csv
+
 import pandas as pd
-import ImageIO
+import SimpleITK as sitk
+
+from niCHARTPipelines import ImageIO
 
 ###---------calculate ROI volumes-----------
 def calculate_volume(maskfile, mapcsv, scanID, output_file):

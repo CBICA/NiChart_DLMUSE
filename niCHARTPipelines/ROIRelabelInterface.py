@@ -1,7 +1,10 @@
-from nipype.interfaces.base import BaseInterfaceInputSpec, BaseInterface, File, Directory, TraitedSpec, traits
-from pathlib import Path
-import ROIRelabeler as relabeler
 import os
+from pathlib import Path
+
+from nipype.interfaces.base import (BaseInterface, BaseInterfaceInputSpec,
+                                    Directory, File, TraitedSpec, traits)
+
+from niCHARTPipelines import ROIRelabeler as relabeler
 
 ###---------Interface------------
 
