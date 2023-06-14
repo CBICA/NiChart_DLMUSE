@@ -23,7 +23,7 @@ def main():
 
     required arguments:
         [INDIR]         The filepath of the directory containing the input. The 
-        [-i, --inDir]   input can be a single .nii.gz (or .nii) file or a  
+        [-i, --indir]   input can be a single .nii.gz (or .nii) file or a  
                         directory containing .nii.gz files (or .nii files). 
 
         [OUTDIR]        The filepath of the directory where the output will be
@@ -110,6 +110,8 @@ def main():
     # INDIR argument
     parser.add_argument('-i',
                         '--indir', 
+                        '--inDir',
+                        '--input',
                         type=str, 
                         help='Input T1 image file path.', 
                         default=None, 
@@ -118,6 +120,8 @@ def main():
     # OUTDIR argument
     parser.add_argument('-o',
                         '--outdir', 
+                        '--outDir',
+                        '--output',
                         type=str,
                         help='Output file name with extension.', 
                         default=None, required=True)
