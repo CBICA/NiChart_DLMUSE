@@ -133,3 +133,6 @@ dmypy.json
 *.simg
 
 temp/
+
+# MACOS files
+.DS_Store
