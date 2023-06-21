@@ -96,8 +96,8 @@ def main():
         [--DLMUSE_fold]         argument is only required if the DLMUSEMDL is a
                                 nnUNet model.
 
-        [ALL_IN_GPU]            If this flag is set, all the processes will be
-        [--all_in_gpu]          done in the GPU. This flag is only available if
+        [ALL_IN_GPU]            If this var is set, all the processes will be
+        [--all_in_gpu]          done in the GPU. This var is only available if 
                                 the DLICVMDL and DLMUSEMDL arguments are 
                                 corresponding to a nnUNet model. Either 'True',
                                 'False' or 'None'. 
@@ -237,7 +237,7 @@ def main():
                         help=help)
     
         
-    args = parser.parse_args(sys.argv[1:])
+    args = parser.parse_args()
 
     indir = args.indir
     outdir = args.outdir
@@ -254,6 +254,7 @@ def main():
     DLMUSE_task = args.DLMUSE_task
     DLICV_fold = args.DLICV_fold
     DLMUSE_fold = args.DLMUSE_fold
+    print(args)
     all_in_gpu = args.all_in_gpu
 
 
