@@ -44,7 +44,6 @@ matplotlib==3.3.3
 MedPy==0.4.0
 networkx==2.5.1
 nibabel==3.2.1
--e git+https://github.com/georgeaidinis/niCHARTPipelines@e8e9e979c24036da0dc6343e520727cb1367f7da#egg=niCHARTPipelines
 nipype==1.8.6
 nnunet==1.7.1
 numpy==1.18.5
