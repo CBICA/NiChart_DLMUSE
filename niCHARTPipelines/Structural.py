@@ -22,7 +22,7 @@ def run_structural_pipeline(inDir,
                             DLMUSE_task=None,
                             DLICV_fold=None,
                             DLMUSE_fold=None,
-                            all_in_gpu='True'):
+                            all_in_gpu='None'):
     
     print("Entering function")
     outDir = os.path.abspath(os.path.dirname(outDir))
