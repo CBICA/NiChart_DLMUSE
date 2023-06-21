@@ -61,40 +61,46 @@ def main():
                                  arguments are corresponding to a  nnUNet model 
                                  (v1 needs this currently).
 
-        [NNUNET_PREPROCESSED]    The filepath of the directory where the 
-        [--nnUNet_preprocessed]  intermediate preprocessed data are saved. This
-                                 argument is only required if the DLICVMDL and
-                                 DLMUSEMDL arguments are corresponding to a
-                                 nnUNet model (v1 needs this currently).
+        [NNUNET_PREPROCESSED]   The filepath of the directory where the 
+        [--nnUNet_preprocessed] intermediate preprocessed data are saved. This
+                                argument is only required if the DLICVMDL and
+                                DLMUSEMDL arguments are corresponding to a
+                                nnUNet model (v1 needs this currently).
 
-        [RESULTS_FOLDER]         THIS IS ONLY NEEDED IF BOTH DLICV AND DLMUSE 
-        [--results_folder]       MODELS ARE NNUNET MODELS. The filepath of the
-                                 directory where the models are saved. The path
-                                 given should be up to (without) the nnUNet/ 
-                                 directory. Example:
-                                 /path/to/nnUNetTrainedModels/          correct
-                                 /path/to/nnUNetTrainedModels/nnUNet/   wrong
-                                 This is a temporary fix, and will be removed 
-                                 in the future. Both models should be saved in 
-                                 the same directory. Example:
-                                 /path/to/nnUNetTrainedModels/nnUNet/Task_001/
-                                 /path/to/nnUNetTrainedModels/nnUNet/Task_002/
+        [RESULTS_FOLDER]        THIS IS ONLY NEEDED IF BOTH DLICV AND DLMUSE 
+        [--results_folder]      MODELS ARE NNUNET MODELS. The filepath of the
+                                directory where the models are saved. The path
+                                given should be up to (without) the nnUNet/ 
+                                directory. Example:
+                                /path/to/nnUNetTrainedModels/          correct
+                                /path/to/nnUNetTrainedModels/nnUNet/   wrong
+                                This is a temporary fix, and will be removed 
+                                in the future. Both models should be saved in 
+                                the same directory. Example:
+                                /path/to/nnUNetTrainedModels/nnUNet/Task_001/
+                                /path/to/nnUNetTrainedModels/nnUNet/Task_002/
 
-        [DLICV_TASK]             The task number of the DLICV model. This 
-        [--DLICV_task]           argument is only required if the DLICVMDL is a 
-                                 nnUNet model.
+        [DLICV_TASK]            The task number of the DLICV model. This 
+        [--DLICV_task]          argument is only required if the DLICVMDL is a 
+                                nnUNet model.
 
-        [DLMUSE_TASK]            The task number of the DLMUSE model. This 
-        [--DLMUSE_task]          argument is only required if the DLMUSEMDL is a 
-                                 nnUNet model.
+        [DLMUSE_TASK]           The task number of the DLMUSE model. This 
+        [--DLMUSE_task]         argument is only required if the DLMUSEMDL is a 
+                                nnUNet model.
 
-        [DLICV_FOLD]             The fold number of the DLICV model. This 
-        [--DLICV_fold]           argument is only required if the DLICVMDL is a
-                                 nnUNet model.
+        [DLICV_FOLD]            The fold number of the DLICV model. This 
+        [--DLICV_fold]          argument is only required if the DLICVMDL is a
+                                nnUNet model.
 
-        [DLMUSE_FOLD]            The fold number of the DLMUSE model. This
-        [--DLMUSE_fold]          argument is only required if the DLMUSEMDL is a
-                                 nnUNet model.
+        [DLMUSE_FOLD]           The fold number of the DLMUSE model. This
+        [--DLMUSE_fold]         argument is only required if the DLMUSEMDL is a
+                                nnUNet model.
+
+        [ALL_IN_GPU]            If this flag is set, all the processes will be
+        [--all_in_gpu]          done in the GPU. This flag is only available if
+                                the DLICVMDL and DLMUSEMDL arguments are 
+                                corresponding to a nnUNet model. Either 'True',
+                                'False' or 'None'. 
     
         [-h, --help]    Show this help message and exit.
         
@@ -209,6 +215,11 @@ def main():
     parser.add_argument('--DLMUSE_fold',
                         type=int, 
                         help='DLMUSE fold.')
+    
+    # ALL_IN_GPU argument
+    parser.add_argument('--all_in_gpu',
+                        type=str,
+                        help='All in GPU.')
         
     # VERSION argument
     help = "Show the version and exit"
@@ -243,6 +254,7 @@ def main():
     DLMUSE_task = args.DLMUSE_task
     DLICV_fold = args.DLICV_fold
     DLMUSE_fold = args.DLMUSE_fold
+    all_in_gpu = args.all_in_gpu
 
 
 
@@ -260,7 +272,9 @@ def main():
                                            DLICV_task,
                                            DLMUSE_task,
                                            DLICV_fold,
-                                           DLMUSE_fold)
+                                           DLMUSE_fold,
+                                           all_in_gpu)
+        
 
     elif(pipelinetype == "fmri"):
         print("Coming soon.")

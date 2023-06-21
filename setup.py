@@ -15,8 +15,8 @@ setup(name='niCHARTPipelines',
       license='MIT',
       url="https://github.com/CBICA/niCHARTPipelines",
 	  install_requires=[
-        'torch>=1.10; platform_system=="Darwin"',  # macOS
-        'torch>=1.10, <2.0; platform_system!="Darwin"',  # Linux and Windows
+        'torch==1.10; platform_system=="Darwin"',  # macOS
+        'torch==1.10; platform_system!="Darwin"',  # Linux and Windows
         'nnunet',
         'tqdm',
         'dicom2nifti',

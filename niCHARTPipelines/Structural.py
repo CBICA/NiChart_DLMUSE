@@ -21,7 +21,8 @@ def run_structural_pipeline(inDir,
                             DLICV_task=None,
                             DLMUSE_task=None,
                             DLICV_fold=None,
-                            DLMUSE_fold=None):
+                            DLMUSE_fold=None,
+                            all_in_gpu='True'):
     
     print("Entering function")
     outDir = os.path.abspath(os.path.dirname(outDir))
@@ -53,7 +54,7 @@ def run_structural_pipeline(inDir,
     if DLICV_task:
         dlicv.inputs.t_val = DLICV_task
     dlicv.inputs.m_val = "3d_fullres"
-    dlicv.inputs.all_in_gpu = 'True'
+    dlicv.inputs.all_in_gpu = all_in_gpu
     dlicv.inputs.tr_val = "nnUNetTrainerV2"
     if os.path.exists(dlicv.inputs.out_dir):
         shutil.rmtree(dlicv.inputs.out_dir)
@@ -84,7 +85,7 @@ def run_structural_pipeline(inDir,
         muse.inputs.t_val = DLMUSE_task
     muse.inputs.m_val = "3d_fullres"
     muse.inputs.tr_val = "nnUNetTrainerV2_noMirroring"
-    muse.inputs.all_in_gpu = 'True'
+    muse.inputs.all_in_gpu = all_in_gpu
     muse.inputs.disable_tta = True
     if os.path.exists(muse.inputs.out_dir):
         shutil.rmtree(muse.inputs.out_dir)
