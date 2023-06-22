@@ -67,8 +67,8 @@ def main():
                                 DLMUSEMDL arguments are corresponding to a
                                 nnUNet model (v1 needs this currently).
 
-        [RESULTS_FOLDER]        THIS IS ONLY NEEDED IF BOTH DLICV AND DLMUSE 
-        [--results_folder]      MODELS ARE NNUNET MODELS. The filepath of the
+        [MODEL_FOLDER]          THIS IS ONLY NEEDED IF BOTH DLICV AND DLMUSE 
+        [--model_folder]        MODELS ARE NNUNET MODELS. The filepath of the
                                 directory where the models are saved. The path
                                 given should be up to (without) the nnUNet/ 
                                 directory. Example:
@@ -192,9 +192,9 @@ def main():
                         help='nnUNet preprocessed.')
     
     # RESULTS_FOLDER argument
-    parser.add_argument('--results_folder',
+    parser.add_argument('--model_folder',
                         type=str,
-                        help='Results folder.')
+                        help='Model folder.')
     
     # DLICV_TASK argument
     parser.add_argument('--DLICV_task',
@@ -249,7 +249,7 @@ def main():
     DLICVmdl = args.DLICVmdl
     nnUNet_raw_data_base = args.nnUNet_raw_data_base
     nnUNet_preprocessed = args.nnUNet_preprocessed
-    results_folder = args.results_folder
+    model_folder = args.model_folder
     DLICV_task = args.DLICV_task
     DLMUSE_task = args.DLMUSE_task
     DLICV_fold = args.DLICV_fold
@@ -269,7 +269,7 @@ def main():
                                            derived_ROI_mappings_file,
                                            nnUNet_raw_data_base,
                                            nnUNet_preprocessed,
-                                           results_folder,
+                                           model_folder,
                                            DLICV_task,
                                            DLMUSE_task,
                                            DLICV_fold,

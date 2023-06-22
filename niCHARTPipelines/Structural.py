@@ -17,7 +17,7 @@ def run_structural_pipeline(inDir,
                             roiMappingsFile,
                             nnUNet_raw_data_base=None,
                             nnUNet_preprocessed=None,
-                            results_folder=None,
+                            model_folder=None,
                             DLICV_task=None,
                             DLMUSE_task=None,
                             DLICV_fold=None,
@@ -39,8 +39,8 @@ def run_structural_pipeline(inDir,
     # /path/to/nnUNetTrainedModels/nnUNet/Task_002/
     # 
     # This is not needed if the environment variable is already set.
-    if results_folder:
-        os.environ['RESULTS_FOLDER'] = os.path.abspath(results_folder) + '/'
+    if model_folder:
+        os.environ['RESULTS_FOLDER'] = os.path.abspath(model_folder) + '/'
 
     # Create DLICV Node
     # os.environ['RESULTS_FOLDER'] = str(Path(DLICVmdl_path))
