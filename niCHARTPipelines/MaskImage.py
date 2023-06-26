@@ -1,5 +1,7 @@
 import SimpleITK as sitk
-import ImageIO
+
+from niCHARTPipelines import ImageIO
+
 
 ###---------mask image-----------
 def apply_mask(input_image_path, input_mask_path, masked_image_filename):

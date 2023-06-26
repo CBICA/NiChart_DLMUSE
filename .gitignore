@@ -131,3 +131,8 @@ dmypy.json
 # Containerization related artifacts
 *.sif
 *.simg
+
+temp/
+
+# MACOS files
+.DS_Store

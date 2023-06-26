@@ -1,7 +1,11 @@
-from nipype.interfaces.base import BaseInterfaceInputSpec, BaseInterface, File, Directory, TraitedSpec
-import MaskImage as masker
-from pathlib import Path
 import os
+from pathlib import Path
+
+from nipype.interfaces.base import (BaseInterface, BaseInterfaceInputSpec,
+                                    Directory, File, TraitedSpec)
+
+from niCHARTPipelines import MaskImage as masker
+
 
 ###---------utils----------------
 def get_file_basename_without_extension(filepath):

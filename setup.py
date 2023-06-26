@@ -15,9 +15,20 @@ setup(name='niCHARTPipelines',
       license='MIT',
       url="https://github.com/CBICA/niCHARTPipelines",
 	  install_requires=[
+        'torch==1.10; platform_system=="Darwin"',  # macOS
+        'torch==1.10; platform_system!="Darwin"',  # Linux and Windows
+        'nnunet',
+        'tqdm',
+        'dicom2nifti',
+        'scikit-image>=0.14',
+        'medpy',
+        'scipy',
+        'batchgenerators>=0.23',
+        'SimpleITK',
+        'requests',
+        'tifffile', 
 		'setuptools',
 		'nipype',
-		'SimpleITK',
 		'scipy==1.5.4',
 		'matplotlib==3.3.3',
 		'dill==0.3.4',
@@ -27,13 +38,12 @@ setup(name='niCHARTPipelines',
 		'numpy==1.18.5',
 		'protobuf==3.17.3',
 		'pymongo==3.12.0',
-		'scikit-learn==0.24.2',
+		'scikit-learn',
 		'nibabel==3.2.1',
 		'resource==0.2.1',
 		'networkx==2.5.1',
 		'pandas==1.2.5',
-		'pathlib',
-                'DeepMRSeg @ git+https://github.com/CBICA/DeepMRSeg.git@main'
+		'pathlib'
     ],
     entry_points={
         'console_scripts': [

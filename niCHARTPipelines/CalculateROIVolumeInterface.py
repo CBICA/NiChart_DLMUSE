@@ -1,7 +1,11 @@
-from nipype.interfaces.base import BaseInterfaceInputSpec, BaseInterface, File, Directory, TraitedSpec, traits
-import ROIVolumeCalculator as volCalculator
-from pathlib import Path
 import os
+from pathlib import Path
+
+from nipype.interfaces.base import (BaseInterface, BaseInterfaceInputSpec,
+                                    Directory, File, TraitedSpec, traits)
+
+from niCHARTPipelines import ROIVolumeCalculator as volCalculator
+
 
 ###---------utils----------------
 def get_file_basename_without_extension(filepath):

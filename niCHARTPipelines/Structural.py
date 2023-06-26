@@ -3,24 +3,59 @@ from pathlib import Path
 import os,  shutil
 
 # from . import DeepMRSegInterface
-import nnUNetInterface
-import MaskImageInterface
-import ROIRelabelInterface
-import CalculateROIVolumeInterface
+from niCHARTPipelines import nnUNetInterface
+from niCHARTPipelines import MaskImageInterface
+from niCHARTPipelines import ROIRelabelInterface
+from niCHARTPipelines import CalculateROIVolumeInterface
 
-def run_structural_pipeline(inDir,DLICVmdl,DLMUSEmdl,outDir, MuseMappingFile,scanID,roiMappingsFile):
+def run_structural_pipeline(inDir,
+                            DLICVmdl_path,
+                            DLMUSEmdl_path,
+                            outDir, 
+                            MuseMappingFile,
+                            scanID,
+                            roiMappingsFile,
+                            nnUNet_raw_data_base=None,
+                            nnUNet_preprocessed=None,
+                            model_folder=None,
+                            DLICV_task=None,
+                            DLMUSE_task=None,
+                            DLICV_fold=None,
+                            DLMUSE_fold=None,
+                            all_in_gpu='None'):
+    
     print("Entering function")
-    outDir = os.path.dirname(outDir)
-    inDir = os.path.dirname(inDir)
+    outDir = os.path.abspath(os.path.dirname(outDir))
+    inDir = os.path.abspath(os.path.dirname(inDir))
+    
+    if nnUNet_raw_data_base:
+        os.environ['nnUNet_raw_data_base'] = os.path.abspath(nnUNet_raw_data_base) + '/'
+    if nnUNet_preprocessed:
+        os.environ['nnUNet_preprocessed'] = os.path.abspath(nnUNet_preprocessed) + '/'
+    # Assuming that both DLICV and DLMUSE models are in the same folder.
+    # Example:
+    # 
+    # /path/to/nnUNetTrainedModels/nnUNet/Task_001/
+    # /path/to/nnUNetTrainedModels/nnUNet/Task_002/
+    # 
+    # This is not needed if the environment variable is already set.
+    if model_folder:
+        os.environ['RESULTS_FOLDER'] = os.path.abspath(model_folder) + '/'
 
     # Create DLICV Node
+    # os.environ['RESULTS_FOLDER'] = str(Path(DLICVmdl_path))
     dlicv = Node(nnUNetInterface.nnUNetInference(), name='dlicv')
     dlicv.inputs.in_dir = Path(inDir)
-    os.environ['RESULTS_FOLDER'] = str(Path(DLICVmdl))
-    dlicv.inputs.f_val = 1
-    dlicv.inputs.t_val = 802
-    dlicv.inputs.m_val = "3d_fullres"
     dlicv.inputs.out_dir = os.path.join(outDir,'dlicv_out')
+    dlicv.inputs.f_val = 1
+    if DLICV_fold:
+        dlicv.inputs.f_val = DLICV_fold
+    dlicv.inputs.t_val = 802
+    if DLICV_task:
+        dlicv.inputs.t_val = DLICV_task
+    dlicv.inputs.m_val = "3d_fullres"
+    dlicv.inputs.all_in_gpu = all_in_gpu
+    dlicv.inputs.tr_val = "nnUNetTrainerV2"
     if os.path.exists(dlicv.inputs.out_dir):
         shutil.rmtree(dlicv.inputs.out_dir)
     os.mkdir(dlicv.inputs.out_dir)
@@ -39,12 +74,19 @@ def run_structural_pipeline(inDir,DLICVmdl,DLMUSEmdl,outDir, MuseMappingFile,sca
     print("masking done")
     
     # Create MUSE Node
+    # os.environ['RESULTS_FOLDER'] = str(Path(DLMUSEmdl_path))
     muse = Node(nnUNetInterface.nnUNetInference(), name='muse')
-    os.environ['RESULTS_FOLDER'] = str(Path(DLMUSEmdl))
-    muse.inputs.f_val = 0#2
-    muse.inputs.t_val = 803#903
-    muse.inputs.m_val = "3d_fullres"
     muse.inputs.out_dir = os.path.join(outDir,'muse_out')
+    muse.inputs.f_val = 2
+    if DLMUSE_fold:
+        muse.inputs.f_val = DLMUSE_fold
+    muse.inputs.t_val = 903
+    if DLMUSE_task:
+        muse.inputs.t_val = DLMUSE_task
+    muse.inputs.m_val = "3d_fullres"
+    muse.inputs.tr_val = "nnUNetTrainerV2_noMirroring"
+    muse.inputs.all_in_gpu = all_in_gpu
+    muse.inputs.disable_tta = True
     if os.path.exists(muse.inputs.out_dir):
         shutil.rmtree(muse.inputs.out_dir)
     os.mkdir(muse.inputs.out_dir)
@@ -53,7 +95,7 @@ def run_structural_pipeline(inDir,DLICVmdl,DLMUSEmdl,outDir, MuseMappingFile,sca
      
     #create muse relabel Node
     relabel = Node(ROIRelabelInterface.ROIRelabel(), name='relabel')
-    relabel.inputs.map_csv_file = Path(MuseMappingFile)
+    relabel.inputs.map_csv_file = os.path.abspath(MuseMappingFile)
     relabel.inputs.out_dir = os.path.join(outDir,'relabeled_out')
     if os.path.exists(relabel.inputs.out_dir):
         shutil.rmtree(relabel.inputs.out_dir)
@@ -64,7 +106,7 @@ def run_structural_pipeline(inDir,DLICVmdl,DLMUSEmdl,outDir, MuseMappingFile,sca
 
     # Create roi csv creation Node
     roi_csv = Node(CalculateROIVolumeInterface.CalculateROIVolume(), name='roi-volume-csv')
-    roi_csv.inputs.map_csv_file = Path(roiMappingsFile)
+    roi_csv.inputs.map_csv_file = os.path.abspath(roiMappingsFile)
     roi_csv.inputs.scan_id = str(scanID)
     roi_csv.inputs.out_dir = os.path.join(outDir,'csv_out')
     if os.path.exists(roi_csv.inputs.out_dir):

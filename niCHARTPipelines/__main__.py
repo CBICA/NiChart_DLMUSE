@@ -6,37 +6,281 @@ Use of this source code is governed by license located in license file: https://
 """
 
 import argparse
-import os, sys
-import Structural
+import sys
+
+import pkg_resources  # part of setuptools
+from niCHARTPipelines import Structural
+
+VERSION = pkg_resources.require("niCHARTPipelines")[0].version
 
 def main():
-    parser = argparse.ArgumentParser(description='niCHART Data Preprocessing Pipelines')
-    parser.add_argument('--inDir', type=str, help='Input T1 image file path.', default=None, required=True)
-    parser.add_argument('--DLICVmdl', type=str, help='DLICV model path.', default=None, required=True)
-    parser.add_argument('--DLMUSEmdl', type=str, help='DLMUSE Model path.', default=None, required=True)
-    parser.add_argument('--pipelineType', type=str, help='Specify type of pipeline[structural, dti, fmri].', default=None, required=True)
-    parser.add_argument('--outDir', type=str, help='Output file name with extension.', default=None, required=True)
-    parser.add_argument('--scanID', type=str, help='scan id.', default=None, required=True)
-    parser.add_argument('--derivedROIMappingsFile', type=str, help='derived MUSE ROI mappings file.', default=None, required=True)
-    parser.add_argument('--MuseROIMappingsFile', type=str, help='MUSE ROI mappings file.', default=None, required=True)
+    prog = "niCHARTPipelines"
+    description = "niCHART Data Preprocessing Pipelines"
+    usage = """
+    niCHARTPipelines v{VERSION}
+    ICV calculation, brain segmentation, and ROI extraction pipelines for 
+    structural MRI data.
+
+    required arguments:
+        [INDIR]         The filepath of the directory containing the input. The 
+        [-i, --indir]   input can be a single .nii.gz (or .nii) file or a  
+                        directory containing .nii.gz files (or .nii files). 
+
+        [OUTDIR]        The filepath of the directory where the output will be
+        [-o, --outdir]  saved.
+
+        [PIPELINETYPE]  Specify type of pipeline[structural, dti, fmri]. 
+        [-p,            Currently only structural pipeline is supported.
+        --pipelinetype]
+
+        [SCANID]        Scan ID of the subject, if only one scan is given. If
+        [-s, --scanID]  multiple scans are given, this argument will be 
+                        ignored, and the scan ID will be extracted from the
+                        filename of the input file(s).
+
+        [DERIVED_ROI_MAPPINGS_FILE]     The filepath of the derived MUSE ROI 
+        [--derived_ROI_mappings_file]   mappings file.
+
+        [MUSE_ROI_MAPPINGS_FILE]    The filepath of the MUSE ROI mappings file.
+        [--MUSE_ROI_mappings_file]
     
-    args = parser.parse_args(sys.argv[1:])
+    optional arguments: 
+        [DLICVMDL]      The filepath of the DLICV model will be. In case the
+        [--DLICVmdl]    model to be used is an nnUNet model, the filepath of
+                        the model's parent directory should be given. Example: 
+                        /path/to/nnUNetTrainedModels/nnUNet/
+        
+        [DLMUSEMDL]     The filepath of the DLMUSE model will be. In case the
+        [--DLMUSEmdl]   model to be used is an nnUNet model, the filepath of
+                        the model's parent directory should be given. Example:
+                        /path/to/nnUNetTrainedModels/nnUNet/
 
-    inDir = args.inDir
-    DLICVmdl = args.DLICVmdl
-    DLMUSEmdl = args.DLMUSEmdl
-    pipelineType = args.pipelineType
-    outDir = args.outDir
+        [NNUNET_RAW_DATA_BASE]   The filepath of the base directory where the 
+        [--nnUNet_raw_data_base] raw data of are saved.  This argument is only 
+                                 required if the DLICVMDL and DLMUSEMDL 
+                                 arguments are corresponding to a  nnUNet model 
+                                 (v1 needs this currently).
+
+        [NNUNET_PREPROCESSED]   The filepath of the directory where the 
+        [--nnUNet_preprocessed] intermediate preprocessed data are saved. This
+                                argument is only required if the DLICVMDL and
+                                DLMUSEMDL arguments are corresponding to a
+                                nnUNet model (v1 needs this currently).
+
+        [MODEL_FOLDER]          THIS IS ONLY NEEDED IF BOTH DLICV AND DLMUSE 
+        [--model_folder]        MODELS ARE NNUNET MODELS. The filepath of the
+                                directory where the models are saved. The path
+                                given should be up to (without) the nnUNet/ 
+                                directory. Example:
+                                /path/to/nnUNetTrainedModels/          correct
+                                /path/to/nnUNetTrainedModels/nnUNet/   wrong
+                                This is a temporary fix, and will be removed 
+                                in the future. Both models should be saved in 
+                                the same directory. Example:
+                                /path/to/nnUNetTrainedModels/nnUNet/Task_001/
+                                /path/to/nnUNetTrainedModels/nnUNet/Task_002/
+
+        [DLICV_TASK]            The task number of the DLICV model. This 
+        [--DLICV_task]          argument is only required if the DLICVMDL is a 
+                                nnUNet model.
+
+        [DLMUSE_TASK]           The task number of the DLMUSE model. This 
+        [--DLMUSE_task]         argument is only required if the DLMUSEMDL is a 
+                                nnUNet model.
+
+        [DLICV_FOLD]            The fold number of the DLICV model. This 
+        [--DLICV_fold]          argument is only required if the DLICVMDL is a
+                                nnUNet model.
+
+        [DLMUSE_FOLD]           The fold number of the DLMUSE model. This
+        [--DLMUSE_fold]         argument is only required if the DLMUSEMDL is a
+                                nnUNet model.
+
+        [ALL_IN_GPU]            If this var is set, all the processes will be
+        [--all_in_gpu]          done in the GPU. This var is only available if 
+                                the DLICVMDL and DLMUSEMDL arguments are 
+                                corresponding to a nnUNet model. Either 'True',
+                                'False' or 'None'. 
+    
+        [-h, --help]    Show this help message and exit.
+        
+        [-V, --version] Show program's version number and exit.
+    """.format(VERSION=VERSION)
+
+    parser = argparse.ArgumentParser(prog=prog,
+                                     usage=usage,
+                                     description=description,
+                                     add_help=False)
+    
+    ################# Required Arguments #################
+    # INDIR argument
+    parser.add_argument('-i',
+                        '--indir', 
+                        '--inDir',
+                        '--input',
+                        type=str, 
+                        help='Input T1 image file path.', 
+                        default=None, 
+                        required=True)
+    
+    # OUTDIR argument
+    parser.add_argument('-o',
+                        '--outdir', 
+                        '--outDir',
+                        '--output',
+                        type=str,
+                        help='Output file name with extension.', 
+                        default=None, required=True)
+    
+    
+    # PIPELINETYPE argument
+    parser.add_argument('-p',
+                        '--pipelinetype', 
+                        type=str, 
+                        help='Specify type of pipeline.', 
+                        choices=['structural', 'dti', 'fmri'],
+                        default='structural', 
+                        required=True)
+    
+    # SCANID argument
+    parser.add_argument('-s',
+                        '--scanID', 
+                        type=str, 
+                        help='scan id.', 
+                        default=None, 
+                        required=True)
+    
+    # DERIVED_ROI_MAPPINGS_FILE argument
+    parser.add_argument('--derived_ROI_mappings_file', 
+                        type=str, 
+                        help='derived MUSE ROI mappings file.', 
+                        default=None, 
+                        required=True)
+    
+    # MUSE_ROI_MAPPINGS_FILE argument
+    parser.add_argument('--MUSE_ROI_mappings_file', 
+                        type=str, 
+                        help='MUSE ROI mappings file.', 
+                        default=None, 
+                        required=True)
+
+    ################# Optional Arguments #################
+    # DLICVMDL argument
+    parser.add_argument('--DLICVmdl', 
+                        '--DLICVMDL',
+                        type=str, 
+                        help='DLICV model path.', 
+                        default=None, 
+                        required=False)
+    
+    # DLMUSEMDL argument
+    parser.add_argument('--DLMUSEmdl', 
+                        '--DLMUSEMDL',
+                        type=str, 
+                        help='DLMUSE Model path.', 
+                        default=None, 
+                        required=False)
+
+    # NNUNET_RAW_DATA_BASE argument
+    parser.add_argument('--nnUNet_raw_data_base',
+                        type=str, 
+                        help='nnUNet raw data base.')
+    
+    # NNUNET_PREPROCESSED argument
+    parser.add_argument('--nnUNet_preprocessed',
+                        type=str, 
+                        help='nnUNet preprocessed.')
+    
+    # RESULTS_FOLDER argument
+    parser.add_argument('--model_folder',
+                        type=str,
+                        help='Model folder.')
+    
+    # DLICV_TASK argument
+    parser.add_argument('--DLICV_task',
+                        type=int, 
+                        help='DLICV task.')
+    
+    # DLMUSE_TASK argument
+    parser.add_argument('--DLMUSE_task',
+                        type=int, 
+                        help='DLMUSE task.')
+    
+    # DLICV_FOLD argument
+    parser.add_argument('--DLICV_fold',
+                        type=int, 
+                        help='DLICV fold.')
+    
+    # DLMUSE_FOLD argument
+    parser.add_argument('--DLMUSE_fold',
+                        type=int, 
+                        help='DLMUSE fold.')
+    
+    # ALL_IN_GPU argument
+    parser.add_argument('--all_in_gpu',
+                        type=str,
+                        help='All in GPU.')
+        
+    # VERSION argument
+    help = "Show the version and exit"
+    parser.add_argument("-V", 
+                        "--version", 
+                        action='version',
+                        version=prog+ ": v{VERSION}.".format(VERSION=VERSION),
+                        help=help)
+
+    # HELP argument
+    help = 'Show this message and exit'
+    parser.add_argument('-h', 
+                        '--help',
+                        action='store_true', 
+                        help=help)
+    
+        
+    args = parser.parse_args()
+
+    indir = args.indir
+    outdir = args.outdir
+    pipelinetype = args.pipelinetype
     scanID = args.scanID
-    roiMappingsFile = args.derivedROIMappingsFile
-    MuseroiMappingsFile = args.MuseROIMappingsFile
+    derived_ROI_mappings_file = args.derived_ROI_mappings_file
+    MUSE_ROI_mappings_file = args.MUSE_ROI_mappings_file
+    DLMUSEmdl = args.DLMUSEmdl
+    DLICVmdl = args.DLICVmdl
+    nnUNet_raw_data_base = args.nnUNet_raw_data_base
+    nnUNet_preprocessed = args.nnUNet_preprocessed
+    model_folder = args.model_folder
+    DLICV_task = args.DLICV_task
+    DLMUSE_task = args.DLMUSE_task
+    DLICV_fold = args.DLICV_fold
+    DLMUSE_fold = args.DLMUSE_fold
+    print(args)
+    all_in_gpu = args.all_in_gpu
 
-    if(pipelineType == "structural"):
-        Structural.run_structural_pipeline(inDir,DLICVmdl,DLMUSEmdl,outDir,MuseroiMappingsFile,scanID,roiMappingsFile)
-    elif(pipelineType == "fmri"):
+
+
+    if(pipelinetype == "structural"):
+        Structural.run_structural_pipeline(indir,
+                                           DLICVmdl,
+                                           DLMUSEmdl,
+                                           outdir,
+                                           MUSE_ROI_mappings_file,
+                                           scanID,
+                                           derived_ROI_mappings_file,
+                                           nnUNet_raw_data_base,
+                                           nnUNet_preprocessed,
+                                           model_folder,
+                                           DLICV_task,
+                                           DLMUSE_task,
+                                           DLICV_fold,
+                                           DLMUSE_fold,
+                                           all_in_gpu)
+        
+
+    elif(pipelinetype == "fmri"):
         print("Coming soon.")
         exit()
-    elif(pipelineType == "dti"):
+    elif(pipelinetype == "dti"):
         print("Coming soon.")
         exit()
     else:
