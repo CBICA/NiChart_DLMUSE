@@ -33,11 +33,6 @@ def main():
         [-p,            Currently only structural pipeline is supported.
         --pipelinetype]
 
-        [SCANID]        Scan ID of the subject, if only one scan is given. If
-        [-s, --scanID]  multiple scans are given, this argument will be 
-                        ignored, and the scan ID will be extracted from the
-                        filename of the input file(s).
-
         [DERIVED_ROI_MAPPINGS_FILE]     The filepath of the derived MUSE ROI 
         [--derived_ROI_mappings_file]   mappings file.
 
@@ -141,15 +136,7 @@ def main():
                         choices=['structural', 'dti', 'fmri'],
                         default='structural', 
                         required=True)
-    
-    # SCANID argument
-    parser.add_argument('-s',
-                        '--scanID', 
-                        type=str, 
-                        help='scan id.', 
-                        default=None, 
-                        required=True)
-    
+        
     # DERIVED_ROI_MAPPINGS_FILE argument
     parser.add_argument('--derived_ROI_mappings_file', 
                         type=str, 
@@ -219,6 +206,7 @@ def main():
     # ALL_IN_GPU argument
     parser.add_argument('--all_in_gpu',
                         type=str,
+                        default='None',
                         help='All in GPU.')
         
     # VERSION argument
@@ -242,7 +230,6 @@ def main():
     indir = args.indir
     outdir = args.outdir
     pipelinetype = args.pipelinetype
-    scanID = args.scanID
     derived_ROI_mappings_file = args.derived_ROI_mappings_file
     MUSE_ROI_mappings_file = args.MUSE_ROI_mappings_file
     DLMUSEmdl = args.DLMUSEmdl
@@ -254,8 +241,12 @@ def main():
     DLMUSE_task = args.DLMUSE_task
     DLICV_fold = args.DLICV_fold
     DLMUSE_fold = args.DLMUSE_fold
-    print(args)
     all_in_gpu = args.all_in_gpu
+
+    print()
+    print("Arguments:")
+    print(args)
+    print()
 
 
 
@@ -265,7 +256,6 @@ def main():
                                            DLMUSEmdl,
                                            outdir,
                                            MUSE_ROI_mappings_file,
-                                           scanID,
                                            derived_ROI_mappings_file,
                                            nnUNet_raw_data_base,
                                            nnUNet_preprocessed,

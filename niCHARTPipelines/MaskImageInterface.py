@@ -1,26 +1,40 @@
 import os
+import re
 from pathlib import Path
 
 from nipype.interfaces.base import (BaseInterface, BaseInterfaceInputSpec,
-                                    Directory, File, TraitedSpec)
+                                    Directory, File, TraitedSpec, traits)
 
 from niCHARTPipelines import MaskImage as masker
 
 
-###---------utils----------------
-def get_file_basename_without_extension(filepath):
-    return os.path.basename(filepath).split('.', 1)[0]
-
-def get_split_filename(basename):
-    what_i_want, the_rest = basename.rsplit("_", 1)
-    return what_i_want
-
 ###---------Interface------------
+def get_basename(in_file, suffix_to_remove, ext_to_remove = ['.nii.gz', '.nii']):
+    '''Get file basename 
+    - Extracts the base name from the input file
+    - Removes a given suffix + file extension
+    '''
+    ## Get file basename
+    out_str = os.path.basename(in_file)
+
+    ## Remove suffix and extension
+    for tmp_ext in ext_to_remove:
+        out_str, num_repl = re.subn(suffix_to_remove + tmp_ext + '$', '', out_str)
+        if num_repl > 0:
+            break
+
+    ## Return basename
+    if num_repl == 0:
+        return None
+    return out_str
 
 class MaskImageInputSpec(BaseInterfaceInputSpec):
     in_dir = Directory(mandatory=True, desc='the input dir')
+    in_suff = traits.Str(mandatory=False, desc='the input image suffix')
+    mask_dir = Directory(mandatory=True, desc='the mask img directory')
+    mask_suff = traits.Str(mandatory=False, desc='the mask image suffix')
     out_dir = Directory(mandatory=True, desc='the output dir') 
-    mask_dir =Directory(desc='the input mask directory')
+    out_suff = traits.Str(mandatory=False, desc='the out image suffix')
 
 class MaskImageOutputSpec(TraitedSpec):
     out_dir = File(desc='the output image')
@@ -31,27 +45,34 @@ class MaskImage(BaseInterface):
 
     def _run_interface(self, runtime):
 
-        # Call our python code here:
-        print('in-dir: ', self.inputs.in_dir)
-        infiles = Path(self.inputs.in_dir).glob('*.nii.gz')
-        maskfiles = Path(self.inputs.mask_dir).glob('*.nii.gz')
+        img_ext_type = '.nii.gz'
 
-        for in_file in infiles:
-          basename_without_ext = get_file_basename_without_extension(in_file)
-          in_file_split_name_ = get_split_filename(basename_without_ext)
+        # Set input args
+        if not self.inputs.in_suff:
+            self.inputs.in_suff = ''
+        if not self.inputs.mask_suff:
+            self.inputs.mask_suff = ''
+        if not self.inputs.out_suff:
+            self.inputs.out_suff = '_masked'
+        
+        ## Create output folder
+        if not os.path.exists(self.inputs.out_dir):
+            os.makedirs(self.inputs.out_dir)
+        
+        infiles = Path(self.inputs.in_dir).glob('*' + self.inputs.in_suff + img_ext_type)
+        
+        for in_img_name in infiles:
+            
+            ## Get args
+            in_bname = get_basename(in_img_name, self.inputs.in_suff, [img_ext_type])
+            mask_img_name = os.path.join(self.inputs.mask_dir,
+                                         in_bname + self.inputs.mask_suff + img_ext_type)
+            out_img_name = os.path.join(self.inputs.out_dir,
+                                        in_bname + self.inputs.out_suff + img_ext_type)
 
-          for mask_file in maskfiles:
-            mask_file_name_without_ext = get_file_basename_without_extension(mask_file)
+            ## Call the main function
+            masker.apply_mask(in_img_name, mask_img_name, out_img_name)
 
-            ##TODO compare basenames only. make sure that DLICV output names match input names first
-            if(in_file_split_name_ == mask_file_name_without_ext):
-                out_file = os.path.join(self.inputs.out_dir,basename_without_ext) + '.nii.gz'
-                masker.apply_mask(
-                    in_file,
-                    mask_file,
-                    out_file
-                )
-                break
         # And we are done
         return runtime
 

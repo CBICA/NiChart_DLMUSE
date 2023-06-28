@@ -1,15 +1,18 @@
-import SimpleITK as sitk
-
-from niCHARTPipelines import ImageIO
+import nibabel as nib
 
 
 ###---------mask image-----------
-def apply_mask(input_image_path, input_mask_path, masked_image_filename):
-    image = ImageIO.read_image(input_image_path)
-    mask = ImageIO.read_image(input_mask_path)
+def apply_mask(in_img_name, mask_img_name, out_img_name):
+    ## Read input image and mask
+    nii_in = nib.load(in_img_name)
+    nii_mask = nib.load(mask_img_name)
 
-    maskfilter = sitk.MaskImageFilter()
-    maskedoutput = maskfilter.Execute(image,mask)
+    img_in = nii_in.get_fdata()
+    img_mask = nii_mask.get_fdata()
 
-    ImageIO.write_image(maskedoutput,masked_image_filename)
+    ## Mask image
+    img_in[img_mask == 0] = 0
 
+    ## Save out image
+    nii_out = nib.Nifti1Image(img_in, nii_in.affine, nii_in.header)    
+    nii_out.to_filename(out_img_name)
