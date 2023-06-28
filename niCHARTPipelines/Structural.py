@@ -79,6 +79,8 @@ def run_structural_pipeline(inDir,
     dlicv.inputs.m_val = "3d_fullres"
     dlicv.inputs.all_in_gpu = all_in_gpu
     dlicv.inputs.tr_val = "nnUNetTrainerV2"
+    dlicv.inputs.mode = 'fastest'
+    dlicv.inputs.disable_tta = True
 
     # Create Apply Mask Node
     maskImage = Node(MaskImageInterface.MaskImage(), name='maskImage')
@@ -102,6 +104,7 @@ def run_structural_pipeline(inDir,
     muse.inputs.tr_val = "nnUNetTrainerV2_noMirroring"
     muse.inputs.all_in_gpu = all_in_gpu
     muse.inputs.disable_tta = True
+    muse.inputs.mode = 'fastest'
 
     #create muse relabel Node
     relabel = Node(ROIRelabelInterface.ROIRelabel(), name='relabel')

@@ -16,7 +16,7 @@ setup(name='niCHARTPipelines',
       url="https://github.com/CBICA/niCHARTPipelines",
 	  install_requires=[
         'torch==1.10; platform_system=="Darwin"',  # macOS
-        'torch==1.10; platform_system!="Darwin"',  # Linux and Windows
+        'torch; platform_system!="Darwin"',  # Linux and Windows
         'nnunet',
         'tqdm',
         'dicom2nifti',
