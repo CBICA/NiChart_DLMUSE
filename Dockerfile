@@ -12,17 +12,19 @@ RUN apt-get update && \
     htop \
     zip \
     unzip \
-    g++
+    g++ && \ 
+    apt-key del 3bf863cc && \ 
+    apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub && \ 
+    rm -rf /var/lib/apt/lists/* && \
+    pip install --upgrade pip && \ 
+    pip install Cmake
 
-RUN apt-key del 3bf863cc
-RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub
-RUN rm -rf /var/lib/apt/lists/*
+RUN mkdir /niCHARTPipelines 
+COPY ./ /niCHARTPipelines/
+RUN cd /niCHARTPipelines && pip install .
 
-RUN pip install --upgrade pip
-RUN pip install Cmake
-# RUN mkdir /niCHARTPipelines 
-# COPY ./ /niCHARTPipelines 
-RUN git clone https://github.com/georgeaidinis/niCHARTPipelines
-RUN cd /niCHARTPipelines && pip install . 
+# RUN cd / && \
+#     git clone https://github.com/georgeaidinis/niCHARTPipelines && \
+#     cd /niCHARTPipelines && pip install . 
 
 CMD ["niCHARTPipelines" ]

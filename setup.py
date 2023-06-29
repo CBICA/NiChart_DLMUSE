@@ -39,7 +39,7 @@ setup(name='niCHARTPipelines',
 		'scikit-learn',
 		'nibabel==3.2.1',
 		'resource==0.2.1',
-		'networkx==2.5.1',
+		'networkx>=2.5.1',
 		'pandas==1.2.5',
 		'pathlib'
     ],
