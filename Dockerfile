@@ -20,9 +20,9 @@ RUN rm -rf /var/lib/apt/lists/*
 
 RUN pip install --upgrade pip
 RUN pip install Cmake
-RUN mkdir /niCHARTPipelines 
+# RUN mkdir /niCHARTPipelines 
 # COPY ./ /niCHARTPipelines 
-RUN git clone https://github.com/CBICA/niCHARTPipelines
+RUN git clone https://github.com/georgeaidinis/niCHARTPipelines
 RUN cd /niCHARTPipelines && pip install . 
 
 CMD ["niCHARTPipelines" ]
