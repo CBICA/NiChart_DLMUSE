@@ -19,12 +19,12 @@ RUN apt-get update && \
     pip install --upgrade pip && \ 
     pip install Cmake
 
-RUN mkdir /niCHARTPipelines 
-COPY ./ /niCHARTPipelines/
-RUN cd /niCHARTPipelines && pip install .
+# RUN mkdir /niCHARTPipelines 
+# COPY ./ /niCHARTPipelines/
+# RUN cd /niCHARTPipelines && pip install .
 
-# RUN cd / && \
-#     git clone https://github.com/georgeaidinis/niCHARTPipelines && \
-#     cd /niCHARTPipelines && pip install . 
+RUN cd / && \
+    git clone https://github.com/CBICA/niCHARTPipelines && \
+    cd /niCHARTPipelines && pip install . 
 
 CMD ["niCHARTPipelines" ]

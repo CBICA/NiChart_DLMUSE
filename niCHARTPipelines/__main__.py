@@ -96,6 +96,14 @@ def main():
                                 the DLICVMDL and DLMUSEMDL arguments are 
                                 corresponding to a nnUNet model. Either 'True',
                                 'False' or 'None'. 
+
+        [DISABLE_TTA]           If this var is set, test-time augmentation will 
+        [--disable_tta]         be disabled. This var is only available if the 
+                                DLICV and DLMUSE models are nnUNet models. True/
+                                False.
+
+        [MODE]                  The mode of the pipeline. Either 'normal' or
+        [--mode]                'fastest'. 'normal' mode is the default mode.
     
         [-h, --help]    Show this help message and exit.
         
@@ -208,6 +216,19 @@ def main():
                         type=str,
                         default='None',
                         help='All in GPU.')
+    
+    # DISABLE_TTA argument
+    parser.add_argument('--disable_tta',
+                        type=bool,
+                        default=True,
+                        help='Disable TTA.')
+    
+    # MODE argument
+    parser.add_argument('--mode',
+                        type=str,
+                        default='fastest',
+                        choices=['normal', 'fastest'],
+                        help='Mode.')
         
     # VERSION argument
     help = "Show the version and exit"
@@ -242,6 +263,9 @@ def main():
     DLICV_fold = args.DLICV_fold
     DLMUSE_fold = args.DLMUSE_fold
     all_in_gpu = args.all_in_gpu
+    disable_tta = args.disable_tta
+    mode = args.mode
+
 
     print()
     print("Arguments:")
@@ -264,7 +288,9 @@ def main():
                                            DLMUSE_task,
                                            DLICV_fold,
                                            DLMUSE_fold,
-                                           all_in_gpu)
+                                           all_in_gpu,
+                                           disable_tta,
+                                           mode)
         
 
     elif(pipelinetype == "fmri"):

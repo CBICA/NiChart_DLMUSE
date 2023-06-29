@@ -25,7 +25,9 @@ def run_structural_pipeline(inDir,
                             DLMUSE_task=None,
                             DLICV_fold=None,
                             DLMUSE_fold=None,
-                            all_in_gpu='None'):
+                            all_in_gpu='None',
+                            disable_tta=True,
+                            mode='fastest'):
     '''NiPype workflow for structural pipeline
     '''
     
@@ -79,8 +81,8 @@ def run_structural_pipeline(inDir,
     dlicv.inputs.m_val = "3d_fullres"
     dlicv.inputs.all_in_gpu = all_in_gpu
     dlicv.inputs.tr_val = "nnUNetTrainerV2"
-    dlicv.inputs.mode = 'fastest'
-    dlicv.inputs.disable_tta = True
+    dlicv.inputs.mode = mode
+    dlicv.inputs.disable_tta = disable_tta
 
     # Create Apply Mask Node
     maskImage = Node(MaskImageInterface.MaskImage(), name='maskImage')
@@ -103,8 +105,8 @@ def run_structural_pipeline(inDir,
     muse.inputs.m_val = "3d_fullres"
     muse.inputs.tr_val = "nnUNetTrainerV2_noMirroring"
     muse.inputs.all_in_gpu = all_in_gpu
-    muse.inputs.disable_tta = True
-    muse.inputs.mode = 'fastest'
+    muse.inputs.disable_tta = disable_tta
+    muse.inputs.mode = mode
 
     #create muse relabel Node
     relabel = Node(ROIRelabelInterface.ROIRelabel(), name='relabel')
