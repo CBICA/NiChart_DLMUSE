@@ -97,10 +97,9 @@ def main():
                                 corresponding to a nnUNet model. Either 'True',
                                 'False' or 'None'. 
 
-        [DISABLE_TTA]           If this var is set, test-time augmentation will 
-        [--disable_tta]         be disabled. This var is only available if the 
-                                DLICV and DLMUSE models are nnUNet models. True/
-                                False.
+        [DISABLE_TTA]           If this var is given, test-time augmentation  
+        [--disable_tta]         will be disabled. This var is only available if 
+                                the DLICV and DLMUSE models are nnUNet models. 
 
         [MODE]                  The mode of the pipeline. Either 'normal' or
         [--mode]                'fastest'. 'normal' mode is the default mode.
@@ -219,8 +218,7 @@ def main():
     
     # DISABLE_TTA argument
     parser.add_argument('--disable_tta',
-                        type=bool,
-                        default=True,
+                        action='store_true',
                         help='Disable TTA.')
     
     # MODE argument

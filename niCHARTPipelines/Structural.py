@@ -26,7 +26,7 @@ def run_structural_pipeline(inDir,
                             DLICV_fold=None,
                             DLMUSE_fold=None,
                             all_in_gpu='None',
-                            disable_tta='True',
+                            disable_tta=True,
                             mode='fastest'):
     '''NiPype workflow for structural pipeline
     '''
@@ -105,7 +105,7 @@ def run_structural_pipeline(inDir,
     muse.inputs.m_val = "3d_fullres"
     muse.inputs.tr_val = "nnUNetTrainerV2_noMirroring"
     muse.inputs.all_in_gpu = all_in_gpu
-    muse.inputs.disable_tta = disable_tta
+    muse.inputs.disable_tta = True # This MUSE model does not support TTA
     muse.inputs.mode = mode
 
     #create muse relabel Node
