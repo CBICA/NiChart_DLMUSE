@@ -26,7 +26,7 @@ def run_structural_pipeline(inDir,
                             DLICV_fold=None,
                             DLMUSE_fold=None,
                             all_in_gpu='None',
-                            disable_tta=True,
+                            disable_tta='True',
                             mode='fastest'):
     '''NiPype workflow for structural pipeline
     '''
