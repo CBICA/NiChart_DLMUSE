@@ -1,20 +1,23 @@
-from nipype import Node, Workflow
+import os
+import shutil
 from pathlib import Path
-import os,  shutil
+
+from nipype import Node, Workflow
+from nipype.interfaces.utility import Merge
 
 # from . import DeepMRSegInterface
-from niCHARTPipelines import nnUNetInterface
-from niCHARTPipelines import MaskImageInterface
-from niCHARTPipelines import ROIRelabelInterface
-from niCHARTPipelines import CalculateROIVolumeInterface
+from niCHARTPipelines import (CalculateROIVolumeInterface,
+                              CombineMasksInterface, MaskImageInterface,
+                              ReorientImageInterface, ROIRelabelInterface,
+                              nnUNetInterface)
+
 
 def run_structural_pipeline(inDir,
                             DLICVmdl_path,
                             DLMUSEmdl_path,
                             outDir, 
-                            MuseMappingFile,
-                            scanID,
-                            roiMappingsFile,
+                            dict_MUSE_ROI_Index,
+                            dict_MUSE_derived_ROI,
                             nnUNet_raw_data_base=None,
                             nnUNet_preprocessed=None,
                             model_folder=None,
@@ -22,12 +25,20 @@ def run_structural_pipeline(inDir,
                             DLMUSE_task=None,
                             DLICV_fold=None,
                             DLMUSE_fold=None,
-                            all_in_gpu='None'):
+                            all_in_gpu='None',
+                            disable_tta=True,
+                            mode='fastest'):
+    '''NiPype workflow for structural pipeline
+    '''
     
-    print("Entering function")
-    outDir = os.path.abspath(os.path.dirname(outDir))
-    inDir = os.path.abspath(os.path.dirname(inDir))
+    ##################################
+    ## Set init paths and envs
+    outDir = os.path.abspath(outDir)
+    inDir = os.path.abspath(inDir)
+    if not os.path.exists(outDir):
+        os.makedirs(outDir)
     
+    ## nnUnet-specific settings
     if nnUNet_raw_data_base:
         os.environ['nnUNet_raw_data_base'] = os.path.abspath(nnUNet_raw_data_base) + '/'
     if nnUNet_preprocessed:
@@ -42,11 +53,25 @@ def run_structural_pipeline(inDir,
     if model_folder:
         os.environ['RESULTS_FOLDER'] = os.path.abspath(model_folder) + '/'
 
+    ## Create working dir (FIXME: in output dir for now)
+    basedir = os.path.join(outDir,'working_dir')
+    if os.path.exists(basedir):
+        shutil.rmtree(basedir)
+    os.makedirs(basedir, exist_ok=True)
+
+    ##################################
+    ## Create nodes
+    
+    # Create ReorientToLPS Node
+    reorientToLPS = Node(ReorientImageInterface.ReorientImage(), name='reorientToLPS')
+    reorientToLPS.inputs.in_dir = Path(inDir)
+    reorientToLPS.inputs.out_dir = os.path.join(outDir,'out_to_LPS')
+    reorientToLPS.inputs.out_suff = '_0000'
+
     # Create DLICV Node
     # os.environ['RESULTS_FOLDER'] = str(Path(DLICVmdl_path))
     dlicv = Node(nnUNetInterface.nnUNetInference(), name='dlicv')
-    dlicv.inputs.in_dir = Path(inDir)
-    dlicv.inputs.out_dir = os.path.join(outDir,'dlicv_out')
+    dlicv.inputs.out_dir = os.path.join(outDir,'out_dlicv_mask')
     dlicv.inputs.f_val = 1
     if DLICV_fold:
         dlicv.inputs.f_val = DLICV_fold
@@ -56,27 +81,21 @@ def run_structural_pipeline(inDir,
     dlicv.inputs.m_val = "3d_fullres"
     dlicv.inputs.all_in_gpu = all_in_gpu
     dlicv.inputs.tr_val = "nnUNetTrainerV2"
-    if os.path.exists(dlicv.inputs.out_dir):
-        shutil.rmtree(dlicv.inputs.out_dir)
-    os.mkdir(dlicv.inputs.out_dir)
-    print('outdir: ', dlicv.inputs.out_dir)
-    print("DLICV done")
+    dlicv.inputs.mode = mode
+    dlicv.inputs.disable_tta = disable_tta
 
     # Create Apply Mask Node
     maskImage = Node(MaskImageInterface.MaskImage(), name='maskImage')
-    maskImage.inputs.in_dir = Path(inDir)
-    maskImage.inputs.out_dir = os.path.join(outDir,'masked_out')
-    if os.path.exists(maskImage.inputs.out_dir):
-        shutil.rmtree(maskImage.inputs.out_dir)
-    os.mkdir(maskImage.inputs.out_dir)
-
-    print('mask-dir: ', maskImage.inputs.out_dir)
-    print("masking done")
+    maskImage.inputs.in_dir = os.path.join(outDir,'out_to_LPS')
+    maskImage.inputs.in_suff = '_0000'
+    maskImage.inputs.mask_suff = ''
+    maskImage.inputs.out_dir = os.path.join(outDir,'out_dlicv_img')
+    maskImage.inputs.out_suff = '_0000'
     
     # Create MUSE Node
     # os.environ['RESULTS_FOLDER'] = str(Path(DLMUSEmdl_path))
     muse = Node(nnUNetInterface.nnUNetInference(), name='muse')
-    muse.inputs.out_dir = os.path.join(outDir,'muse_out')
+    muse.inputs.out_dir = os.path.join(outDir,'out_muse')
     muse.inputs.f_val = 2
     if DLMUSE_fold:
         muse.inputs.f_val = DLMUSE_fold
@@ -86,46 +105,51 @@ def run_structural_pipeline(inDir,
     muse.inputs.m_val = "3d_fullres"
     muse.inputs.tr_val = "nnUNetTrainerV2_noMirroring"
     muse.inputs.all_in_gpu = all_in_gpu
-    muse.inputs.disable_tta = True
-    if os.path.exists(muse.inputs.out_dir):
-        shutil.rmtree(muse.inputs.out_dir)
-    os.mkdir(muse.inputs.out_dir)
-    print('outdir: ', muse.inputs.out_dir)
-    print("MUSE done")
-     
+    muse.inputs.disable_tta = True # This MUSE model does not support TTA
+    muse.inputs.mode = mode
+
     #create muse relabel Node
     relabel = Node(ROIRelabelInterface.ROIRelabel(), name='relabel')
-    relabel.inputs.map_csv_file = os.path.abspath(MuseMappingFile)
-    relabel.inputs.out_dir = os.path.join(outDir,'relabeled_out')
-    if os.path.exists(relabel.inputs.out_dir):
-        shutil.rmtree(relabel.inputs.out_dir)
-    os.mkdir(relabel.inputs.out_dir)
+    relabel.inputs.map_csv_file = os.path.abspath(dict_MUSE_ROI_Index)
+    relabel.inputs.in_suff = ''    
+    relabel.inputs.out_dir = os.path.join(outDir,'out_muse_relabeled')
+    relabel.inputs.out_suff = '_muse_relabeled'    
+    
+    # Create CombineMasks Node
+    combineMasks = Node(CombineMasksInterface.CombineMasks(), name='combineMasks')
+    combineMasks.inputs.in_suff = '_muse_relabeled'
+    combineMasks.inputs.icv_dir = os.path.join(outDir,'out_dlicv_mask')
+    combineMasks.inputs.icv_suff = ''
+    combineMasks.inputs.out_dir = os.path.join(outDir,'out_muse_dlicv')
+    combineMasks.inputs.out_suff = '_muse_combined'
 
-    print('relabeled-dir: ', relabel.inputs.out_dir)
-    print("relabeling done")
+    # Create ReorientToOrg Node
+    reorientToOrg = Node(ReorientImageInterface.ReorientImage(), name='reorientToOrg')
+    reorientToOrg.inputs.in_suff = '_muse_combined'
+    reorientToOrg.inputs.ref_dir = Path(inDir)
+    reorientToOrg.inputs.ref_suff = ''
+    reorientToOrg.inputs.out_dir = os.path.join(outDir,'out_muse_orient_orig')
+    reorientToOrg.inputs.out_suff = '_muse_orig_orient'
 
     # Create roi csv creation Node
-    roi_csv = Node(CalculateROIVolumeInterface.CalculateROIVolume(), name='roi-volume-csv')
-    roi_csv.inputs.map_csv_file = os.path.abspath(roiMappingsFile)
-    roi_csv.inputs.scan_id = str(scanID)
-    roi_csv.inputs.out_dir = os.path.join(outDir,'csv_out')
-    if os.path.exists(roi_csv.inputs.out_dir):
-        shutil.rmtree(roi_csv.inputs.out_dir)
-    os.mkdir(roi_csv.inputs.out_dir)
+    roi_to_csv = Node(CalculateROIVolumeInterface.CalculateROIVolume(), name='roi_to_csv')
+    roi_to_csv.inputs.in_suff = '_muse_orig_orient'
+    roi_to_csv.inputs.list_single_roi = os.path.abspath(dict_MUSE_ROI_Index)
+    roi_to_csv.inputs.map_derived_roi = os.path.abspath(dict_MUSE_derived_ROI)
+    roi_to_csv.inputs.out_dir = os.path.join(outDir, 'results_muse_rois')
+    
 
-    #create working dir in output dir for now
-    basedir = os.path.join(outDir,'working_dir')
-    if os.path.exists(basedir):
-        shutil.rmtree(basedir)
+    ##################################
+    ## Define workflow
 
-    os.makedirs(basedir, exist_ok=True)
-
-    # Workflow
     wf = Workflow(name="structural", base_dir=basedir)
+    wf.connect(reorientToLPS, "out_dir", dlicv, "in_dir")
     wf.connect(dlicv, "out_dir", maskImage, "mask_dir")
     wf.connect(maskImage, "out_dir", muse, "in_dir")
     wf.connect(muse, "out_dir", relabel, "in_dir")
-    wf.connect(relabel,"out_dir", roi_csv, "in_dir")
+    wf.connect(relabel, "out_dir", combineMasks, "in_dir")
+    wf.connect(combineMasks, "out_dir", reorientToOrg, "in_dir")
+    wf.connect(reorientToOrg,"out_dir", roi_to_csv, "in_dir")
     
     wf.base_dir = basedir
     wf.run()

@@ -1,7 +1,6 @@
+import nibabel as nib
+import numpy as np
 import pandas as pd
-import SimpleITK as sitk
-
-from niCHARTPipelines import ImageIO as ImageIO
 
 
 def relabel_roi_img(in_img_file, roi_map_file, label_from, label_to, out_img_file):
@@ -9,21 +8,25 @@ def relabel_roi_img(in_img_file, roi_map_file, label_from, label_to, out_img_fil
     The mapping file should contain numeric indices for the mapping
     between the input roi image (from) and output roi image (to)
     '''
-    # read input image
-    image = ImageIO.read_image(in_img_file)
+
+    ## Read image
+    in_nii = nib.load(in_img_file)
+    img_mat = in_nii.get_fdata().astype(int)
 
     ## Read dictionary with roi index mapping 
     df_dict = pd.read_csv(roi_map_file)
     
-    #convert dataframe to list
-    v_from = df_dict[label_from].to_list()
-    v_to = df_dict[label_to].to_list()
-
-    #construct mapping dictionary from lists
-    map_dict = dict(zip(v_from,v_to))
-
-    #change label using sitk
-    output = sitk.ChangeLabel(image, changeMap=map_dict)
-
-    #write new image
-    ImageIO.write_image(output,out_img_file)
+    # Convert mapping dataframe to dictionaries
+    v_from = df_dict[label_from].astype(int)
+    v_to = df_dict[label_to].astype(int)
+    
+    ## Create a mapping with consecutive numbers from dest to target values
+    tmp_map = np.zeros(np.max([v_from, v_to]) + 1).astype(int)
+    tmp_map[v_from] = v_to
+    
+    ## Replace each value v in data by the value of tmp_map with the index v
+    out_mat = tmp_map[img_mat].astype(np.uint8)
+    
+    ## Write updated img
+    out_nii = nib.Nifti1Image(out_mat, in_nii.affine, in_nii.header)
+    nib.save(out_nii, out_img_file)
