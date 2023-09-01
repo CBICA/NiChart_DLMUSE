@@ -1,14 +1,30 @@
-import numpy as np
 import nibabel as nib
+import numpy as np
+from nibabel.orientations import axcodes2ornt, inv_ornt_aff, ornt_transform
 from nipype.interfaces.image import Reorient
-from nibabel.orientations import axcodes2ornt, ornt_transform, inv_ornt_aff
+from scipy import ndimage
+from scipy.ndimage.measurements import label
+
 
 ## Find bounding box for the foreground values in img, with a given padding percentage
 def calc_bbox_with_padding(img, perc_pad = 10):
     
+    img = img.astype('uint8')
+    
     ## Output is the coordinates of the bounding box
     bcoors = np.zeros([3,2], dtype=int)
     
+    ## Find the largest connected component 
+    ## INFO: In images with very large FOV DLICV may have small isolated regions in
+    ##       boundaries; so we calculate the bounding box based on the brain, not all
+    ##       foreground voxels
+    str_3D = np.array([[[0, 0, 0], [0, 1, 0], [0, 0, 0]],
+                       [[0, 1, 0], [1, 1, 1], [0, 1, 0]],
+                       [[0, 0, 0], [0, 1, 0], [0, 0, 0]]], dtype='uint8')
+    labeled, ncomp = label(img, str_3D)
+    sizes = ndimage.sum(img, labeled, range(ncomp + 1))
+    img_largest_cc = (labeled == np.argmax(sizes)).astype(int)
+
     ## Find coors in each axis
     for sel_axis in [0, 1, 2]:
     
@@ -17,10 +33,10 @@ def calc_bbox_with_padding(img, perc_pad = 10):
         other_axes.remove(sel_axis)
         
         ## Get img dim in selected axis
-        dim = img.shape[sel_axis]
+        dim = img_largest_cc.shape[sel_axis]
         
         ## Find bounding box (index of first and last non-zero slices)
-        nonzero = np.any(img, axis = tuple(other_axes))
+        nonzero = np.any(img_largest_cc, axis = tuple(other_axes))
         bbox= np.where(nonzero)[0][[0,-1]]    
         
         ## Add padding
