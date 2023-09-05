@@ -1,16 +1,16 @@
-import os
-import shutil
-from pathlib import Path
-
 from nipype import Node, Workflow
+from pathlib import Path
+import os,  shutil
+
 from nipype.interfaces.utility import Merge
 
 # from . import DeepMRSegInterface
-from niCHARTPipelines import (CalculateROIVolumeInterface,
-                              CombineMasksInterface, MaskImageInterface,
-                              ReorientImageInterface, ROIRelabelInterface,
-                              nnUNetInterface)
-
+from niCHARTPipelines import nnUNetInterface
+from niCHARTPipelines import MaskImageInterface
+from niCHARTPipelines import ROIRelabelInterface
+from niCHARTPipelines import CalculateROIVolumeInterface
+from niCHARTPipelines import ReorientImageInterface
+from niCHARTPipelines import CombineMasksInterface
 
 def run_structural_pipeline(inDir,
                             DLICVmdl_path,
@@ -25,9 +25,7 @@ def run_structural_pipeline(inDir,
                             DLMUSE_task=None,
                             DLICV_fold=None,
                             DLMUSE_fold=None,
-                            all_in_gpu='None',
-                            disable_tta=True,
-                            mode='fastest'):
+                            all_in_gpu='None'):
     '''NiPype workflow for structural pipeline
     '''
     
@@ -81,8 +79,6 @@ def run_structural_pipeline(inDir,
     dlicv.inputs.m_val = "3d_fullres"
     dlicv.inputs.all_in_gpu = all_in_gpu
     dlicv.inputs.tr_val = "nnUNetTrainerV2"
-    dlicv.inputs.mode = mode
-    dlicv.inputs.disable_tta = disable_tta
 
     # Create Apply Mask Node
     maskImage = Node(MaskImageInterface.MaskImage(), name='maskImage')
@@ -105,8 +101,7 @@ def run_structural_pipeline(inDir,
     muse.inputs.m_val = "3d_fullres"
     muse.inputs.tr_val = "nnUNetTrainerV2_noMirroring"
     muse.inputs.all_in_gpu = all_in_gpu
-    muse.inputs.disable_tta = True # This MUSE model does not support TTA
-    muse.inputs.mode = mode
+    muse.inputs.disable_tta = True
 
     #create muse relabel Node
     relabel = Node(ROIRelabelInterface.ROIRelabel(), name='relabel')
@@ -137,6 +132,8 @@ def run_structural_pipeline(inDir,
     roi_to_csv.inputs.list_single_roi = os.path.abspath(dict_MUSE_ROI_Index)
     roi_to_csv.inputs.map_derived_roi = os.path.abspath(dict_MUSE_derived_ROI)
     roi_to_csv.inputs.out_dir = os.path.join(outDir, 'results_muse_rois')
+    roi_to_csv.inputs.is_extract_roi_images = 1      ## If set to 1, we create an individual mask for each ROI
+    roi_to_csv.inputs.out_dir_roi_masks = os.path.join(outDir, '_muse_individual_roi_masks')
     
 
     ##################################
