@@ -3,7 +3,7 @@
         "ID": "702",
         "Name": "ICV",
         "Full_Name": "Intra Cranial Volume",
-        "Consisting_of_ROIS": ""
+        "Consisting_of_ROIS": "702"
     },
     "701": {
         "ID": "701",
@@ -15,7 +15,7 @@
         "ID": "600",
         "Name": "CSF",
         "Full_Name": "Cerebrospinal Fluid",
-        "Consisting_of_ROIS": ""
+        "Consisting_of_ROIS": "600"
     },
     "601": {
         "ID": "601",
