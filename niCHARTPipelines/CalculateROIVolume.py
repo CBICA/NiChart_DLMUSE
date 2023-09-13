@@ -24,7 +24,7 @@ def calc_roi_volumes(mrid, in_img_file, label_indices = []):
 
     ## Get label indices
     if label_indices.shape[0] == 0:
-        logger.warning('Label indices not provided, generating from data')
+        # logger.warning('Label indices not provided, generating from data')
         label_indices = u_ind
     
     label_names = label_indices.astype(str)
@@ -99,3 +99,30 @@ def create_roi_csv(scan_id, in_roi, list_single_roi, map_derived_roi, out_img, o
 
     ## Write out csv
     df_dmuse.to_csv(out_csv, index = False)
+    
+###---------calculate ROI volumes-----------
+def extract_roi_masks(in_roi, map_derived_roi, out_pref):
+    '''Create individual roi masks for single and derived rois
+    '''
+    img_ext_type = '.nii.gz'
+
+    ## Read image
+    in_nii = nib.load(in_roi)
+    img_mat = in_nii.get_fdata().astype(int)
+
+    ## Read derived roi map file to a dictionary
+    roi_dict = {}
+    with open(map_derived_roi) as roi_map:
+        reader = csv.reader(roi_map, delimiter=',')
+        for row in reader:
+            key = str(row[0])
+            val = [int(x) for x in row[2:]]
+            roi_dict[key] = val
+
+    # Create an individual roi mask for each roi
+    for i, key in enumerate(roi_dict):
+        print(i)
+        key_vals = roi_dict[key]
+        tmp_mask = np.isin(img_mat, key_vals).astype(int)
+        out_nii = nib.Nifti1Image(tmp_mask, in_nii.affine, in_nii.header)
+        nib.save(out_nii, out_pref + '_' + str(key) + img_ext_type)
