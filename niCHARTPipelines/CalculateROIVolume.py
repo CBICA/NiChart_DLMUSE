@@ -24,7 +24,7 @@ def calc_roi_volumes(mrid, in_img_file, label_indices = []):
 
     ## Get label indices
     if label_indices.shape[0] == 0:
-        logger.warning('Label indices not provided, generating from data')
+        # logger.warning('Label indices not provided, generating from data')
         label_indices = u_ind
     
     label_names = label_indices.astype(str)
