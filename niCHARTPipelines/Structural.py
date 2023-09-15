@@ -137,6 +137,8 @@ def run_structural_pipeline(inDir,
     roi_to_csv.inputs.list_single_roi = os.path.abspath(dict_MUSE_ROI_Index)
     roi_to_csv.inputs.map_derived_roi = os.path.abspath(dict_MUSE_derived_ROI)
     roi_to_csv.inputs.out_dir = os.path.join(outDir, 'results_muse_rois')
+    # roi_to_csv.inputs.is_extract_roi_images = 1      ## If set to 1, we create an individual mask for each ROI
+    roi_to_csv.inputs.out_dir_roi_masks = os.path.join(outDir, 'out_muse_individual_roi_masks')
     
 
     ##################################
