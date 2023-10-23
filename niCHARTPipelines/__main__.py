@@ -103,6 +103,12 @@ def main():
 
         [MODE]                  The mode of the pipeline. Either 'normal' or
         [--mode]                'fastest'. 'normal' mode is the default mode.
+
+        [EXTRACT_ROI_MASKS]     Whether the pipeline should extract the individual
+        [--extract_roi_masks]   ROI masks or not. By default individual ROI masks
+                                are NOT extracted. If passed as an argument, 
+                                pipeline will create masks for each individual ROI
+                                mask.
     
         [-h, --help]    Show this help message and exit.
         
@@ -227,6 +233,11 @@ def main():
                         default='fastest',
                         choices=['normal', 'fastest'],
                         help='Mode.')
+    
+    # EXTRACT_ROI_MASKS argument
+    parser.add_argument('--extract_roi_masks',
+                        action='store_true',
+                        help='extract individual ROI masks')
         
     # VERSION argument
     help = "Show the version and exit"
@@ -263,6 +274,7 @@ def main():
     all_in_gpu = args.all_in_gpu
     disable_tta = args.disable_tta
     mode = args.mode
+    extract_roi_masks = args.extract_roi_masks
 
 
     print()
@@ -288,7 +300,8 @@ def main():
                                            DLMUSE_fold,
                                            all_in_gpu,
                                            disable_tta,
-                                           mode)
+                                           mode,
+                                           extract_roi_masks)
         
 
     elif(pipelinetype == "fmri"):

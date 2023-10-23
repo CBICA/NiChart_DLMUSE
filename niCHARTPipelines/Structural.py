@@ -26,8 +26,9 @@ def run_structural_pipeline(inDir,
                             DLICV_fold=None,
                             DLMUSE_fold=None,
                             all_in_gpu='None',
-                            disable_tta=True,
-                            mode='fastest'):
+                            disable_tta=False,
+                            mode='fastest',
+                            extract_roi_masks=False):
     '''NiPype workflow for structural pipeline
     '''
     
@@ -137,7 +138,7 @@ def run_structural_pipeline(inDir,
     roi_to_csv.inputs.list_single_roi = os.path.abspath(dict_MUSE_ROI_Index)
     roi_to_csv.inputs.map_derived_roi = os.path.abspath(dict_MUSE_derived_ROI)
     roi_to_csv.inputs.out_dir = os.path.join(outDir, 'results_muse_rois')
-    # roi_to_csv.inputs.is_extract_roi_images = 1      ## If set to 1, we create an individual mask for each ROI
+    roi_to_csv.inputs.extract_roi_masks = extract_roi_masks      ## If True, we create an individual mask for each ROI
     roi_to_csv.inputs.out_dir_roi_masks = os.path.join(outDir, 'out_muse_individual_roi_masks')
     
 
