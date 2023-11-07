@@ -1,4 +1,4 @@
-FROM pytorch/pytorch:latest
+FROM pytorch/pytorch:2.0.1-cuda11.7-cudnn8-runtime
 
 LABEL IMAGE="niCHARTPipeline"
 LABEL VERSION="0.1.1"
