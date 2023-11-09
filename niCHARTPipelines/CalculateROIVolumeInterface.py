@@ -55,6 +55,8 @@ class CalculateROIVolumeInputSpec(BaseInterfaceInputSpec):
     out_dir = Directory(mandatory=True, desc='the output dir')
     out_img_suff = traits.Str(mandatory=False, desc='the output img suffix')
     out_csv_suff = traits.Str(mandatory=False, desc='the output csv suffix')
+    extract_roi_masks = traits.Bool(desc='whether to extract roi masks')
+    out_dir_roi_masks = Directory(mandatory=False, desc='the output dir for individual rois')
 
 class CalculateROIVolumeOutputSpec(TraitedSpec):
     out_dir = File(desc='the output image')
@@ -80,6 +82,11 @@ class CalculateROIVolume(BaseInterface):
         if not os.path.exists(self.inputs.out_dir):
             os.makedirs(self.inputs.out_dir)
         
+        ## Create output folder for individual ROI masks
+        if self.inputs.extract_roi_masks:
+            if not os.path.exists(self.inputs.out_dir_roi_masks):
+                os.makedirs(self.inputs.out_dir_roi_masks)
+
         ## Get a list of input images
         infiles = Path(self.inputs.in_dir).glob('*' + self.inputs.in_suff + img_ext_type)
         in_img_names = []
@@ -108,6 +115,14 @@ class CalculateROIVolume(BaseInterface):
                                       self.inputs.map_derived_roi,
                                       out_img_name,
                                       out_csv_name)
+            
+            ## If the flag is set, create individual ROI masks
+            out_img_pref = os.path.join(self.inputs.out_dir_roi_masks, 
+                                        in_bname + self.inputs.out_img_suff)
+            if self.inputs.extract_roi_masks:
+                calcroivol.extract_roi_masks(in_img_name,
+                                             self.inputs.map_derived_roi,
+                                             out_img_pref)
         # And we are done
         return runtime
 
