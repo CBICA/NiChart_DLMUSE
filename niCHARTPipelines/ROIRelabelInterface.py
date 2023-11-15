@@ -6,26 +6,7 @@ from nipype.interfaces.base import (BaseInterface, BaseInterfaceInputSpec,
                                     Directory, File, TraitedSpec, traits)
 
 from niCHARTPipelines import ROIRelabeler as relabeler
-
-###---------Interface------------
-def get_basename(in_file, suffix_to_remove, ext_to_remove = ['.nii.gz', '.nii']):
-    '''Get file basename 
-    - Extracts the base name from the input file
-    - Removes a given suffix + file extension
-    '''
-    ## Get file basename
-    out_str = os.path.basename(in_file)
-
-    ## Remove suffix and extension
-    for tmp_ext in ext_to_remove:
-        out_str, num_repl = re.subn(suffix_to_remove + tmp_ext + '$', '', out_str)
-        if num_repl > 0:
-            break
-
-    ## Return basename
-    if num_repl == 0:
-        return None
-    return out_str
+from niCHARTPipelines import utils
 
 class ROIRelabelInputSpec(BaseInterfaceInputSpec):
     map_csv_file = File(exists=True, mandatory=True, desc='the map csv file')
@@ -62,7 +43,7 @@ class ROIRelabel(BaseInterface):
         infiles = Path(self.inputs.in_dir).glob('*' + self.inputs.in_suff + img_ext_type)
         for in_img_name in infiles:
             ## Get args
-            in_bname = get_basename(in_img_name, self.inputs.in_suff, [img_ext_type])
+            in_bname = utils.get_basename(in_img_name, self.inputs.in_suff, [img_ext_type])
             out_img_name = os.path.join(self.inputs.out_dir,
                                         in_bname + self.inputs.out_suff + img_ext_type)
 

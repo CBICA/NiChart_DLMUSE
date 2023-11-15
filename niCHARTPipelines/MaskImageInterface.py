@@ -6,27 +6,7 @@ from nipype.interfaces.base import (BaseInterface, BaseInterfaceInputSpec,
                                     Directory, File, TraitedSpec, traits)
 
 from niCHARTPipelines import MaskImage as masker
-
-
-###---------Interface------------
-def get_basename(in_file, suffix_to_remove, ext_to_remove = ['.nii.gz', '.nii']):
-    '''Get file basename 
-    - Extracts the base name from the input file
-    - Removes a given suffix + file extension
-    '''
-    ## Get file basename
-    out_str = os.path.basename(in_file)
-
-    ## Remove suffix and extension
-    for tmp_ext in ext_to_remove:
-        out_str, num_repl = re.subn(suffix_to_remove + tmp_ext + '$', '', out_str)
-        if num_repl > 0:
-            break
-
-    ## Return basename
-    if num_repl == 0:
-        return None
-    return out_str
+from niCHARTPipelines import utils
 
 class MaskImageInputSpec(BaseInterfaceInputSpec):
     in_dir = Directory(mandatory=True, desc='the input dir')
@@ -64,7 +44,7 @@ class MaskImage(BaseInterface):
         for in_img_name in infiles:
             
             ## Get args
-            in_bname = get_basename(in_img_name, self.inputs.in_suff, [img_ext_type])
+            in_bname = utils.get_basename(in_img_name, self.inputs.in_suff, [img_ext_type])
             mask_img_name = os.path.join(self.inputs.mask_dir,
                                          in_bname + self.inputs.mask_suff + img_ext_type)
             out_img_name = os.path.join(self.inputs.out_dir,
