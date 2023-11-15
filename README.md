@@ -1,12 +1,35 @@
 # niCHARTPipelines
 
+## Overview
+
+niCHARTPipelines is a package that allows the users to process their brain imaging (sMRI) data easily and efficiently.
+
+niCHARTPipelines offers easy ICV (Intra-Cranial Volume) mask extraction, and brain segmentation into ROIs. This is achieved through the [DLICV](https://github.com/CBICA/DLICV) and [DLMUSE](https://github.com/CBICA/DLMUSE) methods. Intermediate step results are saved for easy access to the user.
+
+Given an input (sMRI) scan, niCHARTPipelines extracts the following:
+
+1. ICV mask
+2. Brain MUSE ROI segmentation
+3. ROI volumes in a .csv format
+4. Individual ROI mask (optionally).
+
+This package uses [nnUNet](https://github.com/MIC-DKFZ/nnUNet/tree/nnunetv1) (version 1) as a basis model architecture for the deep learning parts, [nipype](https://nipy.org/packages/nipype/index.html) for the workflow management and various other [libraries](requirements.txt).
+
+It is available both as an installable package, as well as a [docker container](https://hub.docker.com/repository/docker/aidinisg/nichartpipelines/general). Please see [Installation](#installation) and [Usage](#usage) for more information on how to use it.
+
 ## Installation
 
-1. create a new conda env
+1. Create a new conda env
 
     ```bash
     conda create --name NCP python=3.8
     conda activate NCP
+    ```
+
+    In one command:
+
+    ```bash
+    conda create --name NCP -y python=3.8 && conda activate NCP
     ```
 
 2. Clone and install niCHARTPipelines
@@ -15,7 +38,6 @@
     git clone  https://github.com/CBICA/niCHARTPipelines.git
     cd niCHARTPipelines
     pip install .
-
     ```
 
 3. Run niCHARTPipelines. Example usage below
@@ -34,7 +56,13 @@
                      --disable_tta
     ```
 
-## Singularity/Apptainer-based build and installation
+## Docker/Singularity/Apptainer-based build and installation
+
+The package comes already pre-built as a [docker container](https://hub.docker.com/repository/docker/aidinisg/nichartpipelines/general), for convenience. Please see [Usage](#usage) for more information on how to use it. Alternatively, you can build the docker image locally, like so:
+
+```bash
+docker -t nichartpipelines .
+```
 
 Singularity and Apptainer images can be built for niCHARTPipelines, allowing for frozen versions of the pipeline and easier installation for end-users.
 Note that the Singularity project recently underwent a rename to "Apptainer", with a commercial fork still existing under the name "Singularity" (confusing!).
@@ -50,119 +78,57 @@ singularity build nichartpipelines.sif singularity.def
 This will take some time, but will build a containerized version of your current repo. Be aware that this includes any local changes!
 The nichartpipelines.sif file can be distributed via direct download, or pushed to a container registry that accepts SIF images.
 
-Then, anybody with the Singularity/Apptainer engine can run the image easily:
-
-```bash
-singularity run --nv nichartpipelines.sif [options go here]
-```
-
-The --nv option is required to allow niCHARTPipelines to use the host machine's GPU.
-
 ## Usage
 
-```text
-niCHARTPipelines v0.2
-ICV calculation, brain segmentation, and ROI extraction pipelines for 
-structural MRI data.
+Due to the [nnunetv1](https://github.com/MIC-DKFZ/nnUNet/tree/nnunetv1) dependency, the package follows nnUNet's requirements for folder structure and naming conventions. Therefore assuming the following folder structure:
 
-required arguments:
-    [INDIR]         The filepath of the directory containing the input. The 
-    [-i, --indir]   input can be a single .nii.gz (or .nii) file or a  
-                    directory containing .nii.gz files (or .nii files). 
+```bash
+temp
+├── nnUNet_model
+│   └── nnUNet
+├── nnUNet_out
+├── nnUNet_preprocessed
+└── nnUNet_raw_database
+    └── nnUNet_raw_data
+        ├── image1.nii.gz
+        ├── image2.nii.gz
+        └── image3.nii.gz
+```
 
-    [OUTDIR]        The filepath of the directory where the output will be
-    [-o, --outdir]  saved.
+### As a locally installed package
 
-    [PIPELINETYPE]  Specify type of pipeline[structural, dti, fmri]. 
-    [-p,            Currently only structural pipeline is supported.
-    --pipelinetype]
+A complete command would be:
 
-    [DERIVED_ROI_MAPPINGS_FILE]     The filepath of the derived MUSE ROI 
-    [--derived_ROI_mappings_file]   mappings file.
+```bash
+niCHARTPipelines --indir                     temp/nnUNet_raw_database/nnUNet_raw_data           \
+                 --outdir                    temp/nnUNet_out                                    \
+                 --pipelinetype              structural                                         \
+                 --derived_ROI_mappings_file shared/dicts/MUSE_mapping_derived_rois.csv         \
+                 --MUSE_ROI_mappings_file    shared/dicts/MUSE_mapping_consecutive_indices.csv  \
+                 --nnUNet_raw_data_base      temp/nnUNet_raw_database                           \
+                 --nnUNet_preprocessed       temp/nnUNet_preprocessed                           \
+                 --model_folder              temp/nnUNet_model                                  \
+                 --all_in_gpu                True                                               \
+                 --mode                      fastest                                            \
+                 --disable_tta
+```
 
-    [MUSE_ROI_MAPPINGS_FILE]    The filepath of the MUSE ROI mappings file.
-    [--MUSE_ROI_mappings_file]
+For further explanation please refer to the complete documentation:
 
-optional arguments: 
-    [DLICVMDL]      The filepath of the DLICV model will be. In case the
-    [--DLICVmdl]    model to be used is an nnUNet model, the filepath of
-                    the model's parent directory should be given. Example: 
-                    /path/to/nnUNetTrainedModels/nnUNet/
-    
-    [DLMUSEMDL]     The filepath of the DLMUSE model will be. In case the
-    [--DLMUSEmdl]   model to be used is an nnUNet model, the filepath of
-                    the model's parent directory should be given. Example:
-                    /path/to/nnUNetTrainedModels/nnUNet/
+```bash
+niCHARTPipelines -h
+```
 
-    [NNUNET_RAW_DATA_BASE]   The filepath of the base directory where the 
-    [--nnUNet_raw_data_base] raw data of are saved.  This argument is only 
-                                required if the DLICVMDL and DLMUSEMDL 
-                                arguments are corresponding to a  nnUNet model 
-                                (v1 needs this currently).
+### Using the docker container
 
-    [NNUNET_PREPROCESSED]   The filepath of the directory where the 
-    [--nnUNet_preprocessed] intermediate preprocessed data are saved. This
-                            argument is only required if the DLICVMDL and
-                            DLMUSEMDL arguments are corresponding to a
-                            nnUNet model (v1 needs this currently).
+Using the file structure explained above, an example command using the [docker container](https://hub.docker.com/repository/docker/aidinisg/nichartpipelines/general) is the following:
 
-    [MODEL_FOLDER]          THIS IS ONLY NEEDED IF BOTH DLICV AND DLMUSE 
-    [--model_folder]        MODELS ARE NNUNET MODELS. The filepath of the
-                            directory where the models are saved. The path
-                            given should be up to (without) the nnUNet/ 
-                            directory. Example:
-                            /path/to/nnUNetTrainedModels/          correct
-                            /path/to/nnUNetTrainedModels/nnUNet/   wrong
-                            This is a temporary fix, and will be removed 
-                            in the future. Both models should be saved in 
-                            the same directory. Example:
-                            /path/to/nnUNetTrainedModels/nnUNet/Task_001/
-                            /path/to/nnUNetTrainedModels/nnUNet/Task_002/
+```bash
+docker run -it --rm --gpus all -v ./:/workspace/ aidinisg/nichartpipelines:0.1.7 niCHARTPipelines -i temp/nnUNet_raw_database/nnUNet_raw_data/ -o temp/nnUNet_out/ -p structural --derived_ROI_mappings_file /niCHARTPipelines/shared/dicts/MUSE_mapping_derived_rois.csv --MUSE_ROI_mappings_file /niCHARTPipelines/shared/dicts/MUSE_mapping_consecutive_indices.csv --model_folder temp/nnUNet_model/ --nnUNet_raw_data_base temp/nnUNet_raw_database/ --nnUNet_preprocessed  temp/nnUNet_preprocessed/ --all_in_gpu True --mode fastest --disable_tta
+```
 
-    [DLICV_TASK]            The task number of the DLICV model. This 
-    [--DLICV_task]          argument is only required if the DLICVMDL is a 
-                            nnUNet model.
+### Using the singularity container
 
-    [DLMUSE_TASK]           The task number of the DLMUSE model. This 
-    [--DLMUSE_task]         argument is only required if the DLMUSEMDL is a 
-                            nnUNet model.
-
-    [DLICV_FOLD]            The fold number of the DLICV model. This 
-    [--DLICV_fold]          argument is only required if the DLICVMDL is a
-                            nnUNet model.
-
-    [DLMUSE_FOLD]           The fold number of the DLMUSE model. This
-    [--DLMUSE_fold]         argument is only required if the DLMUSEMDL is a
-                            nnUNet model.
-
-    [ALL_IN_GPU]            If this var is set, all the processes will be
-    [--all_in_gpu]          done in the GPU. This var is only available if 
-                            the DLICVMDL and DLMUSEMDL arguments are 
-                            corresponding to a nnUNet model. Either 'True',
-                            'False' or 'None'. 
-
-    [DISABLE_TTA]           If this var is given, test-time augmentation  
-    [--disable_tta]         will be disabled. This var is only available if 
-                            the DLICV and DLMUSE models are nnUNet models. 
-
-    [MODE]                  The mode of the pipeline. Either 'normal' or
-    [--mode]                'fastest'. 'normal' mode is the default mode.
-
-    [-h, --help]    Show this help message and exit.
-    
-    [-V, --version] Show program's version number and exit.
-
-    EXAMPLE USAGE:
-    
-    niCHARTPipelines --indir                     /path/to/input     \
-                     --outdir                    /path/to/output    \
-                     --pipelinetype structural                      \
-                     --derived_ROI_mappings_file /path/to/file.csv  \
-                     --MUSE_ROI_mappings_file    /path/to/file.csv  \
-                     --nnUNet_raw_data_base      /path/to/folder/   \
-                     --nnUNet_preprocessed       /path/to/folder/   \
-                     --model_folder              /path/to/folder/   \
-                     --all_in_gpu True                              \
-                     --mode fastest                                 \
-                     --disable_tta
+```bash
+singularity run --nv --containall --bind /path/to/.\:/workspace/ niCHARTPipelines.simg niCHARTPipelines -i /workspace/temp/nnUNet_raw_data_base/nnUNet_raw_data/ -o /workspace/temp/nnUNet_out -p structural --derived_ROI_mappings_file /niCHARTPipelines/shared/dicts/MUSE_mapping_derived_rois.csv --MUSE_ROI_mappings_file /niCHARTPipelines/shared/dicts/MUSE_mapping_consecutive_indices.csv --nnUNet_raw_data_base /workspace/temp/nnUNet_raw_data_base/ --nnUNet_preprocessed /workspace/temp/nnUNet_preprocessed/ --model_folder /workspace/temp/nnUNet_model/ --all_in_gpu True --mode fastest --disable_tta
 ```

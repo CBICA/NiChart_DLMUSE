@@ -113,6 +113,20 @@ def main():
         [-h, --help]    Show this help message and exit.
         
         [-V, --version] Show program's version number and exit.
+
+        EXAMPLE USAGE:
+        
+        niCHARTPipelines --indir                     /path/to/input     \
+                        --outdir                    /path/to/output    \
+                        --pipelinetype structural                      \
+                        --derived_ROI_mappings_file /path/to/file.csv  \
+                        --MUSE_ROI_mappings_file    /path/to/file.csv  \
+                        --nnUNet_raw_data_base      /path/to/folder/   \
+                        --nnUNet_preprocessed       /path/to/folder/   \
+                        --model_folder              /path/to/folder/   \
+                        --all_in_gpu True                              \
+                        --mode fastest                                 \
+                        --disable_tta
     """.format(VERSION=VERSION)
 
     parser = argparse.ArgumentParser(prog=prog,
