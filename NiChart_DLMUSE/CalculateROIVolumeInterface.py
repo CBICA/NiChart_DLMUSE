@@ -5,8 +5,8 @@ from pathlib import Path
 from nipype.interfaces.base import (BaseInterface, BaseInterfaceInputSpec,
                                     Directory, File, TraitedSpec, traits)
 
-from niCHARTPipelines import CalculateROIVolume as calcroivol
-from niCHARTPipelines import utils
+from NiChart_DLMUSE import CalculateROIVolume as calcroivol
+from NiChart_DLMUSE import utils
 
 class CalculateROIVolumeInputSpec(BaseInterfaceInputSpec):
     list_single_roi = File(exists=True, mandatory=True, desc='the single roi list file')

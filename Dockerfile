@@ -1,7 +1,7 @@
 FROM pytorch/pytorch:2.0.1-cuda11.7-cudnn8-runtime
 
-LABEL IMAGE="niCHARTPipeline"
-LABEL VERSION="0.1.1"
+LABEL IMAGE="NiChart_DLMUSE"
+LABEL VERSION="0.1.7"
 LABEL CI_IGNORE="True"
 
 RUN apt-get update && \
@@ -19,12 +19,12 @@ RUN apt-get update && \
     pip install --upgrade pip && \ 
     pip install Cmake
 
-# RUN mkdir /niCHARTPipelines 
-# COPY ./ /niCHARTPipelines/
-# RUN cd /niCHARTPipelines && pip install .
+# RUN mkdir /NiChart_DLMUSE 
+# COPY ./ /NiChart_DLMUSE/
+# RUN cd /NiChart_DLMUSE && pip install .
 
 RUN cd / && \
-    git clone https://github.com/CBICA/niCHARTPipelines && \
-    cd /niCHARTPipelines && pip install . 
+    git clone https://github.com/CBICA/NiChart_DLMUSE && \
+    cd /NiChart_DLMUSE && pip install . 
 
-CMD ["niCHARTPipelines" ]
+CMD ["NiChart_DLMUSE" ]

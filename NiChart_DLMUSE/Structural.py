@@ -6,7 +6,7 @@ from nipype import Node, Workflow
 from nipype.interfaces.utility import Merge
 
 # from . import DeepMRSegInterface
-from niCHARTPipelines import (CalculateROIVolumeInterface,
+from NiChart_DLMUSE import (CalculateROIVolumeInterface,
                               CombineMasksInterface, MaskImageInterface,
                               ReorientImageInterface, ROIRelabelInterface,
                               nnUNetInterface)

@@ -9,15 +9,15 @@ import argparse
 import sys
 
 import pkg_resources  # part of setuptools
-from niCHARTPipelines import Structural
+from NiChart_DLMUSE import Structural
 
-VERSION = pkg_resources.require("niCHARTPipelines")[0].version
+VERSION = pkg_resources.require("NiChart_DLMUSE")[0].version
 
 def main():
-    prog = "niCHARTPipelines"
+    prog = "NiChart_DLMUSE"
     description = "niCHART Data Preprocessing Pipelines"
     usage = """
-    niCHARTPipelines v{VERSION}
+    NiChart_DLMUSE v{VERSION}
     ICV calculation, brain segmentation, and ROI extraction pipelines for 
     structural MRI data.
 
@@ -116,7 +116,7 @@ def main():
 
         EXAMPLE USAGE:
         
-        niCHARTPipelines --indir                     /path/to/input     \
+        NiChart_DLMUSE  --indir                     /path/to/input     \
                         --outdir                    /path/to/output    \
                         --pipelinetype structural                      \
                         --derived_ROI_mappings_file /path/to/file.csv  \

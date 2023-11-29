@@ -3,7 +3,7 @@ import nibabel as nib
 from scipy import ndimage
 from scipy.ndimage.measurements import label
 
-from niCHARTPipelines.CombineMasks import calc_bbox_with_padding
+from NiChart_DLMUSE.CombineMasks import calc_bbox_with_padding
 
 
 ###---------mask image-----------

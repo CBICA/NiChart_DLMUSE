@@ -5,19 +5,19 @@ from pathlib import Path
 this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
 
-setup(name='niCHARTPipelines',
-      version='0.2',
-      description='Run niCHARTPipelines on your data(currently only structural pipeline is supported).',
+setup(name='NiChart_DLMUSE',
+      version='0.1.7',
+      description='Run NiChart_DLMUSE on your data(currently only structural pipeline is supported).',
       long_description=long_description,
       long_description_content_type='text/markdown',
       author='Ashish Singh, Guray Erus, George Aidinis',
       author_email='software@cbica.upenn.edu',
       license='MIT',
-      url="https://github.com/CBICA/niCHARTPipelines",
+      url="https://github.com/CBICA/NiChart_DLMUSE",
 	  install_requires=[
-        'torch==1.10; platform_system=="Darwin"',  # macOS
-        'torch; platform_system!="Darwin"',  # Linux and Windows
-        'nnunet',
+        'torch<2.1; platform_system=="Darwin"',  # macOS
+        'torch<2.1; platform_system!="Darwin"',  # Linux and Windows
+        'nnunet==1.7.1',
         'tqdm',
         'dicom2nifti',
         'scikit-image>=0.14',
@@ -45,7 +45,7 @@ setup(name='niCHARTPipelines',
     ],
     entry_points={
         'console_scripts': [
-            'niCHARTPipelines = niCHARTPipelines.__main__:main'
+            'NiChart_DLMUSE = NiChart_DLMUSE.__main__:main'
         ]        
     },    
     classifiers=[

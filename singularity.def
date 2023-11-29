@@ -7,7 +7,7 @@ Stage: build
     Version v0.0.1
 
 %help
-    This container runs niCHARTPipelines, a tool for creating derived ROIs for neuroimaging.
+    This container runs NiChart_DLMUSE, a tool for creating derived ROIs for neuroimaging.
 
 %files 
     . /opt/app
@@ -24,4 +24,4 @@ Stage: build
     pip install -r requirements.txt
 
 %runscript
-    python /opt/app/niCHARTPipelines/__main__.py "$*"
+    python /opt/app/NiChart_DLMUSE/__main__.py "$*"
