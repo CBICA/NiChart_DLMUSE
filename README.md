@@ -81,16 +81,21 @@ The nichart_dlmuse.sif file can be distributed via direct download, or pushed to
 ## Usage
 Pre-trained nnUNet models for the skull-stripping and segmentation tasks can be found in the [NiChart_DLMUSE - 0.1.7](https://github.com/CBICA/NiChart_DLMUSE/releases/tag/0.1.7) release as an [artifact](https://github.com/CBICA/NiChart_DLMUSE/releases/download/0.1.7/nnUNet_model.zip). Feel free to use it under the package's [license](LICENSE).
 
-Due to the [nnunetv1](https://github.com/MIC-DKFZ/nnUNet/tree/nnunetv1) dependency, the package follows nnUNet's requirements for folder structure and naming conventions. Therefore assuming the following folder structure:
+Due to the [nnunetv1](https://github.com/MIC-DKFZ/nnUNet/tree/nnunetv1) dependency, the package follows nnUNet's requirements for folder structure and naming conventions. It is recommended that you follow this guide's structure and logic, so that the issues arising from the requirements of the nnUNet dependency are minimized. 
+
+The model provided as an artifact is already in the file structure that's needed for the package to work, so make sure to include it as downloaded.
+The `nnUNet_preprocessed`, `nnUNet_raw_database` directories are needed for the nnUNet library to store (if needed) temporary files. It is highly suggested that you keep these in the same directory as the model and the data, as to avoid any confusion with using the library. This will be fixed in upcoming releases.
+
+Therefore assuming the following folder structure:
 
 ```bash
 temp
-├── nnUNet_model
+├── nnUNet_model            // As provided from the release
 │   └── nnUNet
-├── nnUNet_out
-├── nnUNet_preprocessed
-└── nnUNet_raw_database
-    └── nnUNet_raw_data
+├── nnUNet_out              // Output destination
+├── nnUNet_preprocessed     // Empty
+└── nnUNet_raw_database     // Empty
+    └── nnUNet_raw_data     // Input folder. Image names are irrelevant.
         ├── image1.nii.gz
         ├── image2.nii.gz
         └── image3.nii.gz
@@ -98,17 +103,17 @@ temp
 
 ### As a locally installed package
 
-A complete command would be:
+A complete command would be (run from the directory of the package):
 
 ```bash
-NiChart_DLMUSE   --indir                     temp/nnUNet_raw_database/nnUNet_raw_data           \
-                 --outdir                    temp/nnUNet_out                                    \
+NiChart_DLMUSE   --indir                     /path/to/temp/nnUNet_raw_database/nnUNet_raw_data  \
+                 --outdir                    /path/to/temp/nnUNet_out                           \
                  --pipelinetype              structural                                         \
                  --derived_ROI_mappings_file shared/dicts/MUSE_mapping_derived_rois.csv         \
                  --MUSE_ROI_mappings_file    shared/dicts/MUSE_mapping_consecutive_indices.csv  \
-                 --nnUNet_raw_data_base      temp/nnUNet_raw_database                           \
-                 --nnUNet_preprocessed       temp/nnUNet_preprocessed                           \
-                 --model_folder              temp/nnUNet_model                                  \
+                 --nnUNet_raw_data_base      /path/to/temp/nnUNet_raw_database                  \
+                 --nnUNet_preprocessed       /path/to/temp/nnUNet_preprocessed                  \
+                 --model_folder              /path/to/temp/nnUNet_model                         \
                  --all_in_gpu                True                                               \
                  --mode                      fastest                                            \
                  --disable_tta
