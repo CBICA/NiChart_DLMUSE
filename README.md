@@ -79,6 +79,7 @@ This will take some time, but will build a containerized version of your current
 The nichart_dlmuse.sif file can be distributed via direct download, or pushed to a container registry that accepts SIF images.
 
 ## Usage
+Pre-trained nnUNet models for the skull-stripping and segmentation tasks can be found in the [NiChart_DLMUSE-0.1.7 release](https://github.com/CBICA/NiChart_DLMUSE/releases/tag/v0.1.7) as an [artifact](https://github.com/CBICA/NiChart_DLMUSE/releases/download/0.1.7/nnUNet_model.zip). Feel free to use it under the package's [license](LICENSE).
 
 Due to the [nnunetv1](https://github.com/MIC-DKFZ/nnUNet/tree/nnunetv1) dependency, the package follows nnUNet's requirements for folder structure and naming conventions. Therefore assuming the following folder structure:
 
