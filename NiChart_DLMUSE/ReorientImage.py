@@ -3,11 +3,17 @@ from nibabel.orientations import axcodes2ornt, inv_ornt_aff, ornt_transform
 from nipype.interfaces.image import Reorient
 
 
-def apply_reorient(in_img_name, out_img_name, ref_img_name = None):
-    '''Reorient input image
-       - If provided, to ref img orientation
-       - If not, to LPS
-    '''
+def apply_reorient(in_img_name: str, out_img_name: str, ref_img_name = None) -> None:
+    """
+        Reorient input image to referenced image orientation(if provided), otherwise, to LPS
+        
+        :param in_img_name: the passed image
+        :type in_img_name: str
+        :param out_img_name: the wanted output filename
+        :type out_img_name: str
+        :param ref_img_name: the passed ref image orientation. Default value = None
+        :type ref_img_name: str
+    """
     ## Read input img
     nii_in = nib.load(in_img_name)
 

@@ -29,8 +29,9 @@ def run_structural_pipeline(inDir,
                             disable_tta=False,
                             mode='fastest',
                             extract_roi_masks=False):
-    '''NiPype workflow for structural pipeline
-    '''
+    """
+        NiPype workflow for structural pipeline
+    """
     
     ##################################
     ## Set init paths and envs

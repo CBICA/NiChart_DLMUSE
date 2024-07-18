@@ -6,8 +6,18 @@ from scipy import ndimage
 from scipy.ndimage.measurements import label
 
 
-## Find bounding box for the foreground values in img, with a given padding percentage
-def calc_bbox_with_padding(img, perc_pad = 10):
+def calc_bbox_with_padding(img: np.ndarray, perc_pad: int = 10) -> np.ndarray:
+    """
+        Finds bounding box for the foreground values in img, with a given padding percentage
+
+        :param img: the passed image
+        :type img: np.ndarray
+        :param perc_pad: the given padding percentage
+        :type perc_pad: int
+
+        :return: an array with the coordinates of the bounding box
+        :rtype: np.ndarray
+    """
     
     img = img.astype('uint8')
     
@@ -48,9 +58,18 @@ def calc_bbox_with_padding(img, perc_pad = 10):
     
     return bcoors
 
-def apply_combine(in_img_name, icv_img_name, out_img_name):
-    '''Combine icv and muse masks.
-    '''
+def apply_combine(in_img_name: str, icv_img_name: str, out_img_name: str) -> None:
+    """
+        Combine icv and muse masks
+
+        :param in_img_name: the input roi image
+        :type in_img_name: str
+        :param icv_img_name: the input icv image
+        :type icv_img_name: str
+        :param out_img_name: the wanted output filename
+        :type out_img_name: str
+
+    """
     ## Read input images
     nii_in = nib.load(in_img_name)
     nii_icv = nib.load(icv_img_name)

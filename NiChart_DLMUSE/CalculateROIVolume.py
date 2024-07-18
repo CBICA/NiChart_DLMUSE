@@ -5,12 +5,20 @@ import numpy as np
 import pandas as pd
 
 
-def calc_roi_volumes(mrid, in_img_file, label_indices = []):
-    '''Creates a dataframe with the volumes of rois.
-    Users should provide the mrid (to be added in MRID column) and 
-    the input roi image.
-    Users can optionally select a set of roi indices (default: all indices in the img)
-    '''
+def calc_roi_volumes(mrid: str, in_img_file: str, label_indices = []) -> pd.DataFrame:
+    """
+        Creates a dataframe with the volumes of rois
+
+        :param mrid: the mrid to be added in MRID column
+        :type mrid: str
+        :param in_img_file: the input roi image
+        :type in_img_file: str
+        :param label_indices: optional selection of a set of roi indices. Default value: all indices in the image
+        :type label_indices: list 
+
+        :return: the output dataframe with the volumes of rois
+        :rtype: pd.DataFrame
+    """
     ## Keep input lists as arrays
     label_indices = np.array(label_indices)
     
@@ -47,11 +55,20 @@ def calc_roi_volumes(mrid, in_img_file, label_indices = []):
     ##Return output dataframe
     return df_out
 
-def append_derived_rois(df_in, derived_roi_map_file):
-    '''Calculates a dataframe with the volumes of derived rois.
-    Users should provide a dataframe with single roi volumes and
-    a map file with the list of single roi indices for each derived roi
-    '''
+def append_derived_rois(df_in: pd.DataFrame, derived_roi_map_file: str) -> pd.DataFrame: 
+    """
+        Calculates a dataframe with the volumes of derived rois.
+        
+        :param df_in: the input dataframe with single roi volumes
+        :type df_in: pd.DataFrame
+        :param derived_roi_map_file: a map file with the list of single roi indices 
+                                     for each derived roi
+        :type derived_roi_map_file: str
+
+        :return: the output dataframe with the volumes of derived rois
+        :rtype: pd.DataFrame
+
+    """
     ## Read derived roi map file to a dictionary
     roi_dict = {}
     with open(derived_roi_map_file) as roi_map:
@@ -78,7 +95,25 @@ def append_derived_rois(df_in, derived_roi_map_file):
     return df_out
 
 ###---------calculate ROI volumes-----------
-def create_roi_csv(scan_id, in_roi, list_single_roi, map_derived_roi, out_img, out_csv):
+def create_roi_csv(scan_id: str, in_roi: str, list_single_roi: str, map_derived_roi: str, out_img: str, out_csv: str) -> None:
+    """
+        Creates a csv file with the results of the roi calculations
+
+        :param scan_id: the mrid to be added to MRID
+        :type scan_id: str
+        :param in_roi: the input roi image
+        :type in_roi: str
+        :param list_single_roi: MUSE ROIs csv file 
+        :type list_single_roi: str
+        :param map_derived_roi: a map file with the list of single roi indices 
+                                 for each derived roi
+        :type map_derived_roi: str
+        :param out_img: the name of the output file of the image
+        :type out_img: str
+        :param out_csv: the name of the output csv file 
+        :type out_csv: str
+
+    """
 
     ## Calculate MUSE ROIs
     df_map = pd.read_csv(list_single_roi)
@@ -101,9 +136,19 @@ def create_roi_csv(scan_id, in_roi, list_single_roi, map_derived_roi, out_img, o
     df_dmuse.to_csv(out_csv, index = False)
     
 ###---------calculate ROI volumes-----------
-def extract_roi_masks(in_roi, map_derived_roi, out_pref):
-    '''Create individual roi masks for single and derived rois
-    '''
+def extract_roi_masks(in_roi: str, map_derived_roi: str, out_pref: str) -> None:
+    """
+        Create individual roi masks for single and derived rois
+
+        :param in_roi: the input roi image
+        :type in_roi: str
+        :param map_derived_roi: a map file with the list of single roi indices 
+                                for each derived roi
+        :type map_derived_roi: str
+        :param out_pref: preference for the filename
+        :type out_pref: str
+
+    """
     img_ext_type = '.nii.gz'
 
     ## Read image

@@ -3,11 +3,23 @@ import numpy as np
 import pandas as pd
 
 
-def relabel_roi_img(in_img_file, roi_map_file, label_from, label_to, out_img_file):
-    '''Convert labels in input roi image to new labels based on the mapping
-    The mapping file should contain numeric indices for the mapping
-    between the input roi image (from) and output roi image (to)
-    '''
+def relabel_roi_img(in_img_file: str, roi_map_file: str, label_from: str, label_to: str, out_img_file: str) -> None:
+    """
+        Convert labels in input roi image to new labels based on the mapping
+        The mapping file should contain numeric indices for the mapping
+        between the input roi image (from) and output roi image (to)
+        
+        :param in_img_file: the passed roi image
+        :type in_img_file: str
+        :param roi_map_file: the passed mapping file(.csv)
+        :type roi_map_file: str
+        :param label_from: the mapping from the input roi image
+        :type label_from: str
+        :param label_to: the mapping to the output roi image
+        :type label_to: str
+        :param out_img_file: the wanted output filename
+        :type out_img_file: str
+    """
 
     ## Read image
     in_nii = nib.load(in_img_file)
