@@ -18,7 +18,6 @@ jobs:
           conda run -n spare pip install spare_scores
       - name: Install dependencies
         run: |
-          pip install -e .
           pip install sphinx sphinx_rtd_theme sphinx-tabs sphinx_toolbox
       - name: Sphinx build
         run: |
