@@ -2,7 +2,7 @@ from pathlib import Path
 
 import nibabel as nib
 
-from NiChart_DLMUSE.CombineMasks import calc_bbox_with_padding
+from .CombineMasks import calc_bbox_with_padding
 
 
 def apply_mask(in_img_name: Path, mask_img_name: Path, out_img_name: Path) -> None:
