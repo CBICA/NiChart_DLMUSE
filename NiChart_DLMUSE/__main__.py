@@ -7,7 +7,7 @@ Use of this source code is governed by license located in license file: https://
 
 import argparse
 
-import pkg_resources  # part of setuptools
+import pkg_resources  # type: ignore
 
 from NiChart_DLMUSE import Structural
 
