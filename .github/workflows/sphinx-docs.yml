@@ -11,11 +11,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Activate conda
-        run: |
-          conda create -n spare python=3.8
-          conda run -n spare conda install pip
-          conda run -n spare pip install spare_scores
+      #- name: Activate conda
+      #  run: |
+      #    conda create -n spare python=3.8
+      #    conda run -n spare conda install pip
+      #    conda run -n spare pip install spare_scores
       - name: Install dependencies
         run: |
           pip install nibabel
