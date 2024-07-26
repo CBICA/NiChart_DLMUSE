@@ -34,9 +34,6 @@ def get_basename(
         if num_repl > 0:
             break
 
-    if num_repl == 0:
-        return out_str
-
     return out_str
 
 
