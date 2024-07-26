@@ -32,7 +32,10 @@ def get_basename(
     for tmp_ext in ext_to_remove:
         out_str, num_repl = re.subn(suffix_to_remove + tmp_ext + "$", "", out_str)
         if num_repl > 0:
-            return None
+            break
+
+    if num_repl == 0:
+        return out_str
 
     return out_str
 
