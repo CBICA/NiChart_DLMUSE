@@ -1,27 +1,28 @@
 name: Deploy static cntent to Pages
 on:
   push:
-    branches: ["main"]
+    branches: ["main"] 
   
 jobs:
   build-docs:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
-          python-version: '3.12'
-      - name: Activate conda
-        run: |
-          conda create -n spare python=3.8
-          conda run -n spare conda install pip
-          conda run -n spare pip install spare_scores
+          python-version: '3.x'
+      #- name: Activate conda
+      #  run: |
+      #    conda create -n spare python=3.8
+      #    conda run -n spare conda install pip
+      #    conda run -n spare pip install spare_scores
       - name: Install dependencies
         run: |
+          pip install -r requirements.txt
           pip install sphinx sphinx_rtd_theme sphinx-tabs sphinx_toolbox
       - name: Sphinx build
         run: |
-          sphinx-apidoc -o docs spare_scores/
+          sphinx-apidoc -o docs NiChart_DLMUSE/
           cd docs/
           make html
           cd ..
