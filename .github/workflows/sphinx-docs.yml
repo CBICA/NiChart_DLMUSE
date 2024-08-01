@@ -1,8 +1,8 @@
 name: Deploy static cntent to Pages
 on:
   push:
-    branches: ["main"] 
-  
+    branches: ["main"]
+
 jobs:
   build-docs:
     runs-on: macos-latest
@@ -10,12 +10,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.x'
-      #- name: Activate conda
-      #  run: |
-      #    conda create -n spare python=3.8
-      #    conda run -n spare conda install pip
-      #    conda run -n spare pip install spare_scores
+          python-version: "3.x"
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
@@ -29,29 +24,29 @@ jobs:
 
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v3
-        
+
         with:
           path: docs/_build/html
           retention-days: 90
-  
+
   deploy-docs:
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     needs: build-docs
-    
+
     permissions:
       pages: write
       id-token: write
-    
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.output.page_url }}
-      
-    concurrency: 
+
+    concurrency:
       group: "pages"
       cancel-in-progress: true
-    
+
     runs-on: ubuntu-latest
     steps:
-     - name: Deploy artifact to GitHub Pages
-       id: deployment
-       uses: actions/deploy-pages@v4
+      - name: Deploy artifact to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

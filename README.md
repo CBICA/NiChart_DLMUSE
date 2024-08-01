@@ -26,12 +26,6 @@ It is available both as an installable package, as well as a [docker container](
     conda activate NCP
     ```
 
-    In one command:
-
-    ```bash
-    conda create --name NCP -y python=3.8 && conda activate NCP
-    ```
-
 2. Clone and install NiChart_DLMUSE
 
     ```bash
