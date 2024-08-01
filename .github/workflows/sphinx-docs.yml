@@ -5,15 +5,15 @@ on:
 
 jobs:
   build-docs:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
-          python-version: "3.12"
+          python-version: "3.x"
       - name: Install dependencies
         run: |
-          pip install -e .
+          pip install -r requirements.txt
           pip install sphinx sphinx_rtd_theme sphinx-tabs sphinx_toolbox
       - name: Sphinx build
         run: |
