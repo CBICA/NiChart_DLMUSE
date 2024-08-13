@@ -17,8 +17,8 @@ setup(
     license="MIT",
     url="https://github.com/CBICA/NiChart_DLMUSE",
     install_requires=[
-        'torch<2.1; platform_system=="Darwin"',  # macOS
-        'torch<2.1; platform_system!="Darwin"',  # Linux and Windows
+        'torch==2.3.1; platform_system=="Darwin"',  # macOS
+        'torch==2.3.1; platform_system!="Darwin"',  # Linux and Windows
         "nnunet==1.7.1",
         "tqdm",
         "dicom2nifti",
@@ -42,7 +42,7 @@ setup(
         "nibabel==3.2.1",
         "resource==0.2.1",
         "networkx>=2.5.1",
-        "pandas==1.2.5",
+        "pandas==2.2.0",
         "pathlib",
     ],
     entry_points={"console_scripts": ["NiChart_DLMUSE = NiChart_DLMUSE.__main__:main"]},
@@ -55,3 +55,4 @@ setup(
     packages=setuptools.find_packages(),
     include_package_data=True,
 )
+

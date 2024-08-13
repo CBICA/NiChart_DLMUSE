@@ -22,7 +22,7 @@ It is available both as an installable package, as well as a [docker container](
 1. Create a new conda env
 
     ```bash
-    conda create --name NCP python=3.8
+    conda create --name NCP python=3.12
     conda activate NCP
     ```
 
