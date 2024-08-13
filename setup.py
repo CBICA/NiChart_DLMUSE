@@ -30,7 +30,7 @@ setup(
         "tifffile",
         "setuptools",
         "nipype",
-        "matplotlib>=3.3.3",
+        "matplotlib==3.9.2",
         "dill>=0.3.4",
         "h5py",
         "hyperopt==0.2.5",
@@ -42,7 +42,7 @@ setup(
         "nibabel==3.2.1",
         "resource==0.2.1",
         "networkx>=2.5.1",
-        "pandas==2.2.0",
+        "pandas==2.2.2",
         "pathlib",
     ],
     entry_points={"console_scripts": ["NiChart_DLMUSE = NiChart_DLMUSE.__main__:main"]},
@@ -55,4 +55,3 @@ setup(
     packages=setuptools.find_packages(),
     include_package_data=True,
 )
-
