@@ -1,9 +1,8 @@
 name: Test Coverage and Report to Codecov
-on: 
+on:
   pull_request:
     branches: ["main"]
 
-    
 jobs:
   codecov:
     runs-on: ubuntu-latest
