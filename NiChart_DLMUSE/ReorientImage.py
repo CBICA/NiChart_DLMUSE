@@ -3,31 +3,21 @@ from typing import Union
 
 import nibabel as nib
 from nibabel.orientations import axcodes2ornt, ornt_transform
+import os
+from pathlib import Path
 
+IMG_EXT = ".nii.gz"
 
-def apply_reorient(
-    in_img_name: Path, out_img_name: Path, ref_img_name: Union[str, None] = None
-) -> None:
-    """
-    Reorient input image to referenced image orientation(if provided), otherwise, to LPS
-
-    :param in_img_name: the passed image
-    :type in_img_name: str
-    :param out_img_name: the wanted output filename
-    :type out_img_name: str
-    :param ref_img_name: the passed ref image orientation. Default value = None
-    :type ref_img_name: str
-    """
+def reorient_img(in_img, out_img, ref_orient = 'LPS'):
+    '''
+    Reorient image
+    :param in_img: input image name
+    :param out_img: output image name
+    :param ref_orient: orientation of output image
+    '''
+    
     # Read input img
-    nii_in = nib.load(in_img_name)
-
-    # Detect target orient
-    if ref_img_name is None:
-        ref_orient = "LPS"
-    else:
-        nii_ref = nib.load(ref_img_name)
-        ref_orient = nib.aff2axcodes(nii_ref.affine)
-        ref_orient = "".join(ref_orient)
+    nii_in = nib.load(in_img)
 
     # Find transform from current (approximate) orientation to
     # target, in nibabel orientation matrix and affine forms
@@ -41,3 +31,16 @@ def apply_reorient(
 
     # Write to out file
     reoriented.to_filename(out_img_name)
+
+def apply_reorient(df_img, out_dir, ref_orient = 'LPS', out_suffix = '_LPS.nii.gz'):
+    '''
+    Apply reorientation to all images
+    '''
+    if not os.path.exists(out_dir):
+        os.makedirs(out_dir)
+    
+    for tmp_row in df_img.iter_rows():
+        in_img = tmp_row.img_path
+        out_img = os.path.join(out_dir, tmp_row.img_prefix + out_suffix)
+        
+        reorient_img(in_img, out_img, ref_orient = ref_orient)
