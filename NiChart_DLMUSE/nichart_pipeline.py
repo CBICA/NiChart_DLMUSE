@@ -4,14 +4,13 @@ from pathlib import Path
 from typing import Any
 import pandas as pd
 
-from NiChart_DLMUSE import (
-    utils,
-    ReorientImage,
-    CalculateROIVolume,
-    CombineMasks,
-    MaskImage,
-    ROIRelabel
-)
+from NiChart_DLMUSE import utils as utils
+from NiChart_DLMUSE import ReorientImage as reorient
+    #CalculateROIVolume,
+    #CombineMasks,
+    #MaskImage,
+    #ROIRelabeler
+#)
 
 out_suff_LPS = '_LPS.nii.gz'
 
@@ -21,7 +20,7 @@ def run_pipeline(in_data, out_dir):
     '''
 
     # Detect input images
-    df_img = make_img_list(in_data)
+    df_img = utils.make_img_list(in_data)
 
     # Set init paths and envs
     out_dir = os.path.abspath(out_dir)
@@ -29,13 +28,16 @@ def run_pipeline(in_data, out_dir):
         os.makedirs(out_dir)
 
     # Create working dir (FIXME: in output dir for now)
-    basedir = os.path.join(out_dir, "working_dir")
-    if os.path.exists(basedir):
-        shutil.rmtree(basedir)
-    os.makedirs(basedir, exist_ok=True)
+    working_dir = os.path.join(out_dir, "temp_working_dir")
+    if os.path.exists(working_dir):
+        shutil.rmtree(working_dir)
+    os.makedirs(working_dir, exist_ok=True)
 
     ## Reorient image to LPS
-    apply_reorient(df_img, out_dir, ref_orient = 'LPS', out_suffix = out_suff_LPS)
+    tmp_dir = os.path.join(out_dir, "s1_reorient")
+    if not os.path.exists(tmp_dir):
+        os.makedirs(tmp_dir)
+    reorient.apply_reorient(df_img, tmp_dir, ref_orient = 'LPS', out_suffix = out_suff_LPS)
     
     ### Apply DLICV
     #apply_dlicv(df_img, in_dir, out_dir):

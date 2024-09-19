@@ -30,7 +30,7 @@ def reorient_img(in_img, out_img, ref_orient = 'LPS'):
     reoriented = nii_in.as_reoriented(transform)
 
     # Write to out file
-    reoriented.to_filename(out_img_name)
+    reoriented.to_filename(out_img)
 
 def apply_reorient(df_img, out_dir, ref_orient = 'LPS', out_suffix = '_LPS.nii.gz'):
     '''
@@ -39,7 +39,7 @@ def apply_reorient(df_img, out_dir, ref_orient = 'LPS', out_suffix = '_LPS.nii.g
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
     
-    for tmp_row in df_img.iter_rows():
+    for i, tmp_row in df_img.iterrows():
         in_img = tmp_row.img_path
         out_img = os.path.join(out_dir, tmp_row.img_prefix + out_suffix)
         

@@ -31,8 +31,8 @@ def main() -> None:
         [-h, --help]    Show this help message and exit.
         [-V, --version] Show program's version number and exit.
         EXAMPLE USAGE:
-        NiChart_DLMUSE  --indir                     /path/to/input     \
-                        --outdir                    /path/to/output    \
+        NiChart_DLMUSE  --in_data                     /path/to/input     \
+                        --out_dir                    /path/to/output    \
     """.format(
         VERSION=VERSION
     )
@@ -77,8 +77,8 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    indir = args.indir
-    outdir = args.outdir
+    in_data = args.in_data
+    out_dir = args.out_dir
 
     print()
     print("Arguments:")
