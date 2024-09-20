@@ -28,14 +28,14 @@ OUT_CSV = 'DLMUSE_Volumes.csv'
 REF_ORIENT = 'LPS'
 
 # Dictionary for mapping consecutive dlmuse indices back to regular MUSE indices
-DICT_MUSE_NNUNET_MAP = os.path.join(os.path.dirname(os.getcwd()), 
-                                    'shared', 'dicts', 'MUSE_mapping_consecutive_indices.csv')
+DICT_MUSE_NNUNET_MAP = os.path.join(os.path.dirname(os.getcwd()), 'shared', 
+                                    'dicts', 'MUSE_mapping_consecutive_indices.csv')
 LABEL_FROM = "IndexConsecutive"
 LABEL_TO = "IndexMUSE"
 
 DICT_MUSE_SINGLE = DICT_MUSE_NNUNET_MAP
-DICT_MUSE_DERIVED = os.path.join(os.path.dirname(os.getcwd()), 
-                                 'shared', 'dicts', 'MUSE_mapping_derived_rois.csv')
+DICT_MUSE_DERIVED = os.path.join(os.path.dirname(os.getcwd()), 'shared', 
+                                 'dicts', 'MUSE_mapping_derived_rois.csv')
 
 def run_pipeline(in_data, out_dir, device):
     '''
@@ -54,7 +54,7 @@ def run_pipeline(in_data, out_dir, device):
     # Create working dir (FIXME: created within the output dir for now)
     working_dir = os.path.join(out_dir_final, "temp_working_dir")
 
-    ## FIXME remove tmp out dir
+    ## FIXME remove tmp working dir
     #if os.path.exists(working_dir):
         #shutil.rmtree(working_dir)
 
@@ -79,8 +79,6 @@ def run_pipeline(in_data, out_dir, device):
         os.makedirs(out_dir)
     segimg.run_dlicv(in_dir, in_suff, out_dir, out_suff, device)
 
-    #input('next ...')
-
     ### Mask image
     print('------------------------\n   Apply DLICV mask')
     in_dir = os.path.join(working_dir, "s1_reorient_lps")
@@ -93,8 +91,6 @@ def run_pipeline(in_data, out_dir, device):
         os.makedirs(out_dir)
     maskimg.apply_mask_img(df_img, in_dir, in_suff, mask_dir, mask_suff, out_dir, out_suff)
 
-    #input('next ...')
-
     ### Apply DLMUSE
     print('------------------------\n   Apply DLMUSE')
     in_dir = os.path.join(working_dir, "s3_masked")
@@ -104,8 +100,6 @@ def run_pipeline(in_data, out_dir, device):
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
     segimg.run_dlmuse(in_dir, in_suff, out_dir, out_suff, device)
-
-    #input('next ...')
 
     ### Relabel DLMUSE
     print('------------------------\n   Relabel DLMUSE')
@@ -117,8 +111,6 @@ def run_pipeline(in_data, out_dir, device):
         os.makedirs(out_dir)
     relabelroi.apply_relabel_rois(df_img, in_dir, in_suff, out_dir, out_suff, 
                                   DICT_MUSE_NNUNET_MAP, LABEL_FROM, LABEL_TO)
-
-    #input('next ...')
 
     ### Combine DLICV and MUSE masks
     print('------------------------\n   Combine DLICV and DLMUSE masks')
@@ -132,8 +124,6 @@ def run_pipeline(in_data, out_dir, device):
         os.makedirs(out_dir)
     maskimg.apply_combine_masks(df_img, in_dir, in_suff, mask_dir, mask_suff, out_dir, out_suff)
 
-    #input('next ...')
-
     ### Reorient to initial orientation
     print('------------------------\n   Reorient to initial')
     in_dir = os.path.join(working_dir, "s6_combined")
@@ -141,8 +131,6 @@ def run_pipeline(in_data, out_dir, device):
     in_suff = SUFF_DLMUSE
     out_suff = SUFF_DLMUSE
     reorient.apply_reorient_to_init(df_img, in_dir, in_suff, out_dir, out_suff)
-
-    #input('next ...')
 
     ### Create roi csv
     print('------------------------\n   Create csv')
@@ -161,4 +149,8 @@ def run_pipeline(in_data, out_dir, device):
     in_suff = SUFF_ROI
     out_name = OUT_CSV
     calcroi.combine_roi_csv(df_img, in_dir, in_suff, out_dir, out_name)
+
+    ### Remove working dir
+    # rm -rf working_dir
+    
 
