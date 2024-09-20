@@ -14,9 +14,9 @@ def run_dlicv(in_dir, in_suff, out_dir, out_suff, device):
     for fname in glob.glob(os.path.join(out_dir, "label_*.nii.gz")):
         new_fname = fname.replace("label_", "", 1).replace(in_suff, out_suff)
         #os.rename(fname, new_fname)
-        #shutil.copyfile(fname, new_fname)
-        print(fname)
-        print(new_fname)
+        shutil.copyfile(fname, new_fname)
+        #print(fname)
+        #print(new_fname)
         
 
 def run_dlmuse(in_dir, in_suff, out_dir, out_suff, device):
@@ -32,5 +32,5 @@ def run_dlmuse(in_dir, in_suff, out_dir, out_suff, device):
         new_fname = fname.replace("DLMUSE_mask_", "", 1).replace(in_suff, out_suff)
         #os.rename(fname, new_fname)
         shutil.copyfile(fname, new_fname)
-        print(fname)
-        print(new_fname)
+        #print(fname)
+        #print(new_fname)
