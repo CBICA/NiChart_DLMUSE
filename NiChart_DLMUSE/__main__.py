@@ -11,8 +11,8 @@ import pkg_resources  # type: ignore
 
 from NiChart_DLMUSE import nichart_pipeline
 
-VERSION = pkg_resources.require("NiChart_DLMUSE")[0].version
-
+# VERSION = pkg_resources.require("NiChart_DLMUSE")[0].version
+VERSION=1.0
 
 def main() -> None:
     prog = "NiChart_DLMUSE"

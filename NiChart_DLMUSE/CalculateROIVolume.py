@@ -7,27 +7,16 @@ import numpy as np
 import pandas as pd
 
 
-def calc_roi_volumes(
-    mrid: str, in_img_file: Path, label_indices: Any = []
-) -> pd.DataFrame:
-    """
+def calc_roi_volumes(MRID, in_img, label_indices):
+    '''
     Creates a dataframe with the volumes of rois
+    '''
 
-    :param mrid: the mrid to be added in MRID column
-    :type mrid: str
-    :param in_img_file: the input roi image
-    :type in_img_file: str
-    :param label_indices: optional selection of a set of roi indices. Default value: all indices in the image
-    :type label_indices: list
-
-    :return: the output dataframe with the volumes of rois
-    :rtype: pd.DataFrame
-    """
     # Keep input lists as arrays
     label_indices = np.array(label_indices)
 
     # Read image
-    nii = nib.load(in_img_file)
+    nii = nib.load(in_img)
     img_vec = nii.get_fdata().flatten().astype(int)
 
     # Get counts of unique indices (excluding 0)
@@ -60,23 +49,14 @@ def calc_roi_volumes(
     return df_out
 
 
-def append_derived_rois(df_in: pd.DataFrame, derived_roi_map_file: str) -> pd.DataFrame:
-    """
+def append_derived_rois(df_in, derived_roi_map):
+    '''
     Calculates a dataframe with the volumes of derived rois.
+    '''
 
-    :param df_in: the input dataframe with single roi volumes
-    :type df_in: pd.DataFrame
-    :param derived_roi_map_file: a map file with the list of single roi indices
-                                 for each derived roi
-    :type derived_roi_map_file: str
-
-    :return: the output dataframe with the volumes of derived rois
-    :rtype: pd.DataFrame
-
-    """
     # Read derived roi map file to a dictionary
     roi_dict = {}
-    with open(derived_roi_map_file) as roi_map:
+    with open(derived_roi_map) as roi_map:
         reader = csv.reader(roi_map, delimiter=",")
         for row in reader:
             key = str(row[0])
@@ -101,33 +81,10 @@ def append_derived_rois(df_in: pd.DataFrame, derived_roi_map_file: str) -> pd.Da
     # Return output dataframe
     return df_out
 
-
-def create_roi_csv(
-    scan_id: str,
-    in_roi: Path,
-    list_single_roi: str,
-    map_derived_roi: str,
-    out_img: str,
-    out_csv: str,
-) -> None:
-    """
+def create_roi_csv(mrid, in_roi, list_single_roi, map_derived_roi, out_csv)
+    '''
     Creates a csv file with the results of the roi calculations
-
-    :param scan_id: the mrid to be added to MRID
-    :type scan_id: str
-    :param in_roi: the input roi image
-    :type in_roi: str
-    :param list_single_roi: MUSE ROIs csv file
-    :type list_single_roi: str
-    :param map_derived_roi: a map file with the list of single roi indices
-                             for each derived roi
-    :type map_derived_roi: str
-    :param out_img: the name of the output file of the image
-    :type out_img: str
-    :param out_csv: the name of the output csv file
-    :type out_csv: str
-
-    """
+    '''
 
     # Calculate MUSE ROIs
     df_map = pd.read_csv(list_single_roi)
@@ -144,46 +101,31 @@ def create_roi_csv(
     # Calculate Derived ROIs
     df_dmuse = append_derived_rois(df_muse, map_derived_roi)
 
-    # Write input roi image as out img
-    nii = nib.load(in_roi)
-    nii.to_filename(out_img)
-
     # Write out csv
     df_dmuse.to_csv(out_csv, index=False)
 
+def apply_create_roi_csv(df_img, dlmuse_dir, dlicv_dir, out_dir,
+                        dlmuse_suff = '_LPS.nii.gz',
+                        dlicv_suffix = '_LPS.nii.gz',
+                        out_suffix = '_LPS.nii.gz'):
+    '''
+    Apply reorientation to all images
+    '''
+    if not os.path.exists(out_dir):
+        os.makedirs(out_dir)
 
-def extract_roi_masks(in_roi: Path, map_derived_roi: Path, out_pref: Path) -> None:
-    """
-    Create individual roi masks for single and derived rois
+    for i, tmp_row in df_img.iterrows():
+        img_prefix = tmp_row.MRID
+        dlmuse_mask = os.path.join(in_dir, img_prefix + in_suffix)
+        dlicv_mask = os.path.join(mask_dir, img_prefix + mask_suffix)
+        out_img = os.path.join(out_dir, img_prefix + out_suffix)
 
-    :param in_roi: the input roi image
-    :type in_roi: str
-    :param map_derived_roi: a map file with the list of single roi indices
-                            for each derived roi
-    :type map_derived_roi: str
-    :param out_pref: preference for the filename
-    :type out_pref: str
+        create_roi_csv(mrid, in_roi, list_single_roi, map_derived_roi, out_csv)
 
-    """
-    img_ext_type = ".nii.gz"
+def combine_roi_csvs(df_img, dlmuse_dir, dlicv_dir, out_dir):
+    '''
+    Combine csv files
+    '''
+    for i, tmp_row in df_img.iterrows():
+        img_prefix = tmp_row.MRID
 
-    # Read image
-    in_nii = nib.load(in_roi)
-    img_mat = in_nii.get_fdata().astype(int)
-
-    # Read derived roi map file to a dictionary
-    roi_dict = {}
-    with open(map_derived_roi) as roi_map:
-        reader = csv.reader(roi_map, delimiter=",")
-        for row in reader:
-            key = str(row[0])
-            val = [int(x) for x in row[2:]]
-            roi_dict[key] = val
-
-    # Create an individual roi mask for each roi
-    for i, key in enumerate(roi_dict):
-        print(i)
-        key_vals = roi_dict[key]
-        tmp_mask = np.isin(img_mat, key_vals).astype(int)
-        out_nii = nib.Nifti1Image(tmp_mask, in_nii.affine, in_nii.header)
-        nib.save(out_nii, str(out_pref) + "_" + str(key) + img_ext_type)
