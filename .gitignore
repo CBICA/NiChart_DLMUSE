@@ -136,3 +136,6 @@ temp/
 
 # MACOS files
 .DS_Store
+
+# NNunet results
+**/nnunet_results/
