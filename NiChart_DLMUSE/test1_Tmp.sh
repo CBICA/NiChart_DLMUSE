@@ -1,7 +1,8 @@
 #! /bin/bash
 
 indir='../test/input'
-outdir='../test/out_v3'
+outdir='../test/out_v5'
+device='cpu'
 
-NiChart_DLMUSE -i $indir -o $outdir
-# python __main__ -i $indir -outFile $outdir
+# NiChart_DLMUSE -i $indir -o $outdir -d $device
+python __main__.py -i $indir -o $outdir -d $device

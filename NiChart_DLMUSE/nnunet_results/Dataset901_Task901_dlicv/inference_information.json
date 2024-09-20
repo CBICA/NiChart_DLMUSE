@@ -1,0 +1,30 @@
+{
+    "all_results": {
+        "nnUNetTrainer__nnUNetPlans__3d_fullres": 0.9952810489649679
+    },
+    "best_model_or_ensemble": {
+        "postprocessing_file": "/cbica/home/wudi2/Projects/DLICV-V2/nnunet_results/Dataset901_Task901_dlicv/nnUNetTrainer__nnUNetPlans__3d_fullres/crossval_results_folds_0/postprocessing.pkl",
+        "result_on_crossval_post_pp": 0.9952855127425251,
+        "result_on_crossval_pre_pp": 0.9952810489649679,
+        "selected_model_or_models": [
+            {
+                "configuration": "3d_fullres",
+                "plans_identifier": "nnUNetPlans",
+                "trainer": "nnUNetTrainer"
+            }
+        ],
+        "some_plans_file": "/cbica/home/wudi2/Projects/DLICV-V2/nnunet_results/Dataset901_Task901_dlicv/nnUNetTrainer__nnUNetPlans__3d_fullres/crossval_results_folds_0/plans.json"
+    },
+    "considered_models": [
+        {
+            "configuration": "3d_fullres",
+            "plans": "nnUNetPlans",
+            "trainer": "nnUNetTrainer"
+        }
+    ],
+    "dataset_name_or_id": 901,
+    "ensembling_allowed": true,
+    "folds": [
+        0
+    ]
+}

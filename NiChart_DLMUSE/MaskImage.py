@@ -2,6 +2,7 @@ import nibabel as nib
 import numpy as np
 from scipy import ndimage
 from scipy.ndimage.measurements import label
+import os
 
 
 def calc_bbox_with_padding(img: np.ndarray, perc_pad: int = 10) -> np.ndarray:
@@ -93,30 +94,30 @@ def mask_img(in_img, mask_img, out_img):
     nii_out = nib.Nifti1Image(img_in_crop, nii_in.affine, nii_in.header)
     nii_out.to_filename(out_img)
 
-def combine_masks(in_img, icv_img, out_img):
+def combine_masks(dlmuse_mask, dlicv_mask, out_img):
     ''''
     Combine icv and muse masks
     '''
 
     # Read input images
-    nii_in = nib.load(in_img)
-    nii_icv = nib.load(icv_img)
+    nii_dlmuse = nib.load(dlmuse_mask)
+    nii_icv = nib.load(dlicv_mask)
 
-    img_in = nii_in.get_fdata()
+    img_dlmuse = nii_dlmuse.get_fdata()
     img_icv = nii_icv.get_fdata()
 
     # INFO: nnunet hallucinated on images with large FOV. To solve this problem
     #       we added pre/post processing steps to crop initial image around ICV
     #       mask before sending to DLMUSE
     #
-    # MUSE image (img_in) may be cropped. Pad it to initial image size
+    # MUSE image may have been cropped. Pad it to initial image size
     bcoors = calc_bbox_with_padding(img_icv)
     img_out = img_icv * 0
     img_out[
         bcoors[0, 0] : bcoors[0, 1],
         bcoors[1, 0] : bcoors[1, 1],
         bcoors[2, 0] : bcoors[2, 1],
-    ] = img_in
+    ] = img_dlmuse
 
     # Merge masks : Add a new label (1) to MUSE for foreground voxels in ICV that is not in MUSE
     # this label will mainly represent cortical CSF
@@ -125,14 +126,13 @@ def combine_masks(in_img, icv_img, out_img):
     img_out = img_out.astype(int)
 
     # Save out image
-    nii_out = nib.Nifti1Image(img_out, nii_in.affine, nii_in.header)
+    nii_out = nib.Nifti1Image(img_out, nii_dlmuse.affine, nii_dlmuse.header)
     nii_out.to_filename(out_img)
 
 
-def apply_mask_img(df_img, in_dir, mask_dir, out_dir,
-                   in_suff = '_LPS.nii.gz',
-                   mask_suffix = '_LPS.nii.gz',
-                   out_suffix = '_LPS.nii.gz'):
+def apply_mask_img(df_img, in_dir, in_suff,
+                   mask_dir, mask_suff,
+                   out_dir, out_suff):
     '''
     Apply reorientation to all images
     '''
@@ -140,17 +140,16 @@ def apply_mask_img(df_img, in_dir, mask_dir, out_dir,
         os.makedirs(out_dir)
 
     for i, tmp_row in df_img.iterrows():
-        img_prefix = tmp_row.MRID
-        in_img = os.path.join(in_dir, img_prefix + in_suffix)
-        mask_img = os.path.join(mask_dir, img_prefix + mask_suffix)
-        out_img = os.path.join(out_dir, img_prefix + out_suffix)
+        img_prefix = tmp_row.img_prefix
+        in_img = os.path.join(in_dir, img_prefix + in_suff)
+        in_mask = os.path.join(mask_dir, img_prefix + mask_suff)
+        out_img = os.path.join(out_dir, img_prefix + out_suff)
 
-        mask_img(in_img, mask_img, out_img)
+        mask_img(in_img, in_mask, out_img)
 
-def apply_combine_masks(df_img, dlmuse_dir, dlicv_dir, out_dir,
-                        dlmuse_suff = '_LPS.nii.gz',
-                        dlicv_suffix = '_LPS.nii.gz',
-                        out_suffix = '_LPS.nii.gz'):
+def apply_combine_masks(df_img, dlmuse_dir, dlmuse_suff,
+                        dlicv_dir, dlicv_suff,
+                        out_dir, out_suff):
     '''
     Apply reorientation to all images
     '''
@@ -158,9 +157,9 @@ def apply_combine_masks(df_img, dlmuse_dir, dlicv_dir, out_dir,
         os.makedirs(out_dir)
 
     for i, tmp_row in df_img.iterrows():
-        img_prefix = tmp_row.MRID
-        dlmuse_mask = os.path.join(in_dir, img_prefix + in_suffix)
-        dlicv_mask = os.path.join(mask_dir, img_prefix + mask_suffix)
-        out_img = os.path.join(out_dir, img_prefix + out_suffix)
+        img_prefix = tmp_row.img_prefix
+        dlmuse_mask = os.path.join(dlmuse_dir, img_prefix + dlmuse_suff)
+        dlicv_mask = os.path.join(dlicv_dir, img_prefix + dlicv_suff)
+        out_img = os.path.join(out_dir, img_prefix + out_suff)
 
-        combine_masks(in_img, icv_img, out_img)
+        combine_masks(dlmuse_mask, dlicv_mask, out_img)

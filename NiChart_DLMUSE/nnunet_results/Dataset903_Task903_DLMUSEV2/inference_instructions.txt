@@ -1,0 +1,7 @@
+***Run inference like this:***
+
+nnUNetv2_predict -d 903 -i INPUT_FOLDER -o OUTPUT_FOLDER -f  0 -tr nnUNetTrainer -c 3d_fullres -p nnUNetPlans
+
+***Once inference is completed, run postprocessing like this:***
+
+nnUNetv2_apply_postprocessing -i OUTPUT_FOLDER -o OUTPUT_FOLDER_PP -pp_pkl_file /cbica/home/wudi2/Projects/DLMUSEv2/nnunet_results/Dataset903_Task903_DLMUSEV2/nnUNetTrainer__nnUNetPlans__3d_fullres/crossval_results_folds_0/postprocessing.pkl -np 8 -plans_json /cbica/home/wudi2/Projects/DLMUSEv2/nnunet_results/Dataset903_Task903_DLMUSEV2/nnUNetTrainer__nnUNetPlans__3d_fullres/crossval_results_folds_0/plans.json

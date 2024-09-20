@@ -9,7 +9,8 @@ import argparse
 
 import pkg_resources  # type: ignore
 
-from NiChart_DLMUSE import nichart_pipeline
+#from NiChart_DLMUSE import dlmuse_pipeline
+import dlmuse_pipeline as dlp
 
 # VERSION = pkg_resources.require("NiChart_DLMUSE")[0].version
 VERSION=1.0
@@ -27,6 +28,8 @@ def main() -> None:
                           - a directory containing image files, or
                           - a list with the full path for each input image (one in each row)
         [-o, --out_dir]   The filepath of the output directory
+        [-d, --device]    Device to run segmentation ('cuda' (GPU), 'cpu' (CPU) or 'mps' (Apple 
+                          M-series chips supporting 3D CNN))
     optional arguments:
         [-h, --help]    Show this help message and exit.
         [-V, --version] Show program's version number and exit.
@@ -61,6 +64,16 @@ def main() -> None:
         required=True,
     )
 
+    # DEVICE argument
+    parser.add_argument(
+        "-d",
+        "--device",
+        type=str,
+        help="Device.",
+        default=None,
+        required=True,
+    )
+
     # VERSION argument
     help = "Show the version and exit"
     parser.add_argument(
@@ -79,6 +92,7 @@ def main() -> None:
 
     in_data = args.in_data
     out_dir = args.out_dir
+    device = args.device
 
     print()
     print("Arguments:")
@@ -86,7 +100,9 @@ def main() -> None:
     print()
 
     # Run pipeline
-    nichart_pipeline.run_pipeline(in_data, out_dir)
+    #dlmuse_pipeline.run_pipeline(in_data, out_dir, device)
+    dlp.run_pipeline(in_data, out_dir, device)
+    
 
 if __name__ == "__main__":
     main()
