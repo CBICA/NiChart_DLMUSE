@@ -1,23 +1,21 @@
 # This Python file uses the following encoding: utf-8
 """
 contact: software@cbica.upenn.edu
-Copyright (c) 2018 University of Pennsylvania. All rights reserved.
+Copyright (c) 2024 University of Pennsylvania. All rights reserved.
 Use of this source code is governed by license located in license file: https://github.com/CBICA/NiBAx/blob/main/LICENSE
 """
 
 import argparse
-
 import pkg_resources  # type: ignore
-
-#from NiChart_DLMUSE import dlmuse_pipeline
-import dlmuse_pipeline as dlp
+from .dlmuse_pipeline import *
 
 # VERSION = pkg_resources.require("NiChart_DLMUSE")[0].version
-VERSION=1.0
+VERSION = 1.0
+
 
 def main() -> None:
     prog = "NiChart_DLMUSE"
-    description = "niCHART Data Preprocessing Pipelines"
+    description = "NiCHART Data Preprocessing Pipelines"
     usage = """
     NiChart_DLMUSE v{VERSION}
     ICV calculation, brain segmentation, and ROI extraction pipelines for
@@ -28,7 +26,7 @@ def main() -> None:
                           - a directory containing image files, or
                           - a list with the full path for each input image (one in each row)
         [-o, --out_dir]   The filepath of the output directory
-        [-d, --device]    Device to run segmentation ('cuda' (GPU), 'cpu' (CPU) or 'mps' (Apple 
+        [-d, --device]    Device to run segmentation ('cuda' (GPU), 'cpu' (CPU) or 'mps' (Apple
                           M-series chips supporting 3D CNN))
     optional arguments:
         [-h, --help]    Show this help message and exit.
@@ -100,9 +98,8 @@ def main() -> None:
     print()
 
     # Run pipeline
-    #dlmuse_pipeline.run_pipeline(in_data, out_dir, device)
-    dlp.run_pipeline(in_data, out_dir, device)
-    
+    run_pipeline(in_data, out_dir, device)
+
 
 if __name__ == "__main__":
     main()

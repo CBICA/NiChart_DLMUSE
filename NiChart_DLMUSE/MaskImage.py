@@ -2,6 +2,8 @@ import nibabel as nib
 import numpy as np
 from scipy import ndimage
 from scipy.ndimage.measurements import label
+import pandas as pd
+from typing import Any
 import os
 
 
@@ -62,7 +64,8 @@ def calc_bbox_with_padding(img: np.ndarray, perc_pad: int = 10) -> np.ndarray:
 
     return bcoors
 
-def mask_img(in_img, mask_img, out_img):
+
+def mask_img(in_img: Any, mask_img: Any, out_img: Any) -> None:
     '''
     Applies the input mask to the input image
     Crops the image around the mask
@@ -94,7 +97,8 @@ def mask_img(in_img, mask_img, out_img):
     nii_out = nib.Nifti1Image(img_in_crop, nii_in.affine, nii_in.header)
     nii_out.to_filename(out_img)
 
-def combine_masks(dlmuse_mask, dlicv_mask, out_img):
+
+def combine_masks(dlmuse_mask: Any, dlicv_mask: Any, out_img: Any) -> None:
     ''''
     Combine icv and muse masks
     '''
@@ -130,9 +134,9 @@ def combine_masks(dlmuse_mask, dlicv_mask, out_img):
     nii_out.to_filename(out_img)
 
 
-def apply_mask_img(df_img, in_dir, in_suff,
-                   mask_dir, mask_suff,
-                   out_dir, out_suff):
+def apply_mask_img(df_img: pd.DataFrame, in_dir: str, in_suff: str,
+                   mask_dir: str, mask_suff: str,
+                   out_dir: str, out_suff: str) -> None:
     '''
     Apply reorientation to all images
     '''
@@ -147,9 +151,10 @@ def apply_mask_img(df_img, in_dir, in_suff,
 
         mask_img(in_img, in_mask, out_img)
 
-def apply_combine_masks(df_img, dlmuse_dir, dlmuse_suff,
-                        dlicv_dir, dlicv_suff,
-                        out_dir, out_suff):
+
+def apply_combine_masks(df_img: pd.DataFrame, dlmuse_dir: str, dlmuse_suff: str,
+                        dlicv_dir: str, dlicv_suff: str,
+                        out_dir: str, out_suff: str) -> None:
     '''
     Apply reorientation to all images
     '''

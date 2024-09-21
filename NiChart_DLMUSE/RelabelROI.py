@@ -3,10 +3,10 @@ import os
 import nibabel as nib
 import numpy as np
 import pandas as pd
+from typing import Any
 
 
-
-def relabel_rois(in_img, roi_map, label_from, label_to, out_img):
+def relabel_rois(in_img: Any, roi_map: str, label_from: Any, label_to: Any, out_img: str) -> None:
     '''
     Convert labels in input roi image to new labels based on the mapping
     The mapping file should contain numeric indices for the mapping
@@ -35,8 +35,9 @@ def relabel_rois(in_img, roi_map, label_from, label_to, out_img):
     out_nii = nib.Nifti1Image(out_mat, in_nii.affine, in_nii.header)
     nib.save(out_nii, out_img)
 
-def apply_relabel_rois(df_img, in_dir, in_suff, out_dir, out_suff, 
-                       roi_map, label_from, label_to):
+
+def apply_relabel_rois(df_img: pd.DataFrame, in_dir: str, in_suff: str, out_dir: str, out_suff: str,
+                       roi_map: Any, label_from: Any, label_to: Any) -> None:
     '''
     Apply relabeling to all images
     '''

@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 
-def calc_roi_volumes(mrid, in_img, label_indices):
+def calc_roi_volumes(mrid: Any, in_img: Any, label_indices: Any) -> pd.DataFrame:
     '''
     Creates a dataframe with the volumes of rois
     '''
@@ -81,7 +81,7 @@ def append_derived_rois(df_in, derived_roi_map):
     # Return output dataframe
     return df_out
 
-def create_roi_csv(mrid, in_roi, list_single_roi, map_derived_roi, out_csv):
+def create_roi_csv(mrid: Any, in_roi: Any, list_single_roi: Any, map_derived_roi: Any, out_csv: str) -> None:
     '''
     Creates a csv file with the results of the roi calculations
     '''
@@ -103,9 +103,9 @@ def create_roi_csv(mrid, in_roi, list_single_roi, map_derived_roi, out_csv):
     # Write out csv
     df_dmuse.to_csv(out_csv, index=False)
 
-def apply_create_roi_csv(df_img, in_dir, in_suff,
-                         dict_single_roi, dict_derived_roi,
-                         out_dir, out_suff):
+def apply_create_roi_csv(df_img: pd.DataFrame, in_dir: str, in_suff: str,
+                         dict_single_roi: str, dict_derived_roi: str,
+                         out_dir: str, out_suff: str) -> None:
     '''
     Apply roi volume calc to all images
     '''
@@ -120,7 +120,7 @@ def apply_create_roi_csv(df_img, in_dir, in_suff,
 
         create_roi_csv(mrid, in_img, dict_single_roi, dict_derived_roi, out_csv)
 
-def combine_roi_csv(df_img, in_dir, in_suff, out_dir, out_name):
+def combine_roi_csv(df_img: pd.DataFrame, in_dir: str, in_suff: str, out_dir: str, out_name: str) -> None:
     '''
     Combine csv files
     '''
@@ -128,7 +128,7 @@ def combine_roi_csv(df_img, in_dir, in_suff, out_dir, out_name):
         os.makedirs(out_dir)
 
     out_csv = os.path.join(out_dir, out_name)
-    
+
     dfs = []
     for i, tmp_row in df_img.iterrows():
         img_prefix = tmp_row.img_prefix
@@ -141,6 +141,3 @@ def combine_roi_csv(df_img, in_dir, in_suff, out_dir, out_name):
     if len(dfs) > 0:
         df_out = pd.concat(dfs)
     df_out.to_csv(out_csv, index=False)
-
-        
-
