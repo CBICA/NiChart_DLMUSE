@@ -1,10 +1,10 @@
 import os
 
-from CalcROIVol import apply_create_roi_csv, combine_roi_csv
-from MaskImage import apply_combine_masks, apply_mask_img
-from RelabelROI import apply_relabel_rois
-from ReorientImage import apply_reorient_img, apply_reorient_to_init
-from SegmentImage import run_dlicv, run_dlmuse
+from .CalcROIVol import apply_create_roi_csv, combine_roi_csv
+from .MaskImage import apply_combine_masks, apply_mask_img
+from .RelabelROI import apply_relabel_rois
+from .ReorientImage import apply_reorient_img, apply_reorient_to_init
+from .SegmentImage import run_dlicv, run_dlmuse
 
 from .utils import make_img_list
 
