@@ -1,15 +1,17 @@
+import glob
 import os
 import re
-from pathlib import Path
-from typing import Union, Any
-import glob
+from typing import Any
+
 import numpy as np
 import pandas as pd
 
+LIST_IMG_EXT = [".nii", ".nii.gz"]
 
-LIST_IMG_EXT = ['.nii', '.nii.gz']
 
-def get_basename(in_file: Any, suffix_to_remove: Any, ext_to_remove: Any = LIST_IMG_EXT) -> str:
+def get_basename(
+    in_file: Any, suffix_to_remove: Any, ext_to_remove: Any = LIST_IMG_EXT
+) -> Any:
     """
     Get file basename
     - Extracts the base name from the input file
@@ -69,9 +71,9 @@ def remove_common_suffix(list_files: list) -> list:
 
 
 def make_img_list(in_data: str) -> pd.DataFrame:
-    '''
+    """
     Make a list of images
-    '''
+    """
 
     # Read list of input images
     nii_files = []
@@ -83,41 +85,44 @@ def make_img_list(in_data: str) -> pd.DataFrame:
             nii_files.extend(glob.glob(os.path.join(in_data, "*" + tmp_ext)))
 
     #   case: input data is a single image file
-    elif in_data.endswith('.nii') or in_data.endswith('.nii.gz'):
+    elif in_data.endswith(".nii") or in_data.endswith(".nii.gz"):
         nii_files = [os.path.abspath(in_data)]
 
     #   case: input data is a list with image names (full path, one file in each line)
     else:
-        with open(in_data, 'r') as file:
+        with open(in_data, "r") as file:
             lines = file.readlines()
-            nii_files = [os.path.abspath(line.strip()) for line in lines if line.strip().endswith(LIST_IMG_EXT)]
+            nii_files = [
+                os.path.abspath(line.strip())
+                for line in lines
+                if line.strip().endswith(LIST_IMG_EXT)  # type:ignore
+            ]
 
     nii_files = np.array(nii_files)
-    print(f'Detected {nii_files.shape[0]} images ...')
+    print(f"Detected {nii_files.shape[0]} images ...")  # type:ignore
 
     # Check if images exist
     if len(nii_files) > 0:
-        flag = np.zeros(nii_files.shape[0])
-        for i,ftmp in enumerate(nii_files):
+        flag = np.zeros(nii_files.shape[0])  # type:ignore
+        for i, ftmp in enumerate(nii_files):
             if os.path.exists(ftmp):
                 flag[i] = 1
-        nii_files = nii_files[flag==1]
+        nii_files = nii_files[flag == 1]
 
-    print(f'Number of valid images is {len(nii_files)} ...')
+    print(f"Number of valid images is {len(nii_files)} ...")
     # Create a dataframe
-    df_out = pd.DataFrame(data =  nii_files, columns = ['img_path'])
+    df_out = pd.DataFrame(data=nii_files, columns=["img_path"])
 
     # Detect file info
     bnames = [os.path.basename(filename) for filename in nii_files]
-    bnames_noext = [get_basename(filename, '', LIST_IMG_EXT) for filename in bnames]
-    mrids = remove_common_suffix(bnames_noext) 
+    bnames_noext = [get_basename(filename, "", LIST_IMG_EXT) for filename in bnames]
+    mrids = remove_common_suffix(bnames_noext)
 
     # Extend the dataframe with file info
-    df_out = df_out.reindex(['MRID', 'img_path', 'img_base', 'img_prefix'], axis=1)
-    df_out['MRID'] = mrids
-    df_out['img_base'] = bnames
-    df_out['img_prefix'] = bnames_noext
+    df_out = df_out.reindex(["MRID", "img_path", "img_base", "img_prefix"], axis=1)
+    df_out["MRID"] = mrids
+    df_out["img_base"] = bnames
+    df_out["img_prefix"] = bnames_noext
 
     # Return out dataframe
     return df_out
-

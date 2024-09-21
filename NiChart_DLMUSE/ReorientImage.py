@@ -1,19 +1,19 @@
-from pathlib import Path
-from typing import Union, Any
-import pandas as pd
-import nibabel as nib
-from nibabel.orientations import axcodes2ornt, ornt_transform
 import os
-from pathlib import Path
+from typing import Any
+
+import nibabel as nib
+import pandas as pd
+from nibabel.orientations import axcodes2ornt, ornt_transform
 
 IMG_EXT = ".nii.gz"
 
+
 def reorient_img(in_img: Any, ref: Any, out_img: Any) -> None:
-    '''
-        Reorient image
-    '''
+    """
+    Reorient image
+    """
     if os.path.exists(out_img):
-        print('Out file exists, skip reorientation ...')
+        print("Out file exists, skip reorientation ...")
 
     else:
         # Read input img
@@ -40,10 +40,13 @@ def reorient_img(in_img: Any, ref: Any, out_img: Any) -> None:
         # Write to out file
         reoriented.to_filename(out_img)
 
-def apply_reorient_img(df_img: pd.DataFrame, ref_orient: Any, out_dir: str, out_suffix: str) -> None:
-    '''
+
+def apply_reorient_img(
+    df_img: pd.DataFrame, ref_orient: Any, out_dir: str, out_suffix: str
+) -> None:
+    """
     Apply reorientation to all images
-    '''
+    """
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
 
@@ -52,10 +55,13 @@ def apply_reorient_img(df_img: pd.DataFrame, ref_orient: Any, out_dir: str, out_
         out_img = os.path.join(out_dir, tmp_row.img_prefix + out_suffix)
         reorient_img(in_img, ref_orient, out_img)
 
-def apply_reorient_to_init(df_img: pd.DataFrame, in_dir: str, in_suff: Any, out_dir: str, out_suff: str) -> None:
-    '''
+
+def apply_reorient_to_init(
+    df_img: pd.DataFrame, in_dir: str, in_suff: Any, out_dir: str, out_suff: str
+) -> None:
+    """
     Apply reorientation to init img to all images
-    '''
+    """
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
 

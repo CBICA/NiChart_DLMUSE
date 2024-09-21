@@ -1,16 +1,16 @@
 import csv as csv
-from pathlib import Path
-from typing import Any
 import os
+from typing import Any
+
 import nibabel as nib
 import numpy as np
 import pandas as pd
 
 
 def calc_roi_volumes(mrid: Any, in_img: Any, label_indices: Any) -> pd.DataFrame:
-    '''
+    """
     Creates a dataframe with the volumes of rois
-    '''
+    """
 
     # Keep input lists as arrays
     label_indices = np.array(label_indices)
@@ -49,10 +49,10 @@ def calc_roi_volumes(mrid: Any, in_img: Any, label_indices: Any) -> pd.DataFrame
     return df_out
 
 
-def append_derived_rois(df_in, derived_roi_map):
-    '''
+def append_derived_rois(df_in: pd.DataFrame, derived_roi_map: Any) -> pd.DataFrame:
+    """
     Calculates a dataframe with the volumes of derived rois.
-    '''
+    """
 
     # Read derived roi map file to a dictionary
     roi_dict = {}
@@ -81,14 +81,17 @@ def append_derived_rois(df_in, derived_roi_map):
     # Return output dataframe
     return df_out
 
-def create_roi_csv(mrid: Any, in_roi: Any, list_single_roi: Any, map_derived_roi: Any, out_csv: str) -> None:
-    '''
+
+def create_roi_csv(
+    mrid: Any, in_roi: Any, list_single_roi: Any, map_derived_roi: Any, out_csv: str
+) -> None:
+    """
     Creates a csv file with the results of the roi calculations
-    '''
+    """
 
     # Calculate MUSE ROIs
     df_map = pd.read_csv(list_single_roi)
-    df_map = df_map[['IndexMUSE','ROINameMUSE']]
+    df_map = df_map[["IndexMUSE", "ROINameMUSE"]]
 
     # Add ROI for cortical CSF with index set to 1
     df_map.loc[len(df_map)] = [1, "Cortical CSF"]
@@ -103,12 +106,19 @@ def create_roi_csv(mrid: Any, in_roi: Any, list_single_roi: Any, map_derived_roi
     # Write out csv
     df_dmuse.to_csv(out_csv, index=False)
 
-def apply_create_roi_csv(df_img: pd.DataFrame, in_dir: str, in_suff: str,
-                         dict_single_roi: str, dict_derived_roi: str,
-                         out_dir: str, out_suff: str) -> None:
-    '''
+
+def apply_create_roi_csv(
+    df_img: pd.DataFrame,
+    in_dir: str,
+    in_suff: str,
+    dict_single_roi: str,
+    dict_derived_roi: str,
+    out_dir: str,
+    out_suff: str,
+) -> None:
+    """
     Apply roi volume calc to all images
-    '''
+    """
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
 
@@ -120,10 +130,13 @@ def apply_create_roi_csv(df_img: pd.DataFrame, in_dir: str, in_suff: str,
 
         create_roi_csv(mrid, in_img, dict_single_roi, dict_derived_roi, out_csv)
 
-def combine_roi_csv(df_img: pd.DataFrame, in_dir: str, in_suff: str, out_dir: str, out_name: str) -> None:
-    '''
+
+def combine_roi_csv(
+    df_img: pd.DataFrame, in_dir: str, in_suff: str, out_dir: str, out_name: str
+) -> None:
+    """
     Combine csv files
-    '''
+    """
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
 
@@ -137,7 +150,7 @@ def combine_roi_csv(df_img: pd.DataFrame, in_dir: str, in_suff: str, out_dir: st
             df_tmp = pd.read_csv(in_csv)
             dfs.append(df_tmp)
         except:
-            print('Skip subject, out csv missing: ' + in_csv)
+            print("Skip subject, out csv missing: " + in_csv)
     if len(dfs) > 0:
         df_out = pd.concat(dfs)
     df_out.to_csv(out_csv, index=False)

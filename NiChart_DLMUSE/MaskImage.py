@@ -1,10 +1,11 @@
+import os
+from typing import Any
+
 import nibabel as nib
 import numpy as np
+import pandas as pd
 from scipy import ndimage
 from scipy.ndimage.measurements import label
-import pandas as pd
-from typing import Any
-import os
 
 
 def calc_bbox_with_padding(img: np.ndarray, perc_pad: int = 10) -> np.ndarray:
@@ -66,10 +67,10 @@ def calc_bbox_with_padding(img: np.ndarray, perc_pad: int = 10) -> np.ndarray:
 
 
 def mask_img(in_img: Any, mask_img: Any, out_img: Any) -> None:
-    '''
+    """
     Applies the input mask to the input image
     Crops the image around the mask
-    '''
+    """
 
     # Read input image and mask
     nii_in = nib.load(in_img)
@@ -99,9 +100,9 @@ def mask_img(in_img: Any, mask_img: Any, out_img: Any) -> None:
 
 
 def combine_masks(dlmuse_mask: Any, dlicv_mask: Any, out_img: Any) -> None:
-    ''''
+    """'
     Combine icv and muse masks
-    '''
+    """
 
     # Read input images
     nii_dlmuse = nib.load(dlmuse_mask)
@@ -134,12 +135,18 @@ def combine_masks(dlmuse_mask: Any, dlicv_mask: Any, out_img: Any) -> None:
     nii_out.to_filename(out_img)
 
 
-def apply_mask_img(df_img: pd.DataFrame, in_dir: str, in_suff: str,
-                   mask_dir: str, mask_suff: str,
-                   out_dir: str, out_suff: str) -> None:
-    '''
+def apply_mask_img(
+    df_img: pd.DataFrame,
+    in_dir: str,
+    in_suff: str,
+    mask_dir: str,
+    mask_suff: str,
+    out_dir: str,
+    out_suff: str,
+) -> None:
+    """
     Apply reorientation to all images
-    '''
+    """
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
 
@@ -152,12 +159,18 @@ def apply_mask_img(df_img: pd.DataFrame, in_dir: str, in_suff: str,
         mask_img(in_img, in_mask, out_img)
 
 
-def apply_combine_masks(df_img: pd.DataFrame, dlmuse_dir: str, dlmuse_suff: str,
-                        dlicv_dir: str, dlicv_suff: str,
-                        out_dir: str, out_suff: str) -> None:
-    '''
+def apply_combine_masks(
+    df_img: pd.DataFrame,
+    dlmuse_dir: str,
+    dlmuse_suff: str,
+    dlicv_dir: str,
+    dlicv_suff: str,
+    out_dir: str,
+    out_suff: str,
+) -> None:
+    """
     Apply reorientation to all images
-    '''
+    """
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
 

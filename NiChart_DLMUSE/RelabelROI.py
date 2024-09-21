@@ -1,17 +1,19 @@
-from pathlib import Path
 import os
+from typing import Any
+
 import nibabel as nib
 import numpy as np
 import pandas as pd
-from typing import Any
 
 
-def relabel_rois(in_img: Any, roi_map: str, label_from: Any, label_to: Any, out_img: str) -> None:
-    '''
+def relabel_rois(
+    in_img: Any, roi_map: str, label_from: Any, label_to: Any, out_img: str
+) -> None:
+    """
     Convert labels in input roi image to new labels based on the mapping
     The mapping file should contain numeric indices for the mapping
     between the input roi image (from) and output roi image (to)
-    '''
+    """
 
     # Read image
     in_nii = nib.load(in_img)
@@ -36,11 +38,19 @@ def relabel_rois(in_img: Any, roi_map: str, label_from: Any, label_to: Any, out_
     nib.save(out_nii, out_img)
 
 
-def apply_relabel_rois(df_img: pd.DataFrame, in_dir: str, in_suff: str, out_dir: str, out_suff: str,
-                       roi_map: Any, label_from: Any, label_to: Any) -> None:
-    '''
+def apply_relabel_rois(
+    df_img: pd.DataFrame,
+    in_dir: str,
+    in_suff: str,
+    out_dir: str,
+    out_suff: str,
+    roi_map: Any,
+    label_from: Any,
+    label_to: Any,
+) -> None:
+    """
     Apply relabeling to all images
-    '''
+    """
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
 
