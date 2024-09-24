@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 from .CalcROIVol import apply_create_roi_csv, combine_roi_csv
 from .MaskImage import apply_combine_masks, apply_mask_img
@@ -18,8 +19,14 @@ OUT_CSV = "DLMUSE_Volumes.csv"
 REF_ORIENT = "LPS"
 
 # Dictionary for mapping consecutive dlmuse indices back to regular MUSE indices
+# DICT_MUSE_NNUNET_MAP = os.path.join(
+#     os.path.dirname(os.getcwd()),
+#     "shared",
+#     "dicts",
+#     "MUSE_mapping_consecutive_indices.csv",
+# )
 DICT_MUSE_NNUNET_MAP = os.path.join(
-    os.path.dirname(os.getcwd()),
+    Path(__file__).parent.parent,
     "shared",
     "dicts",
     "MUSE_mapping_consecutive_indices.csv",
@@ -28,8 +35,13 @@ LABEL_FROM = "IndexConsecutive"
 LABEL_TO = "IndexMUSE"
 
 DICT_MUSE_SINGLE = DICT_MUSE_NNUNET_MAP
+# DICT_MUSE_DERIVED = os.path.join(
+#     os.path.dirname(os.getcwd()), "shared", "dicts", "MUSE_mapping_derived_rois.csv"
+# )
 DICT_MUSE_DERIVED = os.path.join(
-    os.path.dirname(os.getcwd()), "shared", "dicts", "MUSE_mapping_derived_rois.csv"
+    Path(__file__).parent.parent, "shared", 
+    "dicts", 
+    "MUSE_mapping_derived_rois.csv"
 )
 
 
