@@ -38,7 +38,7 @@ This package uses [nnU-Net v2](https://github.com/MIC-DKFZ/nnUNet) as a basis mo
 3. Run NiChart_DLMUSE. Example usage below
 
     ```bash
-    NiChart_DLMUSE   -i                     /path/to/input     \
+    NiChart_DLMUSE   -i                    /path/to/input     \
                      -o                    /path/to/output    \
                      -d                    cpu/cuda/mps
     ```
