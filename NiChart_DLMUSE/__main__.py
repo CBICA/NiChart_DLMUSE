@@ -81,6 +81,13 @@ def main() -> None:
         version=prog + ": v{VERSION}.".format(VERSION=VERSION),
         help=help,
     )
+    parser.add_argument(
+        "--clear_cache",
+        action="store_true",
+        required=False,
+        default=False,
+        help="Set this flag to clear any cached models before running. This is recommended if a previous download failed."
+    )
 
     # HELP argument
     help = "Show this message and exit"
@@ -97,9 +104,14 @@ def main() -> None:
     print(args)
     print()
 
+    if args.clear_cache:
+        os.system(f"DLICV --clear_cache")
+        os.system(f"DLMUSE --clear_cache")
+
     # Run pipeline
     run_pipeline(in_data, out_dir, device)
 
 
 if __name__ == "__main__":
     main()
+    
