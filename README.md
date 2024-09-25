@@ -30,7 +30,7 @@ This package uses [nnU-Net v2](https://github.com/MIC-DKFZ/nnUNet) as a basis mo
 2. Clone and install NiChart_DLMUSE
 
     ```bash
-    git clone  https://github.com/CBICA/NiChart_DLMUSE.git
+    git clone https://github.com/CBICA/NiChart_DLMUSE.git
     cd NiChart_DLMUSE
     pip install -e .
     ```
