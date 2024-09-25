@@ -27,7 +27,13 @@ This package uses [nnU-Net v2](https://github.com/MIC-DKFZ/nnUNet) as a basis mo
     conda activate NCP
     ```
 
-2. Clone and install NiChart_DLMUSE
+2. Install DLICV and DLMUSE
+    ```bash
+    pip install DLICV
+    pip install DLMUSE
+    ```
+
+3. Clone and install NiChart_DLMUSE
 
     ```bash
     git clone https://github.com/CBICA/NiChart_DLMUSE.git
@@ -35,7 +41,7 @@ This package uses [nnU-Net v2](https://github.com/MIC-DKFZ/nnUNet) as a basis mo
     pip install -e .
     ```
 
-3. Run NiChart_DLMUSE. Example usage below
+4. Run NiChart_DLMUSE. Example usage below
 
     ```bash
     NiChart_DLMUSE   -i                    /path/to/input     \
