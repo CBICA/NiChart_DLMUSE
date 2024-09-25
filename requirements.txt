@@ -1,5 +1,8 @@
-nibabel==5.2
 torch>=2.2.1
-nnunetv2==2.5.1
-argparse
+DLICV>=1.0.1
+DLMUSE>=1.0.1
+nibabel>=5.2
 huggingface_hub
+argparse
+scipy
+pathlib

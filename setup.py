@@ -6,23 +6,22 @@ from setuptools import setup
 this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
 
+with open('requirements.txt') as f:
+    required = f.read().splitlines()
+
+
 setup(
     name="NiChart_DLMUSE",
     version="1.0.1",
-    description="Run NiChart_DLMUSE on your data(currently only structural pipeline is supported).",
+    description="Run NiChart_DLMUSE on your data (currently only structural pipeline is supported).",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author="Ashish Singh, Guray Erus, George Aidinis",
+    author="Guray Erus, Wu Di, Kyunglok Baik, George Aidinis",
     author_email="software@cbica.upenn.edu",
-    maintainer="Guray Erus, Baik, Kyunglok, Spiros Maggioros",
+    maintainer="Guray Erus, Kyunglok Baik, Spiros Maggioros, Alexander Getka",
     license="MIT",
     url="https://github.com/CBICA/NiChart_DLMUSE",
-    install_requires=[
-        "DLICV",
-        "DLMUSE",
-        "scipy",
-        "pathlib",
-    ],
+    install_requires=required,
     entry_points={"console_scripts": ["NiChart_DLMUSE = NiChart_DLMUSE.__main__:main"]},
     classifiers=[
         "Intended Audience :: Science/Research",
