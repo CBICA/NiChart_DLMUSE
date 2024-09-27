@@ -136,3 +136,11 @@ temp/
 
 # MACOS files
 .DS_Store
+
+# NNunet results
+**/nnunet_results/
+
+# No data on production!
+*.nii.gz
+*.nii
+*.gz

@@ -13,44 +13,43 @@ Given an input (sMRI) scan, NiChart_DLMUSE extracts the following:
 3. ROI volumes in a .csv format
 4. Individual ROI mask (optionally).
 
-This package uses [nnUNet](https://github.com/MIC-DKFZ/nnUNet/tree/nnunetv1) (version 1) as a basis model architecture for the deep learning parts, [nipype](https://nipy.org/packages/nipype/index.html) for the workflow management and various other [libraries](requirements.txt).
+This package uses [nnU-Net v2](https://github.com/MIC-DKFZ/nnUNet) as a basis model architecture for the deep learning parts, and various other [libraries](requirements.txt).
 
-It is available both as an installable package, as well as a [docker container](https://hub.docker.com/repository/docker/aidinisg/nichart_dlmuse/general). Please see [Installation](#installation) and [Usage](#usage) for more information on how to use it.
 
 ## Installation
+
+### As a locally installed package
 
 1. Create a new conda env
 
     ```bash
-    conda create --name NCP python=3.8
+    conda create --name NCP python=3.12
     conda activate NCP
     ```
 
-2. Clone and install NiChart_DLMUSE
+2. Install DLICV and DLMUSE
+    ```bash
+    pip install DLICV
+    pip install DLMUSE
+    ```
+
+3. Clone and install NiChart_DLMUSE
 
     ```bash
-    git clone  https://github.com/CBICA/NiChart_DLMUSE.git
+    git clone https://github.com/CBICA/NiChart_DLMUSE.git
     cd NiChart_DLMUSE
-    pip install .
+    pip install -e .
     ```
 
-3. Run NiChart_DLMUSE. Example usage below
+4. Run NiChart_DLMUSE. Example usage below
 
     ```bash
-    NiChart_DLMUSE   --indir                     /path/to/input     \
-                     --outdir                    /path/to/output    \
-                     --pipelinetype structural                      \
-                     --derived_ROI_mappings_file /path/to/file.csv  \
-                     --MUSE_ROI_mappings_file    /path/to/file.csv  \
-                     --nnUNet_raw_data_base      /path/to/folder/   \
-                     --nnUNet_preprocessed       /path/to/folder/   \
-                     --model_folder              /path/to/folder/   \
-                     --all_in_gpu True                              \
-                     --mode fastest                                 \
-                     --disable_tta
+    NiChart_DLMUSE   -i                    /path/to/input     \
+                     -o                    /path/to/output    \
+                     -d                    cpu/cuda/mps
     ```
 
-## Docker/Singularity/Apptainer-based build and installation
+### (OUTDATED) Docker/Singularity/Apptainer-based build and installation 
 
 The package comes already pre-built as a [docker container](https://hub.docker.com/repository/docker/aidinisg/nichart_dlmuse/general), for convenience. Please see [Usage](#usage) for more information on how to use it. Alternatively, you can build the docker image locally, like so:
 
@@ -73,44 +72,17 @@ This will take some time, but will build a containerized version of your current
 The nichart_dlmuse.sif file can be distributed via direct download, or pushed to a container registry that accepts SIF images.
 
 ## Usage
-Pre-trained nnUNet models for the skull-stripping and segmentation tasks can be found in the [NiChart_DLMUSE - 0.1.7](https://github.com/CBICA/NiChart_DLMUSE/releases/tag/0.1.7) release as an [artifact](https://github.com/CBICA/NiChart_DLMUSE/releases/download/0.1.7/nnUNet_model.zip). Feel free to use it under the package's [license](LICENSE).
-
-Due to the [nnunetv1](https://github.com/MIC-DKFZ/nnUNet/tree/nnunetv1) dependency, the package follows nnUNet's requirements for folder structure and naming conventions. It is recommended that you follow this guide's structure and logic, so that the issues arising from the requirements of the nnUNet dependency are minimized. 
-
-The model provided as an artifact is already in the file structure that's needed for the package to work, so make sure to include it as downloaded.
-The `nnUNet_preprocessed`, `nnUNet_raw_database` directories are needed for the nnUNet library to store (if needed) temporary files. It is highly suggested that you keep these in the same directory as the model and the data, as to avoid any confusion with using the library. This will be fixed in upcoming releases.
-
-Therefore assuming the following folder structure:
-
-```bash
-temp
-├── nnUNet_model            // As provided from the release
-│   └── nnUNet
-├── nnUNet_out              // Output destination
-├── nnUNet_preprocessed     // Empty
-└── nnUNet_raw_database     // Empty
-    └── nnUNet_raw_data     // Input folder. Image names are irrelevant.
-        ├── image1.nii.gz
-        ├── image2.nii.gz
-        └── image3.nii.gz
-```
+Pre-trained nnUNet models for the skull-stripping can be found in [HuggingFace nichart/DLICV](https://huggingface.co/nichart/DLICV/tree/main) and segmentation tasks can be found in [HuggingFace nichart/DLMUSE](https://huggingface.co/nichart/DLMUSE/tree/main). Feel free to use it under the package's [license](LICENSE).
 
 ### As a locally installed package
 
 A complete command would be (run from the directory of the package):
 
 ```bash
-NiChart_DLMUSE   --indir                     /path/to/temp/nnUNet_raw_database/nnUNet_raw_data  \
-                 --outdir                    /path/to/temp/nnUNet_out                           \
-                 --pipelinetype              structural                                         \
-                 --derived_ROI_mappings_file shared/dicts/MUSE_mapping_derived_rois.csv         \
-                 --MUSE_ROI_mappings_file    shared/dicts/MUSE_mapping_consecutive_indices.csv  \
-                 --nnUNet_raw_data_base      /path/to/temp/nnUNet_raw_database                  \
-                 --nnUNet_preprocessed       /path/to/temp/nnUNet_preprocessed                  \
-                 --model_folder              /path/to/temp/nnUNet_model                         \
-                 --all_in_gpu                True                                               \
-                 --mode                      fastest                                            \
-                 --disable_tta
+
+NiChart_DLMUSE -i                    /path/to/input     \
+               -o                    /path/to/output    \
+               -d                    cpu/cuda/mps
 ```
 
 For further explanation please refer to the complete documentation:
@@ -119,7 +91,14 @@ For further explanation please refer to the complete documentation:
 NiChart_DLMUSE -h
 ```
 
-### Using the docker container
+#### Troubleshooting model download failures
+Our model download process creates several deep directory structures. If you are on Windows and your model download process fails, it may be due to Windows file path limitations. 
+
+To enable long path support in Windows 10, version 1607, and later, the registry key `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem LongPathsEnabled (Type: REG_DWORD)` must exist and be set to 1.
+
+If this affects you, we recommend re-running NiChart_DLMUSE with the `--clear_cache` flag set on the first run.
+
+### (OUTDATED) Using the docker container
 
 Using the file structure explained above, an example command using the [docker container](https://hub.docker.com/repository/docker/aidinisg/nichart_dlmuse/general) is the following:
 
@@ -127,7 +106,7 @@ Using the file structure explained above, an example command using the [docker c
 docker run -it --rm --gpus all -v ./:/workspace/ aidinisg/nichart_dlmuse:0.1.7 NiChart_DLMUSE -i temp/nnUNet_raw_database/nnUNet_raw_data/ -o temp/nnUNet_out/ -p structural --derived_ROI_mappings_file /NiChart_DLMUSE/shared/dicts/MUSE_mapping_derived_rois.csv --MUSE_ROI_mappings_file /NiChart_DLMUSE/shared/dicts/MUSE_mapping_consecutive_indices.csv --model_folder temp/nnUNet_model/ --nnUNet_raw_data_base temp/nnUNet_raw_database/ --nnUNet_preprocessed  temp/nnUNet_preprocessed/ --all_in_gpu True --mode fastest --disable_tta
 ```
 
-### Using the singularity container
+### (OUTDATED) Using the singularity container
 
 ```bash
 singularity run --nv --containall --bind /path/to/.\:/workspace/ nichart_dlmuse.simg NiChart_DLMUSE -i /workspace/temp/nnUNet_raw_data_base/nnUNet_raw_data/ -o /workspace/temp/nnUNet_out -p structural --derived_ROI_mappings_file /NiChart_DLMUSE/shared/dicts/MUSE_mapping_derived_rois.csv --MUSE_ROI_mappings_file /NiChart_DLMUSE/shared/dicts/MUSE_mapping_consecutive_indices.csv --nnUNet_raw_data_base /workspace/temp/nnUNet_raw_data_base/ --nnUNet_preprocessed /workspace/temp/nnUNet_preprocessed/ --model_folder /workspace/temp/nnUNet_model/ --all_in_gpu True --mode fastest --disable_tta

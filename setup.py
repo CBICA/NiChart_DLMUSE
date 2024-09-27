@@ -1,50 +1,28 @@
 from pathlib import Path
 
 import setuptools
-from setuptools import setup
+from setuptools import find_packages, setup
 
 this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
 
+with open('requirements.txt') as f:
+    required = f.read().splitlines()
+
+
 setup(
     name="NiChart_DLMUSE",
-    version="0.1.7",
-    description="Run NiChart_DLMUSE on your data(currently only structural pipeline is supported).",
+    version="1.0.1",
+    description="Run NiChart_DLMUSE on your data (currently only structural pipeline is supported).",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author="Ashish Singh, Guray Erus, George Aidinis",
+    author="Guray Erus, Wu Di, Kyunglok Baik, George Aidinis",
     author_email="software@cbica.upenn.edu",
-    license="MIT",
+    maintainer="Guray Erus, Kyunglok Baik, Spiros Maggioros, Alexander Getka",
+    license="By installing/using DLMUSE, the user agrees to the following license: See https://www.med.upenn.edu/cbica/software-agreement-non-commercial.html",
     url="https://github.com/CBICA/NiChart_DLMUSE",
-    install_requires=[
-        'torch==2.2.0; platform_system=="Darwin"',  # macOS
-        'torch==2.2.0; platform_system!="Darwin"',  # Linux and Windows
-        "nnunet==1.7.1",
-        "tqdm",
-        "dicom2nifti",
-        "scikit-image>=0.14",
-        "medpy",
-        "scipy",
-        "batchgenerators>=0.23",
-        "requests",
-        "tifffile",
-        "setuptools",
-        "nipype",
-        "matplotlib==3.7.1",
-        "dill>=0.3.4",
-        "h5py",
-        "hyperopt==0.2.5",
-        "keras==2.6.0",
-        "numpy",
-        "protobuf==3.17.3",
-        "pymongo==3.12.0",
-        "scikit-learn",
-        "nibabel==3.2.1",
-        "resource==0.2.1",
-        "networkx>=2.5.1",
-        "pandas",
-        "pathlib",
-    ],
+    python_requires=">=3.8",
+    install_requires=required,
     entry_points={"console_scripts": ["NiChart_DLMUSE = NiChart_DLMUSE.__main__:main"]},
     classifiers=[
         "Intended Audience :: Science/Research",
@@ -52,6 +30,18 @@ setup(
         "Topic :: Scientific/Engineering",
         "Operating System :: Unix",
     ],
-    packages=setuptools.find_packages(),
+    packages=find_packages(exclude=[".github"]),
     include_package_data=True,
+    keywords=[
+        "deep learning",
+        "image segmentation",
+        "semantic segmentation",
+        "medical image analysis",
+        "medical image segmentation",
+        "nnU-Net",
+        "nnunet",
+    ],
+    package_data={
+        "DLMUSE": ["VERSION"]
+    },
 )
