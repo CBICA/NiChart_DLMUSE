@@ -6,7 +6,6 @@ from .MaskImage import apply_combine_masks, apply_mask_img
 from .RelabelROI import apply_relabel_rois
 from .ReorientImage import apply_reorient_img, apply_reorient_to_init
 from .SegmentImage import run_dlicv, run_dlmuse
-
 from .utils import make_img_list
 
 # Config vars
@@ -39,9 +38,7 @@ DICT_MUSE_SINGLE = DICT_MUSE_NNUNET_MAP
 #     os.path.dirname(os.getcwd()), "shared", "dicts", "MUSE_mapping_derived_rois.csv"
 # )
 DICT_MUSE_DERIVED = os.path.join(
-    Path(__file__).parent.parent, "shared", 
-    "dicts", 
-    "MUSE_mapping_derived_rois.csv"
+    Path(__file__).parent.parent, "shared", "dicts", "MUSE_mapping_derived_rois.csv"
 )
 
 

@@ -6,6 +6,7 @@ Use of this source code is governed by license located in license file: https://
 """
 
 import argparse
+import os
 
 from .dlmuse_pipeline import run_pipeline
 
@@ -86,7 +87,7 @@ def main() -> None:
         action="store_true",
         required=False,
         default=False,
-        help="Set this flag to clear any cached models before running. This is recommended if a previous download failed."
+        help="Set this flag to clear any cached models before running. This is recommended if a previous download failed.",
     )
 
     # HELP argument
@@ -105,8 +106,8 @@ def main() -> None:
     print()
 
     if args.clear_cache:
-        os.system(f"DLICV --clear_cache")
-        os.system(f"DLMUSE --clear_cache")
+        os.system("DLICV --clear_cache")
+        os.system("DLMUSE --clear_cache")
 
     # Run pipeline
     run_pipeline(in_data, out_dir, device)
@@ -114,4 +115,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-    
