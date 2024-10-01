@@ -41,7 +41,12 @@ This package uses [nnU-Net v2](https://github.com/MIC-DKFZ/nnUNet) as a basis mo
     pip install -e .
     ```
 
-4. Run NiChart_DLMUSE. Example usage below
+4. (If needed for your system) Install PyTorch with compatible CUDA.
+    You only need to run this step if you experience errors with CUDA while running NiChart_DLMUSE.
+    Run "pip uninstall torch torchaudio torchvision".
+    Then follow the [PyTorch installation instructions](https://pytorch.org/get-started/locally/) for your CUDA version. 
+
+5. Run NiChart_DLMUSE. Example usage below
 
     ```bash
     NiChart_DLMUSE   -i                    /path/to/input     \
