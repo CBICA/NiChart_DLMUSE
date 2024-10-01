@@ -49,14 +49,16 @@ This package uses [nnU-Net v2](https://github.com/MIC-DKFZ/nnUNet) as a basis mo
                      -d                    cpu/cuda/mps
     ```
 
-### (OUTDATED) Docker/Singularity/Apptainer-based build and installation 
+### Docker/Singularity/Apptainer-based build and installation 
 
-The package comes already pre-built as a [docker container](https://hub.docker.com/repository/docker/aidinisg/nichart_dlmuse/general), for convenience. Please see [Usage](#usage) for more information on how to use it. Alternatively, you can build the docker image locally, like so:
+#### Docker build
+The package comes already pre-built as a [docker container](https://hub.docker.com/repository/docker/cbica/nichart_dlmuse/general), for convenience. Please see [Usage](#usage) for more information on how to use it. Alternatively, you can build the docker image locally, like so:
 
 ```bash
-docker -t NiChart_DLMUSE .
+docker build -t cbica/nichart_dlmuse .
 ```
 
+####  (OUTDATED) Singularity/Apptainer build
 Singularity and Apptainer images can be built for NiChart_DLMUSE, allowing for frozen versions of the pipeline and easier installation for end-users.
 Note that the Singularity project recently underwent a rename to "Apptainer", with a commercial fork still existing under the name "Singularity" (confusing!).
 Please note that while for now these two versions are largely identical, future versions may diverge. It is recommended to use the AppTainer distribution. For now, these instructions apply to either.
@@ -92,18 +94,32 @@ NiChart_DLMUSE -h
 ```
 
 #### Troubleshooting model download failures
-Our model download process creates several deep directory structures. If you are on Windows and your model download process fails, it may be due to Windows file path limitations. 
+Our model download process creates several deep directory structures. If you are running on Windows and your model download process fails, it may be due to Windows file path limitations. 
 
 To enable long path support in Windows 10, version 1607, and later, the registry key `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem LongPathsEnabled (Type: REG_DWORD)` must exist and be set to 1.
 
 If this affects you, we recommend re-running NiChart_DLMUSE with the `--clear_cache` flag set on the first run.
 
-### (OUTDATED) Using the docker container
+### Using the docker container
 
-Using the file structure explained above, an example command using the [docker container](https://hub.docker.com/repository/docker/aidinisg/nichart_dlmuse/general) is the following:
+Using the file structure explained above, an example command using the [docker container](https://hub.docker.com/repository/docker/cbica/nichart_dlmuse/general) is the following:
+
 
 ```bash
-docker run -it --rm --gpus all -v ./:/workspace/ aidinisg/nichart_dlmuse:0.1.7 NiChart_DLMUSE -i temp/nnUNet_raw_database/nnUNet_raw_data/ -o temp/nnUNet_out/ -p structural --derived_ROI_mappings_file /NiChart_DLMUSE/shared/dicts/MUSE_mapping_derived_rois.csv --MUSE_ROI_mappings_file /NiChart_DLMUSE/shared/dicts/MUSE_mapping_consecutive_indices.csv --model_folder temp/nnUNet_model/ --nnUNet_raw_data_base temp/nnUNet_raw_database/ --nnUNet_preprocessed  temp/nnUNet_preprocessed/ --all_in_gpu True --mode fastest --disable_tta
+# Pull the image for your CUDA version (as needed)
+CUDA_VERSION=11.8 docker pull cbica/nichart_dlmuse:1.0.1-cuda${CUDA_VERSION}
+# or, for CPU:
+docker pull cbica/nichart_dlmuse:1.0.1
+
+# Run the container with proper mounts, GPU enabled
+# Place input in /path/to/input/on/host.
+# Replace "-d cuda" with "-d mps" or "-d cpu" as needed...
+# or don't pass at all to automatically use CPU.
+# Each "/path/to/.../on/host" is a placeholder, use your actual paths!
+docker run -it --name DLMUSE_inference --rm 
+    --mount type=bind,source=/path/to/input/on/host,target=/input,readonly 
+    --mount type=bind,source=/path/to/output/on/host,target=/output
+    --gpus all cbica/nichart_dlmuse -d cuda
 ```
 
 ### (OUTDATED) Using the singularity container
