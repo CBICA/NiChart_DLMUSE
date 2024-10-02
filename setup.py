@@ -12,7 +12,7 @@ with open('requirements.txt') as f:
 
 setup(
     name="NiChart_DLMUSE",
-    version="1.0.3",
+    version="1.0.4",
     description="Run NiChart_DLMUSE on your data (currently only structural pipeline is supported).",
     long_description=long_description,
     long_description_content_type="text/markdown",
