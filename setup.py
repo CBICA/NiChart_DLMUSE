@@ -42,6 +42,6 @@ setup(
         "nnunet",
     ],
     package_data={
-        "DLMUSE": ["VERSION"]
+        'NiChart_DLMUSE': ['**/*.csv', '**/*.json'],
     },
 )

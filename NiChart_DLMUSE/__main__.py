@@ -68,7 +68,7 @@ def main() -> None:
         "-d",
         "--device",
         type=str,
-        help="Device.",
+        help="Device (cpu, cuda, or mps)",
         default=None,
         required=True,
     )
@@ -106,8 +106,8 @@ def main() -> None:
     print()
 
     if args.clear_cache:
-        os.system("DLICV --clear_cache")
-        os.system("DLMUSE --clear_cache")
+        os.system("DLICV -i ./dummy -o ./dummy --clear_cache")
+        os.system("DLMUSE -i ./dummy -o ./dummy --clear_cache")
 
     # Run pipeline
     run_pipeline(in_data, out_dir, device)
