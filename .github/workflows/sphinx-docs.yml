@@ -5,12 +5,12 @@ on:
 
 jobs:
   build-docs:
-    runs-on: macos-13
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
-          python-version: "3.8"
+          python-version: "3.12"
       - name: Set-up miniconda for macos and ubuntu
         uses: conda-incubator/setup-miniconda@v2
         with:
@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          brew install python-setuptools
+          pip install setuptools
           pip install sphinx sphinx_rtd_theme sphinx-tabs sphinx_toolbox
       - name: Sphinx build
         run: |
