@@ -46,7 +46,7 @@ DICT_MUSE_SINGLE = DICT_MUSE_NNUNET_MAP
 DICT_MUSE_DERIVED = pkg_resources.resource_filename('NiChart_DLMUSE',
                                                     'shared/dicts/MUSE_mapping_derived_rois.csv')
 
-def run_pipeline(in_data: str, out_dir: str, device: str) -> None:
+def run_pipeline(in_data: str, out_dir: str, device: str, dlmuse_extra_args: str, dlicv_extra_args: str) -> None:
     """
     NiChart pipeline
     """
@@ -86,7 +86,7 @@ def run_pipeline(in_data: str, out_dir: str, device: str) -> None:
     out_suff = SUFF_DLICV
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
-    run_dlicv(in_dir, in_suff, out_dir, out_suff, device)
+    run_dlicv(in_dir, in_suff, out_dir, out_suff, device, dlicv_extra_args)
 
     # Mask image
     print("------------------------\n   Apply DLICV mask")
@@ -108,7 +108,7 @@ def run_pipeline(in_data: str, out_dir: str, device: str) -> None:
     out_suff = SUFF_DLMUSE
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
-    run_dlmuse(in_dir, in_suff, out_dir, out_suff, device)
+    run_dlmuse(in_dir, in_suff, out_dir, out_suff, device, dlmuse_extra_args)
 
     # Relabel DLMUSE
     print("------------------------\n   Relabel DLMUSE")

@@ -5,11 +5,12 @@ from typing import Any
 
 
 def run_dlicv(
-    in_dir: str, in_suff: Any, out_dir: str, out_suff: Any, device: str
+    in_dir: str, in_suff: Any, out_dir: str, out_suff: Any, device: str,
+    extra_args: str = ""
 ) -> None:
     # Call DLICV
     print("Running DLICV")
-    os.system(f"DLICV -i {in_dir} -o {out_dir} -device {device}")
+    os.system(f"DLICV -i {in_dir} -o {out_dir} -device {device} " + extra_args)
 
     print("Rename dlicv out file")
     for fname in glob.glob(os.path.join(out_dir, "label_*.nii.gz")):
@@ -18,11 +19,12 @@ def run_dlicv(
 
 
 def run_dlmuse(
-    in_dir: str, in_suff: Any, out_dir: str, out_suff: Any, device: str
+    in_dir: str, in_suff: Any, out_dir: str, out_suff: Any, device: str,
+    extra_args: str = ""
 ) -> None:
     # Call DLMUSE
     print("Running DLMUSE")
-    os.system(f"DLMUSE -i {in_dir} -o {out_dir} -device {device}")
+    os.system(f"DLMUSE -i {in_dir} -o {out_dir} -device {device} " + extra_args)
 
     print("Rename dlmuse out file")
     for fname in glob.glob(os.path.join(out_dir, "DLMUSE_mask_*.nii.gz")):

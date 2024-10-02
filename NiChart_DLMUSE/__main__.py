@@ -89,6 +89,21 @@ def main() -> None:
         default=False,
         help="Set this flag to clear any cached models before running. This is recommended if a previous download failed.",
     )
+    parser.add_argument(
+        "--dlmuse_args",
+        type=str,
+        required=False,
+        default="",
+        help="Pass additional args to be sent to DLMUSE (ex. '-nps 1 -npp 1'). It is recommended to surround these args in a set of double quotes. See the DLMUSE documentation for details.",
+    )
+
+    parser.add_argument(
+        "--dlicv_args",
+        type=str,
+        required=False,
+        default="",
+        help="Pass additional args to be sent to DLICV (ex. '-nps 1 -npp 1'). It is recommended to surround these args in a set of double quotes. See the DLICV documentation for details.",
+    )
 
     # HELP argument
     help = "Show this message and exit"
@@ -99,6 +114,8 @@ def main() -> None:
     in_data = args.in_data
     out_dir = args.out_dir
     device = args.device
+    dlicv_extra_args = args.dlicv_args
+    dlmuse_extra_args = args.dlmuse_args
 
     print()
     print("Arguments:")
@@ -110,7 +127,7 @@ def main() -> None:
         os.system("DLMUSE -i ./dummy -o ./dummy --clear_cache")
 
     # Run pipeline
-    run_pipeline(in_data, out_dir, device)
+    run_pipeline(in_data, out_dir, device, dlmuse_extra_args, dlicv_extra_args)
 
 
 if __name__ == "__main__":
