@@ -33,20 +33,24 @@ This package uses [nnU-Net v2](https://github.com/MIC-DKFZ/nnUNet) as a basis mo
     pip install DLMUSE
     ```
 
-3. Clone and install NiChart_DLMUSE
-
+3. Install NiChart_DLMUSE from GitHub Repo or PyPi
+    
     ```bash
     git clone https://github.com/CBICA/NiChart_DLMUSE.git
     cd NiChart_DLMUSE
     pip install -e .
     ```
+    or
+    ```bash
+    pip install NiChart_DLMUSE
+    ```
 
-4. (If needed for your system) Install PyTorch with compatible CUDA.
+5. (If needed for your system) Install PyTorch with compatible CUDA.
     You only need to run this step if you experience errors with CUDA while running NiChart_DLMUSE.
     Run "pip uninstall torch torchaudio torchvision".
     Then follow the [PyTorch installation instructions](https://pytorch.org/get-started/locally/) for your CUDA version. 
 
-5. Run NiChart_DLMUSE. Example usage below
+6. Run NiChart_DLMUSE. Example usage below
 
     ```bash
     NiChart_DLMUSE   -i                    /path/to/input     \
