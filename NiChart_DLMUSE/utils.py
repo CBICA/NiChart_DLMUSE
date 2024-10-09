@@ -126,3 +126,46 @@ def make_img_list(in_data: str) -> pd.DataFrame:
 
     # Return out dataframe
     return df_out
+
+def dir_size(in_dir: str) -> int:
+    """
+        Returns the number of images the user passed
+    """
+    size = 0
+    for path in os.listdir(in_dir):
+        if os.path.isfile(os.path.join(in_dir, path)):
+            size += 1
+
+    return size
+
+
+def split_data(in_dir: str, N: int) -> list:
+    """
+        Splits the input data directory into subfolders of size N
+    """
+    assert(N > 0)
+    data_size = dir_size(in_dir)
+    no_files_in_folders = data_size / N if (data_size % N == 0) else (data_size / N) + 1
+    assert(no_files_in_folders > 0)
+    subfolders = []
+
+    current_folder = 1
+    current_file = 0
+    os.system(f"mkdir {in_dir}/split_{current_folder}")
+    for img in os.listdir(in_dir):
+        if current_file >= no_files_in_folders:
+            subfolders.append(f"{in_dir}/split_{current_folder}")
+            current_folder += 1
+            os.system(f"mkdir {in_dir}/split_{current_folder}")
+            current_file = 0
+
+        file = os.path.join(in_dir, img)
+        if os.path.isfile(file):
+            os.system(f"cp {file} {in_dir}/split_{current_folder}")
+            current_file += 1
+
+    return subfolders
+
+
+def remove_subfolders(in_dir: str) -> None:
+    os.system(f"rm -r {in_dir}/split_*")
