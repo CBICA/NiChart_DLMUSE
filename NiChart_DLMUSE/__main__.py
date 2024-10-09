@@ -75,6 +75,15 @@ def main() -> None:
         required=True,
     )
 
+    parser.add_argument(
+        "-c",
+        "--cores",
+        type=str,
+        help="Number of cores",
+        default=4,
+        required=False,
+    )
+
     # VERSION argument
     help = "Show the version and exit"
     parser.add_argument(
@@ -112,7 +121,7 @@ def main() -> None:
         os.system("DLMUSE --clear_cache")
 
     # Run pipeline
-    no_threads = 4  # for now
+    no_threads = args.cores # for now
     subfolders = split_data(in_data, no_threads)
 
     threads = []
