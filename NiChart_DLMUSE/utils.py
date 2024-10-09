@@ -127,9 +127,10 @@ def make_img_list(in_data: str) -> pd.DataFrame:
     # Return out dataframe
     return df_out
 
+
 def dir_size(in_dir: str) -> int:
     """
-        Returns the number of images the user passed
+    Returns the number of images the user passed
     """
     size = 0
     for path in os.listdir(in_dir):
@@ -141,12 +142,12 @@ def dir_size(in_dir: str) -> int:
 
 def split_data(in_dir: str, N: int) -> list:
     """
-        Splits the input data directory into subfolders of size N
+    Splits the input data directory into subfolders of size N
     """
-    assert(N > 0)
+    assert N > 0
     data_size = dir_size(in_dir)
     no_files_in_folders = data_size / N if (data_size % N == 0) else (data_size / N) + 1
-    assert(no_files_in_folders > 0)
+    assert no_files_in_folders > 0
     subfolders = []
 
     current_folder = 1
