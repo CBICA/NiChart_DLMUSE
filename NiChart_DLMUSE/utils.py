@@ -170,3 +170,25 @@ def split_data(in_dir: str, N: int) -> list:
 
 def remove_subfolders(in_dir: str) -> None:
     os.system(f"rm -r {in_dir}/split_*")
+
+def merge_output_data(in_dir: str) -> None:
+    os.system(f"mkdir {in_dir}/results")
+    os.system(f"mkdir {in_dir}/results/s1_reorient_lps")
+    os.system(f"mkdir {in_dir}/results/s2_dlicv")
+    os.system(f"mkdir {in_dir}/results/s3_masked")
+    os.system(f"mkdir {in_dir}/results/s4_dlmuse")
+    os.system(f"mkdir {in_dir}/results/s5_relabeled")
+    os.system(f"mkdir {in_dir}/results/s6_combined")
+
+    for dir in os.listdir(in_dir):
+        os.system(f"mv {in_dir}/{dir}/s1_reorient_lps/* {in_dir}/results/s1_reorient_lps/")
+        os.system(f"mv {in_dir}/{dir}/s2_dlicv/* {in_dir}/results/s2_dlicv/")
+        os.system(f"mv {in_dir}/{dir}/s3_masked/* {in_dir}/results/s3_masked/")
+        os.system(f"mv {in_dir}/{dir}/s4_dlmuse/* {in_dir}/results/s4_dlmuse/")
+        os.system(f"mv {in_dir}/{dir}/s5_relabeled/* {in_dir}/results/s5_relabeled/")
+        os.system(f"mv {in_dir}/{dir}/s6_combined/* {in_dir}/results/s6_combined/")
+
+    os.system(f"mv {in_dir}/*.nii.gz {in_dir}/results/")
+
+    for dir in os.listdir(in_dir):
+        os.system(f"rm -r {dir}")
