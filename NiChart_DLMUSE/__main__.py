@@ -7,8 +7,10 @@ Use of this source code is governed by license located in license file: https://
 
 import argparse
 import os
+import threading
 
 from .dlmuse_pipeline import run_pipeline
+from .utils import merge_output_data, remove_subfolders, split_data
 
 # VERSION = pkg_resources.require("NiChart_DLMUSE")[0].version
 VERSION = 1.0
@@ -73,6 +75,15 @@ def main() -> None:
         required=True,
     )
 
+    parser.add_argument(
+        "-c",
+        "--cores",
+        type=str,
+        help="Number of cores",
+        default=4,
+        required=False,
+    )
+
     # VERSION argument
     help = "Show the version and exit"
     parser.add_argument(
@@ -110,7 +121,23 @@ def main() -> None:
         os.system("DLMUSE --clear_cache")
 
     # Run pipeline
-    run_pipeline(in_data, out_dir, device)
+    no_threads = args.cores  # for now
+    subfolders = split_data(in_data, no_threads)
+
+    threads = []
+    for i in range(len(subfolders)):
+        curr_out_dir = out_dir + f"/split_{i}"
+        curr_thread = threading.Thread(
+            target=run_pipeline, args=(subfolders[i], curr_out_dir, device)
+        )
+        curr_thread.start()
+        threads.append(curr_thread)
+
+    for t in threads:
+        t.join()
+
+    merge_output_data(out_dir)
+    remove_subfolders(in_data)
 
 
 if __name__ == "__main__":
