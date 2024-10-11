@@ -124,17 +124,17 @@ def main() -> None:
     no_threads = args.cores  # for now
     subfolders = split_data(in_data, no_threads)
 
-    ##threads = []
-    ##for i in range(len(subfolders)):
-    ##    curr_out_dir = out_dir + f"split_{i}"
-    ##    curr_thread = threading.Thread(
-    ##        target=run_pipeline, args=(subfolders[i], curr_out_dir, device)
-    ##    )
-    ##    curr_thread.start()
-    ##    threads.append(curr_thread)
+    threads = []
+    for i in range(len(subfolders)):
+        curr_out_dir = out_dir + f"split_{i}"
+        curr_thread = threading.Thread(
+            target=run_pipeline, args=(subfolders[i], curr_out_dir, device)
+        )
+        curr_thread.start()
+        threads.append(curr_thread)
 
-    ##for t in threads:
-    ##    t.join()
+    for t in threads:
+        t.join()
 
     merge_output_data(out_dir)
     remove_subfolders(in_data)
