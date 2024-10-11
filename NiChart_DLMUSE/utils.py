@@ -92,11 +92,14 @@ def make_img_list(in_data: str) -> pd.DataFrame:
     else:
         with open(in_data, "r") as file:
             lines = file.readlines()
-            nii_files = [
-                os.path.abspath(line.strip())
-                for line in lines
-                if line.strip().endswith(LIST_IMG_EXT)  # type:ignore
-            ]
+            nii_files = []
+            for line in lines:
+                is_nifti = False
+                for tmp_ext in LIST_IMG_EXT:
+                    if line.strip().endswith(tmp_ext):
+                        is_nifti = True
+                if is_nifti is True:
+                    nii_files.append(os.path.abspath(line.strip()))
 
     nii_files = np.array(nii_files)
     print(f"Detected {nii_files.shape[0]} images ...")  # type:ignore
