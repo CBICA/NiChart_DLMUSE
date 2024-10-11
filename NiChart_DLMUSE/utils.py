@@ -92,11 +92,14 @@ def make_img_list(in_data: str) -> pd.DataFrame:
     else:
         with open(in_data, "r") as file:
             lines = file.readlines()
-            nii_files = [
-                os.path.abspath(line.strip())
-                for line in lines
-                if line.strip().endswith(LIST_IMG_EXT)  # type:ignore
-            ]
+            nii_files = []
+            for line in lines:
+                is_nifti = False
+                for tmp_ext in LIST_IMG_EXT:
+                    if line.strip().endswith(tmp_ext):
+                        is_nifti = True
+                if is_nifti is True:
+                    nii_files.append(os.path.abspath(line.strip()))
 
     nii_files = np.array(nii_files)
     print(f"Detected {nii_files.shape[0]} images ...")  # type:ignore
@@ -126,3 +129,83 @@ def make_img_list(in_data: str) -> pd.DataFrame:
 
     # Return out dataframe
     return df_out
+
+
+def dir_size(in_dir: str) -> int:
+    """
+    Returns the number of images the user passed
+    """
+    size = 0
+    for path in os.listdir(in_dir):
+        if os.path.isfile(os.path.join(in_dir, path)):
+            size += 1
+
+    return size
+
+
+def split_data(in_dir: str, N: int) -> list:
+    """
+    Splits the input data directory into subfolders of size N
+    """
+    assert N > 0
+    data_size = dir_size(in_dir)
+    no_files_in_folders = data_size / N if (data_size % N == 0) else (data_size / N) + 1
+    assert no_files_in_folders > 0
+    subfolders = []
+
+    current_folder = 1
+    current_file = 0
+    os.system(f"mkdir {in_dir}/split_{current_folder}")
+    for img in os.listdir(in_dir):
+        if current_file >= no_files_in_folders:
+            subfolders.append(f"{in_dir}/split_{current_folder}")
+            current_folder += 1
+            os.system(f"mkdir {in_dir}/split_{current_folder}")
+            current_file = 0
+
+        file = os.path.join(in_dir, img)
+        if os.path.isfile(file):
+            os.system(f"cp {file} {in_dir}/split_{current_folder}")
+            current_file += 1
+
+    return subfolders
+
+
+def remove_subfolders(in_dir: str) -> None:
+    os.system(f"rm -r {in_dir}/split_*")
+
+
+def merge_output_data(in_dir: str) -> None:
+    os.system(f"mkdir {in_dir}/results")
+    os.system(f"mkdir {in_dir}/results/s1_reorient_lps")
+    os.system(f"mkdir {in_dir}/results/s2_dlicv")
+    os.system(f"mkdir {in_dir}/results/s3_masked")
+    os.system(f"mkdir {in_dir}/results/s4_dlmuse")
+    os.system(f"mkdir {in_dir}/results/s5_relabeled")
+    os.system(f"mkdir {in_dir}/results/s6_combined")
+
+    for dir in os.listdir(in_dir):
+        if dir == "results":
+            continue
+
+        os.system(
+            f"mv {in_dir}/{dir}/temp_working_dir/s1_reorient_lps/* {in_dir}/results/s1_reorient_lps/"
+        )
+        os.system(
+            f"mv {in_dir}/{dir}/temp_working_dir/s2_dlicv/* {in_dir}/results/s2_dlicv/"
+        )
+        os.system(
+            f"mv {in_dir}/{dir}/temp_working_dir/s3_masked/* {in_dir}/results/s3_masked/"
+        )
+        os.system(
+            f"mv {in_dir}/{dir}/temp_working_dir/s4_dlmuse/* {in_dir}/results/s4_dlmuse/"
+        )
+        os.system(
+            f"mv {in_dir}/{dir}/temp_working_dir/s5_relabeled/* {in_dir}/results/s5_relabeled/"
+        )
+        os.system(
+            f"mv {in_dir}/{dir}/temp_working_dir/s6_combined/* {in_dir}/results/s6_combined/"
+        )
+        os.system(f"mv {in_dir}/{dir}/*.nii.gz {in_dir}/results/")
+
+    os.system(f"rm -r {in_dir}/split_*")
