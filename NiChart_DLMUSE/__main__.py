@@ -124,26 +124,20 @@ def main() -> None:
     no_threads = args.cores  # for now
     subfolders = split_data(in_data, no_threads)
 
-    threads = []
-    for i in range(len(subfolders)):
+    ##threads = []
+    ##for i in range(len(subfolders)):
+    ##    curr_out_dir = out_dir + f"split_{i}"
+    ##    curr_thread = threading.Thread(
+    ##        target=run_pipeline, args=(subfolders[i], curr_out_dir, device)
+    ##    )
+    ##    curr_thread.start()
+    ##    threads.append(curr_thread)
 
-        if out_dir[len(out_dir) - 1] != '/':
-            # This is because sometimes users don't enter the dir
-            # like this: "output/" but like this "output"
-            out_dir += '/'
+    ##for t in threads:
+    ##    t.join()
 
-        curr_out_dir = out_dir + f"split_{i}"
-        curr_thread = threading.Thread(
-            target=run_pipeline, args=(subfolders[i], curr_out_dir, device)
-        )
-        curr_thread.start()
-        threads.append(curr_thread)
-
-    for t in threads:
-        t.join()
-
-    remove_subfolders(in_data)
     merge_output_data(out_dir)
+    remove_subfolders(in_data)
 
 if __name__ == "__main__":
     main()
