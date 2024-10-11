@@ -10,7 +10,7 @@ import os
 import threading
 
 from .dlmuse_pipeline import run_pipeline
-from .utils import remove_subfolders, split_data, merge_output_data
+from .utils import merge_output_data, remove_subfolders, split_data
 
 # VERSION = pkg_resources.require("NiChart_DLMUSE")[0].version
 VERSION = 1.0
@@ -138,6 +138,7 @@ def main() -> None:
 
     merge_output_data(out_dir)
     remove_subfolders(in_data)
+
 
 if __name__ == "__main__":
     main()
