@@ -5,8 +5,12 @@ from typing import Any
 
 
 def run_dlicv(
-    in_dir: str, in_suff: Any, out_dir: str, out_suff: Any, device: str,
-    extra_args: str = ""
+    in_dir: str,
+    in_suff: Any,
+    out_dir: str,
+    out_suff: Any,
+    device: str,
+    extra_args: str = "",
 ) -> None:
     # Call DLICV
     print("Running DLICV")
@@ -19,8 +23,12 @@ def run_dlicv(
 
 
 def run_dlmuse(
-    in_dir: str, in_suff: Any, out_dir: str, out_suff: Any, device: str,
-    extra_args: str = ""
+    in_dir: str,
+    in_suff: Any,
+    out_dir: str,
+    out_suff: Any,
+    device: str,
+    extra_args: str = "",
 ) -> None:
     # Call DLMUSE
     print("Running DLMUSE")
