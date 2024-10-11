@@ -193,4 +193,4 @@ def merge_output_data(in_dir: str) -> None:
         os.system(f"mv {in_dir}/{dir}/*.nii.gz {in_dir}/results/")
 
     for dir in os.listdir(in_dir):
-        os.system(f"rm -r {dir}")
+        os.system(f"rm -r {in_dir}/{dir}")
