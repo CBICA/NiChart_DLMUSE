@@ -181,7 +181,7 @@ def merge_output_data(in_dir: str) -> None:
     os.system(f"mkdir {in_dir}/results/s6_combined")
 
     for dir in os.listdir(in_dir):
-        if(in_dir == 'results'):
+        if(dir == 'results'):
             continue
 
         os.system(f"mv {in_dir}/{dir}/temp_working_dir/s1_reorient_lps/* {in_dir}/results/s1_reorient_lps/")
