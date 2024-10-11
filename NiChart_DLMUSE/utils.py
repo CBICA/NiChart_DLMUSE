@@ -169,7 +169,7 @@ def split_data(in_dir: str, N: int) -> list:
 
 
 def remove_subfolders(in_dir: str) -> None:
-    os.system(f"rm -r {in_dir}split_*")
+    os.system(f"rm -r {in_dir}/split_*")
 
 
 def merge_output_data(in_dir: str) -> None:
