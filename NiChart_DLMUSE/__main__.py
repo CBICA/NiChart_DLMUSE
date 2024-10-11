@@ -145,7 +145,14 @@ def main() -> None:
     for i in range(len(subfolders)):
         curr_out_dir = out_dir + f"/split_{i}"
         curr_thread = threading.Thread(
-            target=run_pipeline, args=(subfolders[i], curr_out_dir, device, dlmuse_extra_args, dlicv_extra_args)
+            target=run_pipeline,
+            args=(
+                subfolders[i],
+                curr_out_dir,
+                device,
+                dlmuse_extra_args,
+                dlicv_extra_args,
+            ),
         )
         curr_thread.start()
         threads.append(curr_thread)
@@ -155,7 +162,6 @@ def main() -> None:
 
     merge_output_data(out_dir)
     remove_subfolders(in_data)
-
 
 
 if __name__ == "__main__":

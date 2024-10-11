@@ -1,6 +1,6 @@
 import os
-from pathlib import Path
-import pkg_resources
+
+import pkg_resources  # type: ignore
 
 from .CalcROIVol import apply_create_roi_csv, combine_roi_csv
 from .MaskImage import apply_combine_masks, apply_mask_img
@@ -25,14 +25,15 @@ REF_ORIENT = "LPS"
 #     "dicts",
 #     "MUSE_mapping_consecutive_indices.csv",
 # )
-#DICT_MUSE_NNUNET_MAP = os.path.join(
+# DICT_MUSE_NNUNET_MAP = os.path.join(
 #    Path(__file__).parent.parent,
 #    "shared",
 #    "dicts",
 #   "MUSE_mapping_consecutive_indices.csv",
-#)
-DICT_MUSE_NNUNET_MAP = pkg_resources.resource_filename('NiChart_DLMUSE',
-                                                        'shared/dicts/MUSE_mapping_consecutive_indices.csv')
+# )
+DICT_MUSE_NNUNET_MAP = pkg_resources.resource_filename(
+    "NiChart_DLMUSE", "shared/dicts/MUSE_mapping_consecutive_indices.csv"
+)
 LABEL_FROM = "IndexConsecutive"
 LABEL_TO = "IndexMUSE"
 
@@ -40,13 +41,21 @@ DICT_MUSE_SINGLE = DICT_MUSE_NNUNET_MAP
 # DICT_MUSE_DERIVED = os.path.join(
 #     os.path.dirname(os.getcwd()), "shared", "dicts", "MUSE_mapping_derived_rois.csv"
 # )
-#DICT_MUSE_DERIVED = os.path.join(
+# DICT_MUSE_DERIVED = os.path.join(
 #    Path(__file__).parent.parent, "shared", "dicts", "MUSE_mapping_derived_rois.csv"
-#)
-DICT_MUSE_DERIVED = pkg_resources.resource_filename('NiChart_DLMUSE',
-                                                    'shared/dicts/MUSE_mapping_derived_rois.csv')
+# )
+DICT_MUSE_DERIVED = pkg_resources.resource_filename(
+    "NiChart_DLMUSE", "shared/dicts/MUSE_mapping_derived_rois.csv"
+)
 
-def run_pipeline(in_data: str, out_dir: str, device: str, dlmuse_extra_args: str, dlicv_extra_args: str) -> None:
+
+def run_pipeline(
+    in_data: str,
+    out_dir: str,
+    device: str,
+    dlmuse_extra_args: str,
+    dlicv_extra_args: str,
+) -> None:
     """
     NiChart pipeline
     """
