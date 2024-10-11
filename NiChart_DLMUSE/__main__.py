@@ -126,6 +126,12 @@ def main() -> None:
 
     threads = []
     for i in range(len(subfolders)):
+
+        if out_dir[len(out_dir) - 1] != '/':
+            # This is because sometimes users don't enter the dir
+            # like this: "output/" but like this "output"
+            out_dir += '/'
+
         curr_out_dir = out_dir + f"split_{i}"
         curr_thread = threading.Thread(
             target=run_pipeline, args=(subfolders[i], curr_out_dir, device)
