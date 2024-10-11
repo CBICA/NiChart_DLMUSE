@@ -126,7 +126,7 @@ def main() -> None:
 
     threads = []
     for i in range(len(subfolders)):
-        curr_out_dir = out_dir + f"split_{i}"
+        curr_out_dir = out_dir + f"/split_{i}"
         curr_thread = threading.Thread(
             target=run_pipeline, args=(subfolders[i], curr_out_dir, device)
         )
