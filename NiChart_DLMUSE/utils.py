@@ -98,7 +98,7 @@ def make_img_list(in_data: str) -> pd.DataFrame:
                 for tmp_ext in LIST_IMG_EXT:
                     if line.strip().endswith(tmp_ext):
                         is_nifti = True
-                if is_nifti == True:
+                if is_nifti is True:
                     nii_files.append(os.path.abspath(line.strip()))
 
     nii_files = np.array(nii_files)
