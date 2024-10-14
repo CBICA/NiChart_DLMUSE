@@ -11,7 +11,9 @@ def relabel_rois(
 ) -> None:
     """
     Convert labels in input roi image to new labels based on the mapping
+    print()
     The mapping file should contain numeric indices for the mapping
+    irint()
     between the input roi image (from) and output roi image (to)
     """
 

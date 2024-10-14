@@ -1,10 +1,13 @@
 import csv as csv
 import os
 from typing import Any
-
+import logging
 import nibabel as nib
 import numpy as np
 import pandas as pd
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename='pipeline.log', encoding='utf-8', level=logging.DEBUG)
 
 
 def calc_roi_volumes(mrid: Any, in_img: Any, label_indices: Any) -> pd.DataFrame:
@@ -150,7 +153,7 @@ def combine_roi_csv(
             df_tmp = pd.read_csv(in_csv)
             dfs.append(df_tmp)
         except:
-            print("Skip subject, out csv missing: " + in_csv)
+            logging.info("Skip subject, out csv missing: " + in_csv)
     if len(dfs) > 0:
         df_out = pd.concat(dfs)
     df_out.to_csv(out_csv, index=False)

@@ -2,11 +2,14 @@ import glob
 import os
 import re
 from typing import Any
-
+import logging
 import numpy as np
 import pandas as pd
 
 LIST_IMG_EXT = [".nii", ".nii.gz"]
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename='pipeline.log', encoding='utf-8', level=logging.DEBUG)
 
 
 def get_basename(
@@ -102,7 +105,7 @@ def make_img_list(in_data: str) -> pd.DataFrame:
                     nii_files.append(os.path.abspath(line.strip()))
 
     nii_files = np.array(nii_files)
-    print(f"Detected {nii_files.shape[0]} images ...")  # type:ignore
+    logging.info(f"Detected {nii_files.shape[0]} images ...")  # type:ignore
 
     # Check if images exist
     if len(nii_files) > 0:
@@ -112,7 +115,7 @@ def make_img_list(in_data: str) -> pd.DataFrame:
                 flag[i] = 1
         nii_files = nii_files[flag == 1]
 
-    print(f"Number of valid images is {len(nii_files)} ...")
+    logging.info(f"Number of valid images is {len(nii_files)} ...")
     # Create a dataframe
     df_out = pd.DataFrame(data=nii_files, columns=["img_path"])
 
