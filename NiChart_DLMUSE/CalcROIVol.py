@@ -1,13 +1,14 @@
 import csv as csv
+import logging
 import os
 from typing import Any
-import logging
+
 import nibabel as nib
 import numpy as np
 import pandas as pd
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(filename='pipeline.log', encoding='utf-8', level=logging.DEBUG)
+logging.basicConfig(filename="pipeline.log", encoding="utf-8", level=logging.DEBUG)
 
 
 def calc_roi_volumes(mrid: Any, in_img: Any, label_indices: Any) -> pd.DataFrame:

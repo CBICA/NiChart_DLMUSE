@@ -1,6 +1,7 @@
+import logging
 import os
 from typing import Any
-import logging
+
 import nibabel as nib
 import pandas as pd
 from nibabel.orientations import axcodes2ornt, ornt_transform
@@ -8,7 +9,8 @@ from nibabel.orientations import axcodes2ornt, ornt_transform
 IMG_EXT = ".nii.gz"
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(filename='pipeline.log', encoding='utf-8', level=logging.DEBUG)
+logging.basicConfig(filename="pipeline.log", encoding="utf-8", level=logging.DEBUG)
+
 
 def reorient_img(in_img: Any, ref: Any, out_img: Any) -> None:
     """
