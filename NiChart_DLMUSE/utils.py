@@ -105,7 +105,6 @@ def make_img_list(in_data: str) -> pd.DataFrame:
                     nii_files.append(os.path.abspath(line.strip()))
 
     nii_files = np.array(nii_files)
-    logging.info(f"Detected {nii_files.shape[0]} images ...")  # type:ignore
 
     # Check if images exist
     if len(nii_files) > 0:
@@ -115,7 +114,7 @@ def make_img_list(in_data: str) -> pd.DataFrame:
                 flag[i] = 1
         nii_files = nii_files[flag == 1]
 
-    logging.info(f"Number of valid images is {len(nii_files)} ...")
+    logging.info(f"Detected {nii_files.shape[0]} images. Valid images are {len(nii_files)}...")
     # Create a dataframe
     df_out = pd.DataFrame(data=nii_files, columns=["img_path"])
 

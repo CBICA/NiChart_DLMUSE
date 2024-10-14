@@ -104,7 +104,7 @@ def run_pipeline(
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
     run_dlmuse(in_dir, in_suff, out_dir, out_suff, device, dlmuse_extra_args)
-    logging.info('Done')
+    logging.info(f'Applying DLMUSE for batch [{sub_fldr}] done')
 
     logging.info(f'Relabeling DLMUSE for batch [{sub_fldr}]...')
     # Relabel DLMUSE
