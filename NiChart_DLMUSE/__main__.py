@@ -152,6 +152,7 @@ def main() -> None:
                 device,
                 dlmuse_extra_args,
                 dlicv_extra_args,
+                i,
             ),
         )
         curr_thread.start()
