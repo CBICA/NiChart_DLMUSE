@@ -163,6 +163,7 @@ def main() -> None:
 
     merge_output_data(out_dir)
     remove_subfolders(in_data)
+    remove_subfolders(out_dir)
 
 
 if __name__ == "__main__":
