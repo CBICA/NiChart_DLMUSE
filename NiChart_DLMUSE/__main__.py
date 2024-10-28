@@ -138,7 +138,7 @@ def main() -> None:
         os.system("DLMUSE -i ./dummy -o ./dummy --clear_cache")
 
     # Run pipeline
-    no_threads = args.cores  # for now
+    no_threads = int(args.cores)  # for now
     subfolders = split_data(in_data, no_threads)
 
     threads = []

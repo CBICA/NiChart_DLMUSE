@@ -154,7 +154,7 @@ def split_data(in_dir: str, N: int) -> list:
     """
     assert N > 0
     data_size = dir_size(in_dir)
-    no_files_in_folders = data_size / N if (data_size % N == 0) else (data_size / N) + 1
+    no_files_in_folders = data_size // N if (data_size % N == 0) else (data_size // N) + 1
     assert no_files_in_folders > 0
     subfolders = []
 
