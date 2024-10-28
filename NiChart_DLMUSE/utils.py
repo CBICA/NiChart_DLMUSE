@@ -220,3 +220,5 @@ def merge_output_data(in_dir: str) -> None:
             f"mv {in_dir}/{dir}/temp_working_dir/s6_combined/* {in_dir}/results/s6_combined/"
         )
         os.system(f"mv {in_dir}/{dir}/*.nii.gz {in_dir}/results/")
+
+    os.system(f"rm -r {in_dir}/split_*")
