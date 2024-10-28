@@ -133,7 +133,6 @@ def main() -> None:
     print(args)
     print()
 
-
     if len(os.listdir(out_dir)) != 0:
         print(f"Emptying output folder: {out_dir}...")
         os.system(f"rm -r {out_dir}/*")

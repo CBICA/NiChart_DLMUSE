@@ -150,12 +150,14 @@ def dir_size(in_dir: str) -> int:
 
 def split_data(in_dir: str, N: int) -> list:
     """
-        Splits the input data directory into subfolders of size.
-        N should be > 0 and the number of files in each subfolder should be > 0 as well.
+    Splits the input data directory into subfolders of size.
+    N should be > 0 and the number of files in each subfolder should be > 0 as well.
     """
     assert N > 0
     data_size = dir_size(in_dir)
-    no_files_in_folders = data_size // N if (data_size % N == 0) else (data_size // N) + 1
+    no_files_in_folders = (
+        data_size // N if (data_size % N == 0) else (data_size // N) + 1
+    )
     assert no_files_in_folders > 0
     subfolders = []
 
@@ -179,15 +181,15 @@ def split_data(in_dir: str, N: int) -> list:
 
 def remove_subfolders(in_dir: str) -> None:
     """
-        Removes all the split_* subolders from the input folder
+    Removes all the split_* subolders from the input folder
     """
     os.system(f"rm -r {in_dir}/split_*")
 
 
 def merge_output_data(in_dir: str) -> None:
     """
-        Takes all the results from the temp_working_fir and moves them into
-        the results/ subfolder in the output folder
+    Takes all the results from the temp_working_fir and moves them into
+    the results/ subfolder in the output folder
     """
 
     os.system(f"mkdir {in_dir}/results")
