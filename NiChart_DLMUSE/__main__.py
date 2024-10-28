@@ -133,6 +133,11 @@ def main() -> None:
     print(args)
     print()
 
+
+    if len(os.listdir(out_dir)) != 0:
+        print(f"Emptying output folder: {out_dir}...")
+        os.system(f"rm -r {out_dir}/*")
+
     if args.clear_cache:
         os.system("DLICV -i ./dummy -o ./dummy --clear_cache")
         os.system("DLMUSE -i ./dummy -o ./dummy --clear_cache")

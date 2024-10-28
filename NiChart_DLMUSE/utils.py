@@ -190,9 +190,6 @@ def merge_output_data(in_dir: str) -> None:
         the results/ subfolder in the output folder
     """
 
-    if len(os.listdir(in_dir)) != 0:
-        os.system(f"rm -r {in_dir}/*")
-
     os.system(f"mkdir {in_dir}/results")
     os.system(f"mkdir {in_dir}/results/s1_reorient_lps")
     os.system(f"mkdir {in_dir}/results/s2_dlicv")
