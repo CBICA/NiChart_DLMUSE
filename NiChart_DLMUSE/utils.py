@@ -205,11 +205,10 @@ def merge_bids_output_data(out_data: str) -> None:
     Move all the images on the s5_relabeled subfolder to the subfolder of their prefix
     """
     dlmuse_images = []
-
-    for img in os.listdir(os.path.join(out_data, "s5_relabeled")):
+    relabeled_dir = os.path.join(out_data, "s5_relabeled")
+    for img in os.listdir(relabeled_dir):
         img_prefix = get_bids_prefix(img)
-        os.system(f"mv {os.path.join(out_data, "s5_relabeled")}/{img} {img_prefix}/anat/")
-
+        os.system(f"mv {relabeled_dir}/{img} {img_prefix}/anat/")
 
 
 def split_data(in_dir: str, N: int) -> list:
