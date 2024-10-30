@@ -133,12 +133,16 @@ def main() -> None:
     print(args)
     print()
 
+    if len(os.listdir(out_dir)) != 0:
+        print(f"Emptying output folder: {out_dir}...")
+        os.system(f"rm -r {out_dir}/*")
+
     if args.clear_cache:
         os.system("DLICV -i ./dummy -o ./dummy --clear_cache")
         os.system("DLMUSE -i ./dummy -o ./dummy --clear_cache")
 
     # Run pipeline
-    no_threads = args.cores  # for now
+    no_threads = int(args.cores)  # for now
     subfolders = split_data(in_data, no_threads)
 
     threads = []
@@ -163,6 +167,7 @@ def main() -> None:
 
     merge_output_data(out_dir)
     remove_subfolders(in_data)
+    remove_subfolders(out_dir)
 
 
 if __name__ == "__main__":

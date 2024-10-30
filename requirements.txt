@@ -1,6 +1,6 @@
 torch>=2.2.1
-DLICV>=1.0.1
-DLMUSE>=1.0.1
+DLICV
+DLMUSE
 nibabel>=5.2
 huggingface_hub
 argparse

@@ -1,12 +1,11 @@
 from pathlib import Path
 
-import setuptools
 from setuptools import find_packages, setup
 
 this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
 
-with open('requirements.txt') as f:
+with open("requirements.txt") as f:
     required = f.read().splitlines()
 
 
@@ -42,6 +41,6 @@ setup(
         "nnunet",
     ],
     package_data={
-        'NiChart_DLMUSE': ['**/*.csv', '**/*.json'],
+        "NiChart_DLMUSE": ["**/*.csv", "**/*.json"],
     },
 )
