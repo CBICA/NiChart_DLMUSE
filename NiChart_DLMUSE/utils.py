@@ -147,6 +147,44 @@ def dir_size(in_dir: str) -> int:
 
     return size
 
+def dir_foldercount(in_dir: str) -> int:
+    """
+    Returns the number of subfolders that the input directory has
+    """
+
+    size = 0
+    for path in os.listdir(in_dir):
+        if os.path.isdir(os.path.join(in_dir, path)):
+            size += 1
+
+    return size
+
+
+def collect_T1(in_dir: str) -> None:
+    """
+    This function collects all the raw T1 images from the passed BIDS input dir and
+    it creates a temporary folder that will act as a generic dataset with only T1 images
+    """
+    if os.path.isdir("raw_temp_T1"):
+        os.system("rm -r raw_temp_T1/*")
+    else:
+        # create the raw_temp_T1 folder that will host all the T1 images
+        os.system("mkdir raw_temp_T1")
+
+    total_subs = dir_foldercount(in_dir)
+    accepted_subfolders = []
+    for i in range(1, total_subs):
+        if i < 10:
+            accepted_subfolders.append(f"sub-0{i}")
+        else:
+            accepted_subfolders.append(f"sub-{i}")
+
+    for root, subs, files in os.walk(in_dir):
+        for sub in subs:
+            if(sub in accepted_subfolders):
+                os.system(f"cp {os.path.join(in_dir, sub)}/anat/* raw_temp_T1")
+
+
 
 def split_data(in_dir: str, N: int) -> list:
     """
@@ -175,6 +213,10 @@ def split_data(in_dir: str, N: int) -> list:
         if os.path.isfile(file):
             os.system(f"cp {file} {in_dir}/split_{current_folder}")
             current_file += 1
+
+    if current_file < no_files_in_folders:
+        # Don't forget the last split if it has less files than the maximum files in a subfolder
+        subfolders.append(f"{in_dir}/split_{current_folder}")
 
     return subfolders
 
