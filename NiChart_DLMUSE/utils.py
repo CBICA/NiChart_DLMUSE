@@ -135,6 +135,19 @@ def make_img_list(in_data: str) -> pd.DataFrame:
     # Return out dataframe
     return df_out
 
+def get_bids_prefix(filename: str) -> str:
+    """
+    Returns the prefix of a bids file
+    """
+    prefix = ""
+    idx = 0
+    char = filename[idx]
+    while char != '_':
+        prefix += char
+        idx += 1
+        char = filename[idx]
+
+    return prefix
 
 def dir_size(in_dir: str) -> int:
     """
@@ -160,7 +173,7 @@ def dir_foldercount(in_dir: str) -> int:
     return size
 
 
-def collect_T1(in_dir: str) -> None:
+def collect_T1(in_dir: str, out_dir: str) -> None:
     """
     This function collects all the raw T1 images from the passed BIDS input dir and
     it creates a temporary folder that will act as a generic dataset with only T1 images
@@ -170,6 +183,8 @@ def collect_T1(in_dir: str) -> None:
     else:
         # create the raw_temp_T1 folder that will host all the T1 images
         os.system("mkdir raw_temp_T1")
+
+    os.system(f"cp -r {in_dir}/* {out_dir}/")
 
     total_subs = dir_foldercount(in_dir)
     accepted_subfolders = []
@@ -183,6 +198,17 @@ def collect_T1(in_dir: str) -> None:
         for sub in subs:
             if(sub in accepted_subfolders):
                 os.system(f"cp {os.path.join(in_dir, sub)}/anat/* raw_temp_T1")
+
+
+def merge_bids_output_data(out_data: str) -> None:
+    """
+    Move all the images on the s5_relabeled subfolder to the subfolder of their prefix
+    """
+    dlmuse_images = []
+
+    for img in os.listdir(os.path.join(out_data, "s5_relabeled")):
+        img_prefix = get_bids_prefix(img)
+        os.system(f"mv {os.path.join(out_data, "s5_relabeled")}/{img} {img_prefix}/anat/")
 
 
 
@@ -231,37 +257,36 @@ def remove_subfolders(in_dir: str) -> None:
 def merge_output_data(in_dir: str) -> None:
     """
     Takes all the results from the temp_working_fir and moves them into
-    the results/ subfolder in the output folder
+    the output folder
     """
 
-    os.system(f"mkdir {in_dir}/results")
-    os.system(f"mkdir {in_dir}/results/s1_reorient_lps")
-    os.system(f"mkdir {in_dir}/results/s2_dlicv")
-    os.system(f"mkdir {in_dir}/results/s3_masked")
-    os.system(f"mkdir {in_dir}/results/s4_dlmuse")
-    os.system(f"mkdir {in_dir}/results/s5_relabeled")
-    os.system(f"mkdir {in_dir}/results/s6_combined")
+    os.system(f"mkdir {in_dir}/s1_reorient_lps")
+    os.system(f"mkdir {in_dir}/s2_dlicv")
+    os.system(f"mkdir {in_dir}/s3_masked")
+    os.system(f"mkdir {in_dir}/s4_dlmuse")
+    os.system(f"mkdir {in_dir}/s5_relabeled")
+    os.system(f"mkdir {in_dir}/s6_combined")
 
     for dir in os.listdir(in_dir):
         if dir == "results":
             continue
 
         os.system(
-            f"mv {in_dir}/{dir}/temp_working_dir/s1_reorient_lps/* {in_dir}/results/s1_reorient_lps/"
+            f"mv {in_dir}/{dir}/temp_working_dir/s1_reorient_lps/* {in_dir}/s1_reorient_lps/"
         )
         os.system(
-            f"mv {in_dir}/{dir}/temp_working_dir/s2_dlicv/* {in_dir}/results/s2_dlicv/"
+            f"mv {in_dir}/{dir}/temp_working_dir/s2_dlicv/* {in_dir}/s2_dlicv/"
         )
         os.system(
-            f"mv {in_dir}/{dir}/temp_working_dir/s3_masked/* {in_dir}/results/s3_masked/"
+            f"mv {in_dir}/{dir}/temp_working_dir/s3_masked/* {in_dir}/s3_masked/"
         )
         os.system(
-            f"mv {in_dir}/{dir}/temp_working_dir/s4_dlmuse/* {in_dir}/results/s4_dlmuse/"
+            f"mv {in_dir}/{dir}/temp_working_dir/s4_dlmuse/* {in_dir}/s4_dlmuse/"
         )
         os.system(
-            f"mv {in_dir}/{dir}/temp_working_dir/s5_relabeled/* {in_dir}/results/s5_relabeled/"
+            f"mv {in_dir}/{dir}/temp_working_dir/s5_relabeled/* {in_dir}/s5_relabeled/"
         )
         os.system(
-            f"mv {in_dir}/{dir}/temp_working_dir/s6_combined/* {in_dir}/results/s6_combined/"
+            f"mv {in_dir}/{dir}/temp_working_dir/s6_combined/* {in_dir}/s6_combined/"
         )
-        os.system(f"mv {in_dir}/{dir}/*.nii.gz {in_dir}/results/")
+        os.system(f"mv {in_dir}/{dir}/*.nii.gz {in_dir}/")

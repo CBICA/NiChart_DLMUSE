@@ -10,7 +10,7 @@ import os
 import threading
 
 from .dlmuse_pipeline import run_pipeline
-from .utils import merge_output_data, remove_subfolders, split_data, collect_T1
+from .utils import merge_bids_output_data, merge_output_data, remove_subfolders, split_data, collect_T1
 
 # VERSION = pkg_resources.require("NiChart_DLMUSE")[0].version
 VERSION = "1.0.5"
@@ -141,7 +141,10 @@ def main() -> None:
     print(args)
     print()
 
-    if len(os.listdir(out_dir)) != 0:
+    if not os.path.isdir(out_dir):
+        print(f"Can't find {out_dir}, creating it...")
+        os.system(f"mkdir {out_dir}")
+    elif len(os.listdir(out_dir)) != 0:
         print(f"Emptying output folder: {out_dir}...")
         os.system(f"rm -r {out_dir}/*")
 
@@ -152,7 +155,7 @@ def main() -> None:
 
     # Run pipeline
     if args.bids == True:
-        collect_T1(in_dir)
+        collect_T1(in_dir, out_dir)
 
         no_threads = int(args.cores)
         subfolders = split_data("raw_temp_T1", no_threads)
@@ -177,9 +180,9 @@ def main() -> None:
             t.join()
 
         merge_output_data(out_dir)
+        merge_bids_output_data(out_dir)
         remove_subfolders("raw_temp_T1")
         remove_subfolders(out_dir)
-
 
     else:
         no_threads = int(args.cores)
