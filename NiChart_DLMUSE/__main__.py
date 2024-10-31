@@ -179,6 +179,7 @@ def main() -> None:
         for t in threads:
             t.join()
 
+        # TODO | FIX: Transform normal output data to BIDS output
         merge_output_data(out_dir)
         merge_bids_output_data(out_dir)
         remove_subfolders("raw_temp_T1")
