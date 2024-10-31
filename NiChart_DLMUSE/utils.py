@@ -176,6 +176,9 @@ def split_data(in_dir: str, N: int) -> list:
             os.system(f"cp {file} {in_dir}/split_{current_folder}")
             current_file += 1
 
+    if current_file > 0:
+        subfolders.append(f"{in_dir}/split_{current_folder}")
+
     return subfolders
 
 
