@@ -142,32 +142,35 @@ def main() -> None:
         os.system("DLMUSE -i ./dummy -o ./dummy --clear_cache")
 
     # Run pipeline
-    no_threads = int(args.cores)  # for now
-    subfolders = split_data(in_data, no_threads)
+    if int(args.cores) > 1:
+        no_threads = int(args.cores)  # for now
+        subfolders = split_data(in_data, no_threads)
 
-    threads = []
-    for i in range(len(subfolders)):
-        curr_out_dir = out_dir + f"/split_{i}"
-        curr_thread = threading.Thread(
-            target=run_pipeline,
-            args=(
-                subfolders[i],
-                curr_out_dir,
-                device,
-                dlmuse_extra_args,
-                dlicv_extra_args,
-                i,
-            ),
-        )
-        curr_thread.start()
-        threads.append(curr_thread)
+        threads = []
+        for i in range(len(subfolders)):
+            curr_out_dir = out_dir + f"/split_{i}"
+            curr_thread = threading.Thread(
+                target=run_pipeline,
+                args=(
+                    subfolders[i],
+                    curr_out_dir,
+                    device,
+                    dlmuse_extra_args,
+                    dlicv_extra_args,
+                    i,
+                ),
+            )
+            curr_thread.start()
+            threads.append(curr_thread)
 
-    for t in threads:
-        t.join()
+        for t in threads:
+            t.join()
 
-    merge_output_data(out_dir)
-    remove_subfolders(in_data)
-    remove_subfolders(out_dir)
+        merge_output_data(out_dir)
+        remove_subfolders(in_data)
+        remove_subfolders(out_dir)
+    else:
+        run_pipeline(in_data, out_dir, device, dlmuse_extra_args, dlicv_extra_args)
 
 
 if __name__ == "__main__":
