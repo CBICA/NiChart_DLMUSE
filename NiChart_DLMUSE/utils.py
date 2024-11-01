@@ -211,7 +211,7 @@ def merge_bids_output_data(out_data: str) -> None:
         if get_bids_prefix(split, True) == "split":
             s5_relabeled_dir = os.path.join(out_data, split, "temp_working_dir", "s5_relabeled")
             for img in os.listdir(s5_relabeled_dir):
-                os.system(f"mv {s5_relabeled_dir}/{img} {out_data}/{get_bids_prefix(img)}/anat/")
+                os.system(f"mv {s5_relabeled_dir}/{img} {out_data}/{get_bids_prefix(img, True)}/anat/")
 
 def split_data(in_dir: str, N: int) -> list:
     """
