@@ -146,6 +146,8 @@ def get_bids_prefix(filename: str, folder: bool = False) -> str:
     while char != checker:
         prefix += char
         idx += 1
+        if idx >= len(filename):
+            break
         char = filename[idx]
 
     return prefix
@@ -208,7 +210,7 @@ def merge_bids_output_data(out_data: str) -> None:
     for split in os.listdir(out_data):
         if get_bids_prefix(split, True) == "split":
             s5_relabeled_dir = os.path.join(out_data, split, "temp_working_dir", "s5_relabeled")
-            for img in s5_relabeled_dir:
+            for img in os.listdir(s5_relabeled_dir):
                 os.system(f"mv {s5_relabeled_dir}/{img} {out_data}/{get_bids_prefix(img)}/anat/")
 
 def split_data(in_dir: str, N: int) -> list:
