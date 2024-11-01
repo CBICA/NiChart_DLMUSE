@@ -178,11 +178,11 @@ def collect_T1(in_dir: str, out_dir: str) -> None:
     This function collects all the raw T1 images from the passed BIDS input dir and
     it creates a temporary folder that will act as a generic dataset with only T1 images
     """
-    if os.path.isdir("../raw_temp_T1") and len(os.listdir("../raw_temp_T1")):
-        os.system("rm -r ../raw_temp_T1/*")
-    elif not os.path.isdir("../raw_temp_T1"):
+    if os.path.isdir("raw_temp_T1") and len(os.listdir("raw_temp_T1")):
+        os.system("rm -r raw_temp_T1/*")
+    elif not os.path.isdir("raw_temp_T1"):
         # create the raw_temp_T1 folder that will host all the T1 images
-        os.system("mkdir ../raw_temp_T1")
+        os.system("mkdir raw_temp_T1")
 
     os.system(f"cp -r {in_dir}/* {out_dir}/")
 
