@@ -135,14 +135,15 @@ def make_img_list(in_data: str) -> pd.DataFrame:
     # Return out dataframe
     return df_out
 
-def get_bids_prefix(filename: str) -> str:
+def get_bids_prefix(filename: str, folder: bool = False) -> str:
     """
     Returns the prefix of a bids file
     """
+    checker = '-' if folder is False else '_'
     prefix = ""
     idx = 0
     char = filename[idx]
-    while char != '_':
+    while char != checker:
         prefix += char
         idx += 1
         char = filename[idx]
@@ -205,7 +206,7 @@ def merge_bids_output_data(out_data: str) -> None:
     Move all the images on the s5_relabeled subfolder to the subfolder of their prefix
     """
     for split in os.listdir(out_data):
-        if get_bids_prefix(split) == "split_":
+        if get_bids_prefix(split, True) == "split":
             s5_relabeled_dir = os.path.join(out_data, split, "temp_working_dir", "s5_relabeled")
             for img in s5_relabeled_dir:
                 os.system(f"mv {s5_relabeled_dir}/{img} {out_data}/{get_bids_prefix(img)}/anat/")
