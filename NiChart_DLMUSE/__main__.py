@@ -153,6 +153,7 @@ def main() -> None:
         os.system("DLICV -i ./dummy -o ./dummy --clear_cache")
         os.system("DLMUSE -i ./dummy -o ./dummy --clear_cache")
 
+    working_dir = os.path.join(os.path.abspath(out_dir))
 
     # Run pipeline
     if args.bids == True:
@@ -182,8 +183,7 @@ def main() -> None:
 
         # TODO | FIX: Transform normal output data to BIDS output
 
-        merge_output_data(out_dir)
-        merge_bids_output_data(out_dir)
+        merge_bids_output_data(working_dir)
         remove_subfolders("../raw_temp_T1")
         remove_subfolders(out_dir)
 
