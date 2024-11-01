@@ -184,7 +184,7 @@ def main() -> None:
         # TODO | FIX: Transform normal output data to BIDS output
 
         merge_bids_output_data(working_dir)
-        remove_subfolders("../raw_temp_T1")
+        remove_subfolders("raw_temp_T1")
         remove_subfolders(out_dir)
 
     else:
