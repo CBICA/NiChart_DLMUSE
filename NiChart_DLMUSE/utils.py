@@ -178,38 +178,36 @@ def collect_T1(in_dir: str, out_dir: str) -> None:
     This function collects all the raw T1 images from the passed BIDS input dir and
     it creates a temporary folder that will act as a generic dataset with only T1 images
     """
-    if os.path.isdir("raw_temp_T1"):
-        os.system("rm -r raw_temp_T1/*")
-    else:
+    if os.path.isdir("../raw_temp_T1") and len(os.listdir("../raw_temp_T1")):
+        os.system("rm -r ../raw_temp_T1/*")
+    elif not os.path.isdir("../raw_temp_T1"):
         # create the raw_temp_T1 folder that will host all the T1 images
-        os.system("mkdir raw_temp_T1")
+        os.system("mkdir ../raw_temp_T1")
 
     os.system(f"cp -r {in_dir}/* {out_dir}/")
 
     total_subs = dir_foldercount(in_dir)
     accepted_subfolders = []
-    for i in range(1, total_subs):
-        if i < 10:
-            accepted_subfolders.append(f"sub-0{i}")
+    for i in range(total_subs):
+        if i < 9:
+            accepted_subfolders.append(f"sub-0{i + 1}")
         else:
-            accepted_subfolders.append(f"sub-{i}")
+            accepted_subfolders.append(f"sub-{i + 1}")
 
     for root, subs, files in os.walk(in_dir):
         for sub in subs:
             if(sub in accepted_subfolders):
-                os.system(f"cp {os.path.join(in_dir, sub)}/anat/* raw_temp_T1")
+                os.system(f"cp {os.path.join(in_dir, sub)}/anat/* raw_temp_T1/")
 
 
 def merge_bids_output_data(out_data: str) -> None:
     """
     Move all the images on the s5_relabeled subfolder to the subfolder of their prefix
     """
-    dlmuse_images = []
     relabeled_dir = os.path.join(out_data, "s5_relabeled")
     for img in os.listdir(relabeled_dir):
         img_prefix = get_bids_prefix(img)
         os.system(f"mv {relabeled_dir}/{img} {img_prefix}/anat/")
-
 
 def split_data(in_dir: str, N: int) -> list:
     """
