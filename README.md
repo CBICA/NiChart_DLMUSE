@@ -1,8 +1,8 @@
 # NiChart_DLMUSE
 
-[MacOS Build](https://github.com/CBICA/NiChart_DLMUSE/actions/workflows/macos_build.yml/badge.svg)
-[Ubuntu Build](https://github.com/CBICA/NiChart_DLMUSE/actions/workflows/ubuntu_build.yml/badge.svg)
-[PyPI Stable](https://img.shields.io/pypi/v/NiChart_DLMUSE)
+![MacOS Build](https://github.com/CBICA/NiChart_DLMUSE/actions/workflows/macos_build.yml/badge.svg)
+![Ubuntu Build](https://github.com/CBICA/NiChart_DLMUSE/actions/workflows/ubuntu_build.yml/badge.svg)
+![PyPI Stable](https://img.shields.io/pypi/v/NiChart_DLMUSE)
 
 ## Overview
 
