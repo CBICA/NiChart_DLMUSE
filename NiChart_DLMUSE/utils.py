@@ -2,7 +2,7 @@ import glob
 import logging
 import os
 import re
-from typing import Any
+from typing import Any, Optional
 
 import numpy as np
 import pandas as pd
@@ -14,8 +14,8 @@ logging.basicConfig(filename="pipeline.log", encoding="utf-8", level=logging.DEB
 
 
 def get_basename(
-    in_file: Any, suffix_to_remove: Any, ext_to_remove: Any = LIST_IMG_EXT
-) -> Any:
+    in_file: str, suffix_to_remove: str, ext_to_remove: list = LIST_IMG_EXT
+) -> str:
     """
     Get file basename
     - Extracts the base name from the input file
@@ -34,7 +34,7 @@ def get_basename(
     """
     # Get file basename
     out_str = os.path.basename(in_file)
-
+    num_repl: Optional[int] = None
     # Remove suffix and extension
     for tmp_ext in ext_to_remove:
         out_str, num_repl = re.subn(suffix_to_remove + tmp_ext + "$", "", out_str)

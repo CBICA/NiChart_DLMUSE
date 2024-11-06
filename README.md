@@ -1,5 +1,9 @@
 # NiChart_DLMUSE
 
+[MacOS Build](https://github.com/CBICA/NiChart_DLMUSE/actions/workflows/macos_build.yml/badge.svg)
+[Ubuntu Build](https://github.com/CBICA/NiChart_DLMUSE/actions/workflows/ubuntu_build.yml/badge.svg)
+[PyPI Stable](https://img.shields.io/pypi/v/NiChart_DLMUSE)
+
 ## Overview
 
 NiChart_DLMUSE is a package that allows the users to process their brain imaging (sMRI) data easily and efficiently.
@@ -34,7 +38,7 @@ This package uses [nnU-Net v2](https://github.com/MIC-DKFZ/nnUNet) as a basis mo
     ```
 
 3. Install NiChart_DLMUSE from GitHub Repo or PyPi
-    
+
     ```bash
     git clone https://github.com/CBICA/NiChart_DLMUSE.git
     cd NiChart_DLMUSE
@@ -48,7 +52,7 @@ This package uses [nnU-Net v2](https://github.com/MIC-DKFZ/nnUNet) as a basis mo
 5. (If needed for your system) Install PyTorch with compatible CUDA.
     You only need to run this step if you experience errors with CUDA while running NiChart_DLMUSE.
     Run "pip uninstall torch torchaudio torchvision".
-    Then follow the [PyTorch installation instructions](https://pytorch.org/get-started/locally/) for your CUDA version. 
+    Then follow the [PyTorch installation instructions](https://pytorch.org/get-started/locally/) for your CUDA version.
 
 6. Run NiChart_DLMUSE. Example usage below
 
@@ -58,7 +62,7 @@ This package uses [nnU-Net v2](https://github.com/MIC-DKFZ/nnUNet) as a basis mo
                      -d                    cpu/cuda/mps
     ```
 
-### Docker/Singularity/Apptainer-based build and installation 
+### Docker/Singularity/Apptainer-based build and installation
 
 #### Docker build
 The package comes already pre-built as a [docker container](https://hub.docker.com/repository/docker/cbica/nichart_dlmuse/general), for convenience. Please see [Usage](#usage) for more information on how to use it. Alternatively, you can build the docker image locally, like so:
@@ -103,7 +107,7 @@ NiChart_DLMUSE -h
 ```
 
 #### Troubleshooting model download failures
-Our model download process creates several deep directory structures. If you are running on Windows and your model download process fails, it may be due to Windows file path limitations. 
+Our model download process creates several deep directory structures. If you are running on Windows and your model download process fails, it may be due to Windows file path limitations.
 
 To enable long path support in Windows 10, version 1607, and later, the registry key `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem LongPathsEnabled (Type: REG_DWORD)` must exist and be set to 1.
 
@@ -125,8 +129,8 @@ docker pull cbica/nichart_dlmuse:1.0.1
 # Replace "-d cuda" with "-d mps" or "-d cpu" as needed...
 # or don't pass at all to automatically use CPU.
 # Each "/path/to/.../on/host" is a placeholder, use your actual paths!
-docker run -it --name DLMUSE_inference --rm 
-    --mount type=bind,source=/path/to/input/on/host,target=/input,readonly 
+docker run -it --name DLMUSE_inference --rm
+    --mount type=bind,source=/path/to/input/on/host,target=/input,readonly
     --mount type=bind,source=/path/to/output/on/host,target=/output
     --gpus all cbica/nichart_dlmuse -d cuda
 ```
