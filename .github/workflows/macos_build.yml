@@ -1,4 +1,4 @@
-name: NiChart_DLMUSE building test for macos
+name: MacOS Build
 
 # workflow dispatch has been added for testing purposes
 on: [push, pull_request, workflow_dispatch]
