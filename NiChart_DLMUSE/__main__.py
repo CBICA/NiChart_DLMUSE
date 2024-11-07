@@ -10,7 +10,13 @@ import os
 import threading
 
 from .dlmuse_pipeline import run_pipeline
-from .utils import merge_bids_output_data, merge_output_data, remove_subfolders, split_data, collect_T1
+from .utils import (
+    collect_T1,
+    merge_bids_output_data,
+    merge_output_data,
+    remove_subfolders,
+    split_data,
+)
 
 # VERSION = pkg_resources.require("NiChart_DLMUSE")[0].version
 VERSION = "1.0.7"
@@ -89,7 +95,7 @@ def main() -> None:
         type=bool,
         help="Specify if the provided dataset is BIDS type",
         default=False,
-        required=False
+        required=False,
     )
 
     # VERSION argument
@@ -156,7 +162,7 @@ def main() -> None:
     working_dir = os.path.join(os.path.abspath(out_dir))
 
     # Run pipeline
-    if args.bids == True:
+    if args.bids is True:
         collect_T1(in_dir, out_dir)
 
         no_threads = int(args.cores)

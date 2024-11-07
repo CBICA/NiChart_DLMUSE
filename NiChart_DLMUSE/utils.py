@@ -2,7 +2,7 @@ import glob
 import logging
 import os
 import re
-from typing import Any, Optional
+from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -135,11 +135,12 @@ def make_img_list(in_data: str) -> pd.DataFrame:
     # Return out dataframe
     return df_out
 
+
 def get_bids_prefix(filename: str, folder: bool = False) -> str:
     """
     Returns the prefix of a bids file
     """
-    checker = '-' if folder is False else '_'
+    checker = "-" if folder is False else "_"
     prefix = ""
     idx = 0
     char = filename[idx]
@@ -152,6 +153,7 @@ def get_bids_prefix(filename: str, folder: bool = False) -> str:
 
     return prefix
 
+
 def dir_size(in_dir: str) -> int:
     """
     Returns the number of images the user passed
@@ -162,6 +164,7 @@ def dir_size(in_dir: str) -> int:
             size += 1
 
     return size
+
 
 def dir_foldercount(in_dir: str) -> int:
     """
@@ -199,7 +202,7 @@ def collect_T1(in_dir: str, out_dir: str) -> None:
 
     for root, subs, files in os.walk(in_dir):
         for sub in subs:
-            if(sub in accepted_subfolders):
+            if sub in accepted_subfolders:
                 os.system(f"cp {os.path.join(in_dir, sub)}/anat/* raw_temp_T1/")
 
 
@@ -209,9 +212,14 @@ def merge_bids_output_data(out_data: str) -> None:
     """
     for split in os.listdir(out_data):
         if get_bids_prefix(split, True) == "split":
-            s5_relabeled_dir = os.path.join(out_data, split, "temp_working_dir", "s5_relabeled")
+            s5_relabeled_dir = os.path.join(
+                out_data, split, "temp_working_dir", "s5_relabeled"
+            )
             for img in os.listdir(s5_relabeled_dir):
-                os.system(f"mv {s5_relabeled_dir}/{img} {out_data}/{get_bids_prefix(img, True)}/anat/")
+                os.system(
+                    f"mv {s5_relabeled_dir}/{img} {out_data}/{get_bids_prefix(img, True)}/anat/"
+                )
+
 
 def split_data(in_dir: str, N: int) -> list:
     """
@@ -275,15 +283,9 @@ def merge_output_data(in_dir: str) -> None:
         os.system(
             f"mv {in_dir}/{dir}/temp_working_dir/s1_reorient_lps/* {in_dir}/s1_reorient_lps/"
         )
-        os.system(
-            f"mv {in_dir}/{dir}/temp_working_dir/s2_dlicv/* {in_dir}/s2_dlicv/"
-        )
-        os.system(
-            f"mv {in_dir}/{dir}/temp_working_dir/s3_masked/* {in_dir}/s3_masked/"
-        )
-        os.system(
-            f"mv {in_dir}/{dir}/temp_working_dir/s4_dlmuse/* {in_dir}/s4_dlmuse/"
-        )
+        os.system(f"mv {in_dir}/{dir}/temp_working_dir/s2_dlicv/* {in_dir}/s2_dlicv/")
+        os.system(f"mv {in_dir}/{dir}/temp_working_dir/s3_masked/* {in_dir}/s3_masked/")
+        os.system(f"mv {in_dir}/{dir}/temp_working_dir/s4_dlmuse/* {in_dir}/s4_dlmuse/")
         os.system(
             f"mv {in_dir}/{dir}/temp_working_dir/s5_relabeled/* {in_dir}/s5_relabeled/"
         )
