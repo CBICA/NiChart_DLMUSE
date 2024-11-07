@@ -21,7 +21,7 @@ setup(
     install_requires=[
         "torch",
         "DLICV",
-        "DLMSUE",
+        "DLMUSE",
         "huggingface_hub",
         "scipy",
         "nibabel",
