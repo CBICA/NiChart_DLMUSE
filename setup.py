@@ -19,7 +19,7 @@ setup(
     url="https://github.com/CBICA/NiChart_DLMUSE",
     python_requires=">=3.9",
     install_requires=[
-        "torch",
+        "torch<=2.2.1",
         "DLICV",
         "DLMUSE",
         "huggingface_hub",
