@@ -77,6 +77,12 @@ def remove_common_suffix(list_files: list) -> list:
 def make_img_list(in_data: str) -> pd.DataFrame:
     """
     Make a list of images
+
+    :param in_data: the input directory
+    :type in_data: str
+
+    :return: a dataframe with the information about the passed data
+    :rtype: pd.DataFrame
     """
 
     # Read list of input images
@@ -139,6 +145,14 @@ def make_img_list(in_data: str) -> pd.DataFrame:
 def get_bids_prefix(filename: str, folder: bool = False) -> str:
     """
     Returns the prefix of a bids file
+    :param filename: The passed file
+    :type filename: str
+
+    :param folder: True if the passed filename is a folder or False if it's not
+    :type folder: bool
+
+    :return: The prefix of the bids i/o
+    :rtype: str
     """
     checker = "-" if folder is False else "_"
     prefix = ""
@@ -157,6 +171,12 @@ def get_bids_prefix(filename: str, folder: bool = False) -> str:
 def dir_size(in_dir: str) -> int:
     """
     Returns the number of images the user passed
+
+    :param in_dir: the input directory
+    :type in_dir: str
+
+    :return: The size of the passsed directory
+    :rtype: int
     """
     size = 0
     for path in os.listdir(in_dir):
@@ -169,6 +189,12 @@ def dir_size(in_dir: str) -> int:
 def dir_foldercount(in_dir: str) -> int:
     """
     Returns the number of subfolders that the input directory has
+
+    :param in_dir: the input directory
+    :type in_dir: str
+
+    :return: the number of folders in the input directory
+    :rtype: int
     """
 
     size = 0
@@ -183,6 +209,14 @@ def collect_T1(in_dir: str, out_dir: str) -> None:
     """
     This function collects all the raw T1 images from the passed BIDS input dir and
     it creates a temporary folder that will act as a generic dataset with only T1 images
+
+    :param in_dir: the input directory
+    :type in_dir: str
+
+    :param out_dir: the output directory
+    :type out_dir: str
+
+    :rtype: None
     """
     if os.path.isdir("raw_temp_T1") and len(os.listdir("raw_temp_T1")):
         os.system("rm -r raw_temp_T1/*")
@@ -209,6 +243,11 @@ def collect_T1(in_dir: str, out_dir: str) -> None:
 def merge_bids_output_data(out_data: str) -> None:
     """
     Move all the images on the s5_relabeled subfolder to the subfolder of their prefix
+
+    :param out_data: the output_directory
+    :type out_data: str
+
+    :rtype: None
     """
     for split in os.listdir(out_data):
         if get_bids_prefix(split, True) == "split":
@@ -225,6 +264,15 @@ def split_data(in_dir: str, N: int) -> list:
     """
     Splits the input data directory into subfolders of size.
     N should be > 0 and the number of files in each subfolder should be > 0 as well.
+
+    :param in_dir: the input directory
+    :type in_dir: str
+
+    :param N: the number of generated split folders
+    :type N: int
+
+    :return: a list of the subfolders name
+    :rtype: list
     """
     assert N > 0
     data_size = dir_size(in_dir)
@@ -266,6 +314,11 @@ def split_data(in_dir: str, N: int) -> list:
 def remove_subfolders(in_dir: str) -> None:
     """
     Removes all the split_* subolders from the input folder
+
+    :param in_dir: the input directory
+    :type in_dir: str
+
+    :rtype: None
     """
     os.system(f"rm -r {in_dir}/split_*")
 
@@ -274,6 +327,11 @@ def merge_output_data(in_dir: str) -> None:
     """
     Takes all the results from the temp_working_fir and moves them into
     the output folder
+
+    :param in_dir: the input directory
+    :type in_dir: str
+
+    :rtype: None
     """
 
     os.system(f"mkdir {in_dir}/s1_reorient_lps")

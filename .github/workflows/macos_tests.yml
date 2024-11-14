@@ -20,4 +20,9 @@ jobs:
           python -m pip install .
       - name: Run unit tests
         run: |
-          cd tests/ && pytest --cov=../
+          cd tests/ && pytest --cov=../ --cov-report=xml
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: CBICA/NiChart_DLMUSE
