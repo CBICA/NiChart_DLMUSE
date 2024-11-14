@@ -1,5 +1,4 @@
 from pathlib import Path
-from re import A
 
 from setuptools import find_packages, setup
 
@@ -26,7 +25,7 @@ setup(
         "scipy",
         "nibabel",
         "argparse",
-        "pathlib"
+        "pathlib",
     ],
     entry_points={"console_scripts": ["NiChart_DLMUSE = NiChart_DLMUSE.__main__:main"]},
     classifiers=[

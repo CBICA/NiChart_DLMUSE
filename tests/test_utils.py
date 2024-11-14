@@ -1,43 +1,53 @@
-from dateutil.relativedelta import WE
-import pytest
 import os
 
-from NiChart_DLMUSE.utils import *
+import pandas as pd
+
+from NiChart_DLMUSE.utils import (
+    get_basename,
+    get_bids_prefix,
+    make_img_list,
+    remove_common_suffix,
+    remove_subfolders,
+    split_data,
+)
 
 
-def testing_get_basename():
+def testing_get_basename() -> None:
     test_file: str = "test.nii.gz"
     assert get_basename(test_file, "", [".nii", ".nii.gz"]) == "test"
 
-    test_file: str = "test.nii"
+    test_file = "test.nii"
     assert get_basename(test_file, "", [".nii", ".nii.gz"]) == "test"
 
-def testing_remove_common_suffix():
+
+def testing_remove_common_suffix() -> None:
     test_files: list = ["test1.nii.gz", "test2.nii.gz", "test3.nii.gz", "test4.nii.gz"]
     correct_res: list = ["test1", "test2", "test3", "test4"]
     assert remove_common_suffix(test_files) == correct_res
 
-    test_files = ["test1.nii.gz"] # WARNING: Single case, review if needed
+    test_files = ["test1.nii.gz"]  # WARNING: Single case, review if needed
     correct_res = ["test1.nii.gz"]
 
     assert remove_common_suffix(test_files) == correct_res
 
-def testing_make_img_list():
+
+def testing_make_img_list() -> None:
     os.system("mkdir test_dataset")
     for i in range(3):
         os.system(f"touch test_dataset/IXI10{i}-Guys-0000-T1.nii.gz")
 
     df_img: pd.DataFrame = make_img_list("test_dataset")
-    df_img = df_img.sort_values(by='MRID')
+    df_img = df_img.sort_values(by="MRID")
     info = {
         "MRID": [f"IXI10{i}" for i in range(3)],
-        "img_path": [os.path.abspath(f"test_dataset/IXI10{i}-Guys-0000-T1.nii.gz") for i in range(3)],
+        "img_path": [
+            os.path.abspath(f"test_dataset/IXI10{i}-Guys-0000-T1.nii.gz")
+            for i in range(3)
+        ],
         "img_base": [f"IXI10{i}-Guys-0000-T1.nii.gz" for i in range(3)],
-        "img_prefix": [f"IXI10{i}-Guys-0000-T1" for i in range(3)]
+        "img_prefix": [f"IXI10{i}-Guys-0000-T1" for i in range(3)],
     }
-    df_test:pd.DataFrame = pd.DataFrame(
-        info
-    )
+    df_test: pd.DataFrame = pd.DataFrame(info)
 
     assert list(df_img["MRID"]) == list(df_test["MRID"])
     assert list(df_img["img_path"]) == list(df_test["img_path"])
@@ -47,10 +57,11 @@ def testing_make_img_list():
     os.system("rm -r test_dataset")
 
 
-def testing_get_bids_prefix():
+def testing_get_bids_prefix() -> None:
     pass
 
-def testing_collect_T1():
+
+def testing_collect_T1() -> None:
     os.system("mkdir test_collect_T1")
 
     # Generate the BIDS input folder for testing
@@ -64,11 +75,12 @@ def testing_collect_T1():
 
     os.system("rm -r test_collect_T1")
 
-def testing_split_data():
+
+def testing_split_data() -> None:
     if os.path.exists("test_split_data"):
         os.system("rm -r test_split_data")
 
-    def generate_random_test_folders(no_files: int = 15):
+    def generate_random_test_folders(no_files: int = 15) -> None:
         os.system("mkdir test_split_data")
         for i in range(no_files):
             if i < 10:
@@ -76,9 +88,9 @@ def testing_split_data():
             else:
                 os.system(f"touch test_split_data/IXI-1{i}-Guys-0000-T1.nii.gz")
 
-    def check_subfolder_count(no_folders: int, count_in: int, count_last: int):
+    def check_subfolder_count(no_folders: int, count_in: int, count_last: int) -> None:
         subfldr_files = []
-        for (idx, subfldr) in enumerate(os.listdir("test_split_data")):
+        for idx, subfldr in enumerate(os.listdir("test_split_data")):
             joined = os.path.join("test_split_data", subfldr)
             if idx < no_folders and os.path.isdir(joined):
                 subfldr_files.append(len(os.listdir(joined)))
@@ -94,7 +106,11 @@ def testing_split_data():
             else:
                 last_count += 1
 
-        assert (last_count == 1 if count_in != count_last else last_count == 0) and (in_count == no_folders - 1 if count_in != count_last else in_count == no_folders)
+        assert (last_count == 1 if count_in != count_last else last_count == 0) and (
+            in_count == no_folders - 1
+            if count_in != count_last
+            else in_count == no_folders
+        )
 
     generate_random_test_folders(12)
     subfolders: list = split_data("test_split_data", 4)
@@ -125,8 +141,9 @@ def testing_split_data():
     check_subfolder_count(1, 1, 1)
     os.system("rm -r test_split_data")
 
-def testing_remove_subfolders():
-    def generate_random_test_folders(no_files: int = 15):
+
+def testing_remove_subfolders() -> None:
+    def generate_random_test_folders(no_files: int = 15) -> None:
         os.system("mkdir test_split_data")
         for i in range(no_files):
             if i < 10:
