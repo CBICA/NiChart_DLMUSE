@@ -249,9 +249,16 @@ def split_data(in_dir: str, N: int) -> list:
             os.system(f"cp {file} {in_dir}/split_{current_folder}")
             current_file += 1
 
-    if current_file < no_files_in_folders:
+    if current_file <= no_files_in_folders:
         # Don't forget the last split if it has less files than the maximum files in a subfolder
         subfolders.append(f"{in_dir}/split_{current_folder}")
+
+    for subfldr in os.listdir(in_dir):
+        joined_folder = os.path.join(in_dir, subfldr)
+        if os.path.isdir(joined_folder):
+            if len(os.listdir(joined_folder)) == 0:
+                os.system(f"rm -r {joined_folder}")
+                subfolders.remove(f"{joined_folder}")
 
     return subfolders
 
