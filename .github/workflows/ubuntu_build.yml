@@ -1,4 +1,4 @@
-name: NiChart_DLMUSE building test for ubuntu
+name: Ubuntu Build
 
 # workflow dispatch has been added for testing purposes
 on: [push, pull_request, workflow_dispatch]
@@ -24,6 +24,7 @@ jobs:
         run: conda run -n NCP conda install pip
       - name: Build NiChart_DLMUSE from source
         run: |
+          python -m pip cache purge
           pip install setuptools twine wheel
           pip install -r requirements.txt
           python3 -m pip install -e .

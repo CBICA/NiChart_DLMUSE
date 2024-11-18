@@ -10,10 +10,16 @@ import os
 import threading
 
 from .dlmuse_pipeline import run_pipeline
-from .utils import merge_output_data, remove_subfolders, split_data
+from .utils import (
+    collect_T1,
+    merge_bids_output_data,
+    merge_output_data,
+    remove_subfolders,
+    split_data,
+)
 
 # VERSION = pkg_resources.require("NiChart_DLMUSE")[0].version
-VERSION = 1.0
+VERSION = "1.0.7"
 
 
 def main() -> None:
@@ -24,7 +30,7 @@ def main() -> None:
     ICV calculation, brain segmentation, and ROI extraction pipelines for
     structural MRI data.
     required arguments:
-        [-i, --in_data]   Input images. The input should be:
+        [-i, --in_dir]   Input images. The input should be:
                           - a single image file (.nii.gz or .nii), or
                           - a directory containing image files, or
                           - a list with the full path for each input image (one in each row)
@@ -35,7 +41,7 @@ def main() -> None:
         [-h, --help]    Show this help message and exit.
         [-V, --version] Show program's version number and exit.
         EXAMPLE USAGE:
-        NiChart_DLMUSE  --in_data                     /path/to/input     \
+        NiChart_DLMUSE  --in_dir                     /path/to/input     \
                         --out_dir                    /path/to/output    \
     """.format(
         VERSION=VERSION
@@ -48,7 +54,7 @@ def main() -> None:
     # INDIR argument
     parser.add_argument(
         "-i",
-        "--in_data",
+        "--in_dir",
         type=str,
         help="Input images.",
         default=None,
@@ -81,6 +87,14 @@ def main() -> None:
         type=str,
         help="Number of cores",
         default=4,
+        required=False,
+    )
+
+    parser.add_argument(
+        "--bids",
+        type=bool,
+        help="Specify if the provided dataset is BIDS type",
+        default=False,
         required=False,
     )
 
@@ -122,7 +136,7 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    in_data = args.in_data
+    in_dir = args.in_dir
     out_dir = args.out_dir
     device = args.device
     dlicv_extra_args = args.dlicv_args
@@ -133,7 +147,11 @@ def main() -> None:
     print(args)
     print()
 
-    if len(os.listdir(out_dir)) != 0:
+    if not os.path.isdir(out_dir):
+        print(f"Can't find {out_dir}, creating it...")
+        os.system(f"mkdir {out_dir}")
+
+    elif len(os.listdir(out_dir)) != 0:
         print(f"Emptying output folder: {out_dir}...")
         os.system(f"rm -r {out_dir}/*")
 
@@ -141,10 +159,41 @@ def main() -> None:
         os.system("DLICV -i ./dummy -o ./dummy --clear_cache")
         os.system("DLMUSE -i ./dummy -o ./dummy --clear_cache")
 
+    working_dir = os.path.join(os.path.abspath(out_dir))
+
     # Run pipeline
-    if int(args.cores) > 1:
-        no_threads = int(args.cores)  # for now
-        subfolders = split_data(in_data, no_threads)
+    if args.bids is True:
+        collect_T1(in_dir, out_dir)
+
+        no_threads = int(args.cores)
+        subfolders = split_data("raw_temp_T1", no_threads)
+        threads = []
+        for i in range(len(subfolders)):
+            curr_out_dir = out_dir + f"/split_{i}"
+            curr_thread = threading.Thread(
+                target=run_pipeline,
+                args=(
+                    subfolders[i],
+                    curr_out_dir,
+                    device,
+                    dlmuse_extra_args,
+                    dlicv_extra_args,
+                    i,
+                ),
+            )
+            curr_thread.start()
+            threads.append(curr_thread)
+
+        for t in threads:
+            t.join()
+
+        merge_bids_output_data(working_dir)
+        remove_subfolders("raw_temp_T1")
+        remove_subfolders(out_dir)
+
+    else:
+        no_threads = int(args.cores)
+        subfolders = split_data(in_dir, no_threads)
 
         threads = []
         for i in range(len(subfolders)):
@@ -167,10 +216,8 @@ def main() -> None:
             t.join()
 
         merge_output_data(out_dir)
-        remove_subfolders(in_data)
+        remove_subfolders(in_dir)
         remove_subfolders(out_dir)
-    else:
-        run_pipeline(in_data, out_dir, device, dlmuse_extra_args, dlicv_extra_args)
 
 
 if __name__ == "__main__":
