@@ -1,0 +1,23 @@
+name: ubuntu tests
+
+# workflow dispatch has been added for testing purposes
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ["ubuntu-latest"]
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install spare scores
+        run: |
+          python -m pip cache purge
+          pip install -r requirements.txt
+          pip install setuptools twine wheel
+          python -m pip install .
+      - name: Run unit tests
+        run: |
+          cd tests && pytest

@@ -1,5 +1,13 @@
-nibabel==5.2
-torch>=2.2.1
-nnunetv2==2.5.1
-argparse
+# Main pipeline
+torch==2.2.1
+DLICV
+DLMUSE
+nibabel>=5.2
+scipy
+
+# Developer tools
+pytest
+pytest-cov
 huggingface_hub
+argparse
+pathlib

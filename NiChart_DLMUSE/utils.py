@@ -1,17 +1,21 @@
 import glob
+import logging
 import os
 import re
-from typing import Any
+from typing import Optional
 
 import numpy as np
 import pandas as pd
 
 LIST_IMG_EXT = [".nii", ".nii.gz"]
 
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename="pipeline.log", encoding="utf-8", level=logging.DEBUG)
+
 
 def get_basename(
-    in_file: Any, suffix_to_remove: Any, ext_to_remove: Any = LIST_IMG_EXT
-) -> Any:
+    in_file: str, suffix_to_remove: str, ext_to_remove: list = LIST_IMG_EXT
+) -> str:
     """
     Get file basename
     - Extracts the base name from the input file
@@ -30,7 +34,7 @@ def get_basename(
     """
     # Get file basename
     out_str = os.path.basename(in_file)
-
+    num_repl: Optional[int] = None
     # Remove suffix and extension
     for tmp_ext in ext_to_remove:
         out_str, num_repl = re.subn(suffix_to_remove + tmp_ext + "$", "", out_str)
@@ -73,6 +77,12 @@ def remove_common_suffix(list_files: list) -> list:
 def make_img_list(in_data: str) -> pd.DataFrame:
     """
     Make a list of images
+
+    :param in_data: the input directory
+    :type in_data: str
+
+    :return: a dataframe with the information about the passed data
+    :rtype: pd.DataFrame
     """
 
     # Read list of input images
@@ -92,14 +102,16 @@ def make_img_list(in_data: str) -> pd.DataFrame:
     else:
         with open(in_data, "r") as file:
             lines = file.readlines()
-            nii_files = [
-                os.path.abspath(line.strip())
-                for line in lines
-                if line.strip().endswith(LIST_IMG_EXT)  # type:ignore
-            ]
+            nii_files = []
+            for line in lines:
+                is_nifti = False
+                for tmp_ext in LIST_IMG_EXT:
+                    if line.strip().endswith(tmp_ext):
+                        is_nifti = True
+                if is_nifti is True:
+                    nii_files.append(os.path.abspath(line.strip()))
 
     nii_files = np.array(nii_files)
-    print(f"Detected {nii_files.shape[0]} images ...")  # type:ignore
 
     # Check if images exist
     if len(nii_files) > 0:
@@ -109,7 +121,9 @@ def make_img_list(in_data: str) -> pd.DataFrame:
                 flag[i] = 1
         nii_files = nii_files[flag == 1]
 
-    print(f"Number of valid images is {len(nii_files)} ...")
+    logging.info(
+        f"Detected {nii_files.shape[0]} images. Valid images are {len(nii_files)}..."  # type:ignore
+    )
     # Create a dataframe
     df_out = pd.DataFrame(data=nii_files, columns=["img_path"])
 
@@ -126,3 +140,221 @@ def make_img_list(in_data: str) -> pd.DataFrame:
 
     # Return out dataframe
     return df_out
+
+
+def get_bids_prefix(filename: str, folder: bool = False) -> str:
+    """
+    Returns the prefix of a bids file
+    :param filename: The passed file
+    :type filename: str
+
+    :param folder: True if the passed filename is a folder or False if it's not
+    :type folder: bool
+
+    :return: The prefix of the bids i/o
+    :rtype: str
+    """
+    checker = "-" if folder is False else "_"
+    prefix = ""
+    idx = 0
+    char = filename[idx]
+    while char != checker:
+        prefix += char
+        idx += 1
+        if idx >= len(filename):
+            break
+        char = filename[idx]
+
+    return prefix
+
+
+def dir_size(in_dir: str) -> int:
+    """
+    Returns the number of images the user passed
+
+    :param in_dir: the input directory
+    :type in_dir: str
+
+    :return: The size of the passsed directory
+    :rtype: int
+    """
+    size = 0
+    for path in os.listdir(in_dir):
+        if os.path.isfile(os.path.join(in_dir, path)):
+            size += 1
+
+    return size
+
+
+def dir_foldercount(in_dir: str) -> int:
+    """
+    Returns the number of subfolders that the input directory has
+
+    :param in_dir: the input directory
+    :type in_dir: str
+
+    :return: the number of folders in the input directory
+    :rtype: int
+    """
+
+    size = 0
+    for path in os.listdir(in_dir):
+        if os.path.isdir(os.path.join(in_dir, path)):
+            size += 1
+
+    return size
+
+
+def collect_T1(in_dir: str, out_dir: str) -> None:
+    """
+    This function collects all the raw T1 images from the passed BIDS input dir and
+    it creates a temporary folder that will act as a generic dataset with only T1 images
+
+    :param in_dir: the input directory
+    :type in_dir: str
+
+    :param out_dir: the output directory
+    :type out_dir: str
+
+    :rtype: None
+    """
+    if os.path.isdir("raw_temp_T1") and len(os.listdir("raw_temp_T1")):
+        os.system("rm -r raw_temp_T1/*")
+    elif not os.path.isdir("raw_temp_T1"):
+        # create the raw_temp_T1 folder that will host all the T1 images
+        os.system("mkdir raw_temp_T1")
+
+    os.system(f"cp -r {in_dir}/* {out_dir}/")
+
+    total_subs = dir_foldercount(in_dir)
+    accepted_subfolders = []
+    for i in range(total_subs):
+        if i < 9:
+            accepted_subfolders.append(f"sub-0{i + 1}")
+        else:
+            accepted_subfolders.append(f"sub-{i + 1}")
+
+    for root, subs, files in os.walk(in_dir):
+        for sub in subs:
+            if sub in accepted_subfolders:
+                os.system(f"cp {os.path.join(in_dir, sub)}/anat/* raw_temp_T1/")
+
+
+def merge_bids_output_data(out_data: str) -> None:
+    """
+    Move all the images on the s5_relabeled subfolder to the subfolder of their prefix
+
+    :param out_data: the output_directory
+    :type out_data: str
+
+    :rtype: None
+    """
+    for split in os.listdir(out_data):
+        if get_bids_prefix(split, True) == "split":
+            s5_relabeled_dir = os.path.join(
+                out_data, split, "temp_working_dir", "s5_relabeled"
+            )
+            for img in os.listdir(s5_relabeled_dir):
+                os.system(
+                    f"mv {s5_relabeled_dir}/{img} {out_data}/{get_bids_prefix(img, True)}/anat/"
+                )
+
+
+def split_data(in_dir: str, N: int) -> list:
+    """
+    Splits the input data directory into subfolders of size.
+    N should be > 0 and the number of files in each subfolder should be > 0 as well.
+
+    :param in_dir: the input directory
+    :type in_dir: str
+
+    :param N: the number of generated split folders
+    :type N: int
+
+    :return: a list of the subfolders name
+    :rtype: list
+    """
+    assert N > 0
+    data_size = dir_size(in_dir)
+    no_files_in_folders = (
+        data_size // N if (data_size % N == 0) else (data_size // N) + 1
+    )
+    assert no_files_in_folders > 0
+    subfolders = []
+
+    current_folder = 1
+    current_file = 0
+    os.system(f"mkdir {in_dir}/split_{current_folder}")
+    for img in os.listdir(in_dir):
+        if current_file >= no_files_in_folders:
+            subfolders.append(f"{in_dir}/split_{current_folder}")
+            current_folder += 1
+            os.system(f"mkdir {in_dir}/split_{current_folder}")
+            current_file = 0
+
+        file = os.path.join(in_dir, img)
+        if os.path.isfile(file):
+            os.system(f"cp {file} {in_dir}/split_{current_folder}")
+            current_file += 1
+
+    if current_file <= no_files_in_folders:
+        # Don't forget the last split if it has less files than the maximum files in a subfolder
+        subfolders.append(f"{in_dir}/split_{current_folder}")
+
+    for subfldr in os.listdir(in_dir):
+        joined_folder = os.path.join(in_dir, subfldr)
+        if os.path.isdir(joined_folder):
+            if len(os.listdir(joined_folder)) == 0:
+                os.system(f"rm -r {joined_folder}")
+                subfolders.remove(f"{joined_folder}")
+
+    return subfolders
+
+
+def remove_subfolders(in_dir: str) -> None:
+    """
+    Removes all the split_* subolders from the input folder
+
+    :param in_dir: the input directory
+    :type in_dir: str
+
+    :rtype: None
+    """
+    os.system(f"rm -r {in_dir}/split_*")
+
+
+def merge_output_data(in_dir: str) -> None:
+    """
+    Takes all the results from the temp_working_fir and moves them into
+    the output folder
+
+    :param in_dir: the input directory
+    :type in_dir: str
+
+    :rtype: None
+    """
+
+    os.system(f"mkdir {in_dir}/s1_reorient_lps")
+    os.system(f"mkdir {in_dir}/s2_dlicv")
+    os.system(f"mkdir {in_dir}/s3_masked")
+    os.system(f"mkdir {in_dir}/s4_dlmuse")
+    os.system(f"mkdir {in_dir}/s5_relabeled")
+    os.system(f"mkdir {in_dir}/s6_combined")
+
+    for dir in os.listdir(in_dir):
+        if dir == "results":
+            continue
+
+        os.system(
+            f"mv {in_dir}/{dir}/temp_working_dir/s1_reorient_lps/* {in_dir}/s1_reorient_lps/"
+        )
+        os.system(f"mv {in_dir}/{dir}/temp_working_dir/s2_dlicv/* {in_dir}/s2_dlicv/")
+        os.system(f"mv {in_dir}/{dir}/temp_working_dir/s3_masked/* {in_dir}/s3_masked/")
+        os.system(f"mv {in_dir}/{dir}/temp_working_dir/s4_dlmuse/* {in_dir}/s4_dlmuse/")
+        os.system(
+            f"mv {in_dir}/{dir}/temp_working_dir/s5_relabeled/* {in_dir}/s5_relabeled/"
+        )
+        os.system(
+            f"mv {in_dir}/{dir}/temp_working_dir/s6_combined/* {in_dir}/s6_combined/"
+        )
+        os.system(f"mv {in_dir}/{dir}/*.nii.gz {in_dir}/")
