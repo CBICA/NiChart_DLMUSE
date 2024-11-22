@@ -4,9 +4,7 @@ import os
 import pathlib
 import re
 import shutil
-from functools import reduce
 from typing import Optional
-
 
 import numpy as np
 import pandas as pd
@@ -223,15 +221,15 @@ def collect_T1(in_dir: str, out_dir: str) -> None:
     :rtype: None
     """
     if os.path.isdir("raw_temp_T1") and len(os.listdir("raw_temp_T1")):
-        #os.system("rm -r raw_temp_T1/*")
-        
-        for path in pathlib.path("raw_temp_T1").glob("**/*"):
+        # os.system("rm -r raw_temp_T1/*")
+
+        for path in pathlib.Path("raw_temp_T1").glob("**/*"):
             shutil.rmtree(path)
     elif not os.path.isdir("raw_temp_T1"):
         # create the raw_temp_T1 folder that will host all the T1 images
         os.mkdir("raw_temp_T1")
 
-    #os.system(f"cp -r {in_dir}/* {out_dir}/")
+    # os.system(f"cp -r {in_dir}/* {out_dir}/")
     for file in pathlib.Path(in_dir).glob("**/*"):
         shutil.copytree(file, pathlib.Path(out_dir), dirs_exist_ok=True)
 
@@ -247,7 +245,7 @@ def collect_T1(in_dir: str, out_dir: str) -> None:
         for sub in subs:
             if sub in accepted_subfolders:
                 shutil.copytree(pathlib.Path(in_dir) / sub / "anat", "raw_temp_T1/")
-                #os.system(f"cp {os.path.join(in_dir, sub)}/anat/* raw_temp_T1/")
+                # os.system(f"cp {os.path.join(in_dir, sub)}/anat/* raw_temp_T1/")
 
 
 def merge_bids_output_data(out_data: str) -> None:
@@ -265,10 +263,13 @@ def merge_bids_output_data(out_data: str) -> None:
                 out_data, split, "temp_working_dir", "s5_relabeled"
             )
             for img in os.listdir(s5_relabeled_dir):
-                #os.system(
+                # os.system(
                 #    f"mv {s5_relabeled_dir}/{img} {out_data}/{get_bids_prefix(img, True)}/anat/"
-                #)
-                shutil.move(pathlib.Path(s5_relabeled_dir) / img, pathlib.Path(out_data) / get_bids_prefix(img, True) / "anat" / img)
+                # )
+                shutil.move(
+                    pathlib.Path(s5_relabeled_dir) / img,
+                    pathlib.Path(out_data) / get_bids_prefix(img, True) / "anat" / img,
+                )
 
 
 def split_data(in_dir: str, N: int) -> list:
@@ -300,7 +301,9 @@ def split_data(in_dir: str, N: int) -> list:
         if current_file >= no_files_in_folders:
             subfolders.append(f"{in_dir}/split_{current_folder}")
             current_folder += 1
-            pathlib.Path(f"{in_dir}/split_{current_folder}").mkdir(parents=True, exist_ok=True)
+            pathlib.Path(f"{in_dir}/split_{current_folder}").mkdir(
+                parents=True, exist_ok=True
+            )
             current_file = 0
 
         file = os.path.join(in_dir, img)
@@ -317,8 +320,8 @@ def split_data(in_dir: str, N: int) -> list:
         if os.path.isdir(joined_folder):
             if len(os.listdir(joined_folder)) == 0:
                 shutil.rmtree(joined_folder)
-                if f"joined_folder" in subfolders:
-                    subfolders.remove(f"{joined_folder}")
+                if str(joined_folder) in subfolders:
+                    subfolders.remove(str(joined_folder))
 
     return subfolders
 
@@ -333,7 +336,7 @@ def remove_subfolders(in_dir: str) -> None:
     :rtype: None
     """
     for path in pathlib.Path(in_dir).glob("**/split_*"):
-        #os.system(f"rm -r {in_dir}/split_*")
+        # os.system(f"rm -r {in_dir}/split_*")
         if path.is_file():
             path.unlink()
         elif path.is_dir():
@@ -351,7 +354,6 @@ def merge_output_data(in_dir: str) -> None:
     :rtype: None
     """
 
-
     subdirs = [f for f in os.listdir(in_dir)]
     print(f"Subdirs: {subdirs}")
     os.mkdir(pathlib.Path(in_dir) / "s1_reorient_lps")
@@ -360,7 +362,15 @@ def merge_output_data(in_dir: str) -> None:
     os.mkdir(pathlib.Path(in_dir) / "s4_dlmuse")
     os.mkdir(pathlib.Path(in_dir) / "s5_relabeled")
     os.mkdir(pathlib.Path(in_dir) / "s6_combined")
-    ignored_subdirs = ["results", "s1_reorient_lps", "s2_dlicv", "s3_masked", "s4_dlmuse", "s5_relabeled", "s6_combined"]
+    ignored_subdirs = [
+        "results",
+        "s1_reorient_lps",
+        "s2_dlicv",
+        "s3_masked",
+        "s4_dlmuse",
+        "s5_relabeled",
+        "s6_combined",
+    ]
     found_dlmuse_dfs = []
     for dir in subdirs:
         if dir in ignored_subdirs:
@@ -368,28 +378,34 @@ def merge_output_data(in_dir: str) -> None:
         if os.path.isdir(pathlib.Path(in_dir) / dir):
             src = pathlib.Path(in_dir) / dir / "temp_working_dir"
             dst = pathlib.Path(in_dir)
-            shutil.copytree(src / "s1_reorient_lps", dst / "s1_reorient_lps", dirs_exist_ok=True)
+            shutil.copytree(
+                src / "s1_reorient_lps", dst / "s1_reorient_lps", dirs_exist_ok=True
+            )
             shutil.copytree(src / "s2_dlicv", dst / "s2_dlicv", dirs_exist_ok=True)
             shutil.copytree(src / "s3_masked", dst / "s3_masked", dirs_exist_ok=True)
             shutil.copytree(src / "s4_dlmuse", dst / "s4_dlmuse", dirs_exist_ok=True)
-            shutil.copytree(src / "s5_relabeled", dst / "s5_relabeled", dirs_exist_ok=True)
-            shutil.copytree(src / "s6_combined", dst / "s6_combined", dirs_exist_ok=True)
-            
+            shutil.copytree(
+                src / "s5_relabeled", dst / "s5_relabeled", dirs_exist_ok=True
+            )
+            shutil.copytree(
+                src / "s6_combined", dst / "s6_combined", dirs_exist_ok=True
+            )
+
             shutil.rmtree(src / "s1_reorient_lps")
             shutil.rmtree(src / "s2_dlicv")
             shutil.rmtree(src / "s3_masked")
             shutil.rmtree(src / "s4_dlmuse")
             shutil.rmtree(src / "s5_relabeled")
             shutil.rmtree(src / "s6_combined")
-            
+
         # Move top-level misc results
         for file in (pathlib.Path(in_dir) / dir).glob("*.nii.gz"):
             shutil.move(file, pathlib.Path(in_dir))
-        
+
         for file in (pathlib.Path(in_dir) / dir).glob("*_DLMUSE_Volumes.csv"):
             df = pd.read_csv(file)
             found_dlmuse_dfs.append(df)
             shutil.move(file, pathlib.Path(in_dir))
-            
+
     final_dlmuse_df = pd.concat(found_dlmuse_dfs).reset_index(drop=True)
     final_dlmuse_df.to_csv(pathlib.Path(in_dir) / "DLMUSE_Volumes.csv", index=False)
