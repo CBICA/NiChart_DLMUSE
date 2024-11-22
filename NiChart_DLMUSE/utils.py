@@ -317,7 +317,7 @@ def split_data(in_dir: str, N: int) -> list:
         if os.path.isdir(joined_folder):
             if len(os.listdir(joined_folder)) == 0:
                 shutil.rmtree(joined_folder)
-                if f"joined_folder" in subfolders:
+                if f"{joined_folder}" in subfolders:
                     subfolders.remove(f"{joined_folder}")
 
     return subfolders
