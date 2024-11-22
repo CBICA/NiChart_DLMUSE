@@ -6,8 +6,11 @@ Use of this source code is governed by license located in license file: https://
 """
 
 import argparse
+import glob
 import os
+import shutil
 import threading
+
 
 from .dlmuse_pipeline import run_pipeline
 from .utils import (
@@ -149,11 +152,16 @@ def main() -> None:
 
     if not os.path.isdir(out_dir):
         print(f"Can't find {out_dir}, creating it...")
-        os.system(f"mkdir {out_dir}")
+        #os.system(f"mkdir {out_dir}")
+        os.mkdir(out_dir)
 
     elif len(os.listdir(out_dir)) != 0:
         print(f"Emptying output folder: {out_dir}...")
-        os.system(f"rm -r {out_dir}/*")
+        for root, dirs, files in os.walk(out_dir):
+            for f in files:
+                os.unlink(os.path.join(root, f))
+            for d in dirs:
+                shutil.rmtree(os.path.join(root, d))
 
     if args.clear_cache:
         os.system("DLICV -i ./dummy -o ./dummy --clear_cache")
@@ -163,61 +171,68 @@ def main() -> None:
 
     # Run pipeline
     if args.bids is True:
-        collect_T1(in_dir, out_dir)
+        if int(args.cores) > 1:
+            collect_T1(in_dir, out_dir)
 
-        no_threads = int(args.cores)
-        subfolders = split_data("raw_temp_T1", no_threads)
-        threads = []
-        for i in range(len(subfolders)):
-            curr_out_dir = out_dir + f"/split_{i}"
-            curr_thread = threading.Thread(
-                target=run_pipeline,
-                args=(
-                    subfolders[i],
-                    curr_out_dir,
-                    device,
-                    dlmuse_extra_args,
-                    dlicv_extra_args,
-                    i,
-                ),
-            )
-            curr_thread.start()
-            threads.append(curr_thread)
+            no_threads = int(args.cores)
+            subfolders = split_data("raw_temp_T1", no_threads)
+            threads = []
+            for i in range(len(subfolders)):
+                curr_out_dir = out_dir + f"/split_{i}"
+                curr_thread = threading.Thread(
+                    target=run_pipeline,
+                    args=(
+                        subfolders[i],
+                        curr_out_dir,
+                        device,
+                        dlmuse_extra_args,
+                        dlicv_extra_args,
+                        i,
+                    ),
+                )
+                curr_thread.start()
+                threads.append(curr_thread)
 
-        for t in threads:
-            t.join()
+            for t in threads:
+                t.join()
 
-        merge_bids_output_data(working_dir)
-        remove_subfolders("raw_temp_T1")
-        remove_subfolders(out_dir)
+            merge_bids_output_data(working_dir)
+            remove_subfolders("raw_temp_T1")
+            remove_subfolders(out_dir)
+        else: # No core parallelization
+            run_pipeline(in_dir, out_dir, device, dlmuse_extra_args, dlicv_extra_args)
+            
 
-    else:
-        no_threads = int(args.cores)
-        subfolders = split_data(in_dir, no_threads)
+    else: # Non-BIDS 
+        if int(args.cores) > 1:
+            no_threads = int(args.cores)
+            subfolders = split_data(in_dir, no_threads)
 
-        threads = []
-        for i in range(len(subfolders)):
-            curr_out_dir = out_dir + f"/split_{i}"
-            curr_thread = threading.Thread(
-                target=run_pipeline,
-                args=(
-                    subfolders[i],
-                    curr_out_dir,
-                    device,
-                    dlmuse_extra_args,
-                    dlicv_extra_args,
-                    i,
-                ),
-            )
-            curr_thread.start()
-            threads.append(curr_thread)
+            threads = []
+            for i in range(len(subfolders)):
+                curr_out_dir = out_dir + f"/split_{i}"
+                curr_thread = threading.Thread(
+                    target=run_pipeline,
+                    args=(
+                        subfolders[i],
+                        curr_out_dir,
+                        device,
+                        dlmuse_extra_args,
+                        dlicv_extra_args,
+                        i,
+                    ),
+                )
+                curr_thread.start()
+                threads.append(curr_thread)
 
-        for t in threads:
-            t.join()
+            for t in threads:
+                t.join()
 
-        merge_output_data(out_dir)
-        remove_subfolders(in_dir)
-        remove_subfolders(out_dir)
+            merge_output_data(out_dir)
+            remove_subfolders(in_dir)
+            remove_subfolders(out_dir)
+        else: # No core parallelization
+            run_pipeline(in_dir, out_dir, device, dlmuse_extra_args, dlicv_extra_args)
 
 
 if __name__ == "__main__":

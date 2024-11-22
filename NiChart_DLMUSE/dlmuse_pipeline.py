@@ -41,7 +41,7 @@ def run_pipeline(
     device: str,
     dlmuse_extra_args: str,
     dlicv_extra_args: str,
-    sub_fldr: int = 0,
+    sub_fldr: int = 1,
 ) -> None:
     """
     NiChart pipeline
