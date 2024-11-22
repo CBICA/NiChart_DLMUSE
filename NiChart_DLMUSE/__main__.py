@@ -6,11 +6,9 @@ Use of this source code is governed by license located in license file: https://
 """
 
 import argparse
-import glob
 import os
 import shutil
 import threading
-
 
 from .dlmuse_pipeline import run_pipeline
 from .utils import (
@@ -152,7 +150,7 @@ def main() -> None:
 
     if not os.path.isdir(out_dir):
         print(f"Can't find {out_dir}, creating it...")
-        #os.system(f"mkdir {out_dir}")
+        # os.system(f"mkdir {out_dir}")
         os.mkdir(out_dir)
 
     elif len(os.listdir(out_dir)) != 0:
@@ -199,11 +197,10 @@ def main() -> None:
             merge_bids_output_data(working_dir)
             remove_subfolders("raw_temp_T1")
             remove_subfolders(out_dir)
-        else: # No core parallelization
+        else:  # No core parallelization
             run_pipeline(in_dir, out_dir, device, dlmuse_extra_args, dlicv_extra_args)
-            
 
-    else: # Non-BIDS 
+    else:  # Non-BIDS
         if int(args.cores) > 1:
             no_threads = int(args.cores)
             subfolders = split_data(in_dir, no_threads)
@@ -231,7 +228,7 @@ def main() -> None:
             merge_output_data(out_dir)
             remove_subfolders(in_dir)
             remove_subfolders(out_dir)
-        else: # No core parallelization
+        else:  # No core parallelization
             run_pipeline(in_dir, out_dir, device, dlmuse_extra_args, dlicv_extra_args)
 
 
