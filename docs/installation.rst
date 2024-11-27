@@ -24,7 +24,7 @@ heavy development and building from source can lead to crashes and bugs.
 Docker Container
 ****************
 
-The package comes already pre-built as a docker container that you can download at our `docker hub <https://hub.docker.com/r/cbica/nichart_dlmuse/tags>`.
+The package comes already pre-built as a docker container that you can download at our `docker hub <https://hub.docker.com/r/cbica/nichart_dlmuse/tags>`_.
 You can build the package by running the following command: ::
 
     $ docker build -t cbica/nichart_dlmuse .

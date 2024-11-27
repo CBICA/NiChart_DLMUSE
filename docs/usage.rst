@@ -2,8 +2,8 @@
 Usage
 #####
 
-Pre-trained nnUNet models for the skull-stripping can be found in `HuggingFace nichart/DLICV<https://huggingface.co/nichart/DLICV/tree/main>`_ and
-segmentation tasks can be found in `HuggingFace nichart/DLMUSE<https://huggingface.co/nichart/DLMUSE/tree/main>`. Feel free to use it under the package's license.
+Pre-trained nnUNet models for the skull-stripping can be found in `HuggingFace nichart/DLICV <https://huggingface.co/nichart/DLICV/tree/main>`_ and
+segmentation tasks can be found in `HuggingFace nichart/DLMUSE <https://huggingface.co/nichart/DLMUSE/tree/main>`_. Feel free to use it under the package's license.
 
 *********
 Using CLI
