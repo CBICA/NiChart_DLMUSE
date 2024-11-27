@@ -20,20 +20,11 @@ release = "2024"
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    'nbsphinx',
-    'nipype.sphinxext.apidoc',
-    'nipype.sphinxext.plot_workflow',
-    'recommonmark',
-    'sphinx.ext.autodoc',
-    'sphinx.ext.coverage',
-    'sphinx.ext.doctest',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.linkcode',
-    'sphinx.ext.mathjax',
-    'sphinx_markdown_tables',
-    'sphinxarg.ext',
-    'sphinxcontrib.apidoc',
-    'sphinxcontrib.bibtex',
+    "sphinx.ext.todo",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.autodoc",
+    "sphinx_toolbox.sidebar_links",
+    "sphinx_toolbox.github",
 ]
 
 templates_path = ["_templates"]
