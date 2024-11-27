@@ -3,11 +3,11 @@ from pathlib import Path
 from setuptools import find_packages, setup
 
 this_directory = Path(__file__).parent
-long_description = (this_directory / "README.md").read_text()
+long_description = (this_directory / "README.rst").read_text()
 
 setup(
     name="NiChart_DLMUSE",
-    version="1.0.7",
+    version="1.0.8",
     description="Run NiChart_DLMUSE on your data (currently only structural pipeline is supported).",
     long_description=long_description,
     long_description_content_type="text/markdown",
