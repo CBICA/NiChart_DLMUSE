@@ -46,6 +46,7 @@ The nichart_dlmuse.sif file can be distributed via direct download, or pushed to
 
 You can manually build the package from source by running: ::
     $ git clone https://github.com/CBICA/NiChart_DLMUSE
+
     $ cd NiChart_DLMUSE && python3 -m pip install -e .
 
 We *do not* recomment installing the package directly from source as the repository above is under heavy development and can cause
