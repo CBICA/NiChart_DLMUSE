@@ -20,11 +20,20 @@ release = "2024"
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    "sphinx.ext.todo",
-    "sphinx.ext.viewcode",
-    "sphinx.ext.autodoc",
-    "sphinx_toolbox.sidebar_links",
-    "sphinx_toolbox.github",
+    'nbsphinx',
+    'nipype.sphinxext.apidoc',
+    'nipype.sphinxext.plot_workflow',
+    'recommonmark',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.coverage',
+    'sphinx.ext.doctest',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.linkcode',
+    'sphinx.ext.mathjax',
+    'sphinx_markdown_tables',
+    'sphinxarg.ext',
+    'sphinxcontrib.apidoc',
+    'sphinxcontrib.bibtex',
 ]
 
 templates_path = ["_templates"]
@@ -35,7 +44,7 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 github_username = "CBICA"
-github_repository = "github.com/CBICA/spare_score"
+github_repository = "github.com/CBICA/NiChart_DLMUSE"
 
 html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
