@@ -11,7 +11,8 @@ our latest PyPI wheel. Note that the Singularity/Apptainer versions are outdated
 Install with pip
 ****************
 
-To install *NiChart DLMUSE* with pip, just do: ::
+To install **NiChart DLMUSE** with pip, just do: ::
+
     $ pip install NiChart_DLMUSE
 
 We always have our latest stable version on PyPI, so we highly suggest you to install it this way, as this package is under
@@ -45,9 +46,10 @@ The nichart_dlmuse.sif file can be distributed via direct download, or pushed to
 .. _`Manual installation`
 
 You can manually build the package from source by running: ::
+
     $ git clone https://github.com/CBICA/NiChart_DLMUSE
 
     $ cd NiChart_DLMUSE && python3 -m pip install -e .
 
-We *do not* recomment installing the package directly from source as the repository above is under heavy development and can cause
+We **do not** recomment installing the package directly from source as the repository above is under heavy development and can cause
 crashes and bugs.

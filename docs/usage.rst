@@ -14,13 +14,15 @@ Our CLI is simply to use as it just takes 2 required parameters: ::
     $ NiChart_DLMUSE -i <input path> -o <output path>
 
 By default, our CLI runs on CPU. You can run it on GPU with CUDA or MPS just by specifying the device: ::
+
     $ NiChart_DLMUSE -i <input path> -o <output path> -d cuda
 
 .. note::
 
-    *MPS* Can be used if your chip supports 3d convolution(M1 chips do not support 3d convolution, thus, you can't use MPS with M1 macbooks)
+    **MPS** Can be used if your chip supports 3d convolution(M1 chips do not support 3d convolution, thus, you can't use MPS with M1 macbooks)
 
 For further explanation please refer to the complete CLI documentation: ::
+
     $ NiChart_DLMUSE -h
 
 
@@ -28,7 +30,7 @@ For further explanation please refer to the complete CLI documentation: ::
 Using the docker container
 **************************
 
-Using the file structure explained above, an example command using the `docker container<https://hub.docker.com/r/cbica/nichart_dlmuse/tags>`
+Using the file structure explained above, an example command using the `docker container<https://hub.docker.com/r/cbica/nichart_dlmuse/tags>`_
 is the following: ::
 
     # For GPU
