@@ -30,7 +30,7 @@ For further explanation please refer to the complete CLI documentation: ::
 Using the docker container
 **************************
 
-Using the file structure explained above, an example command using the `docker container<https://hub.docker.com/r/cbica/nichart_dlmuse/tags>`_
+Using the file structure explained above, an example command using the `docker container <https://hub.docker.com/r/cbica/nichart_dlmuse/tags>`_
 is the following: ::
 
     # For GPU

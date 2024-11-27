@@ -9,3 +9,6 @@ Contents
 
    installation
    usage
+   contributors
+   api
+   help
