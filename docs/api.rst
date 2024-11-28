@@ -4,39 +4,24 @@ NiChart\_DLMUSE package
 Submodules
 ----------
 
-NiChart\_DLMUSE.CalculateROIVolume module
------------------------------------------
-
-.. automodule:: NiChart_DLMUSE.CalculateROIVolume
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-NiChart\_DLMUSE.CalculateROIVolumeInterface module
---------------------------------------------------
-
-.. automodule:: NiChart_DLMUSE.CalculateROIVolumeInterface
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-NiChart\_DLMUSE.CombineMasks module
------------------------------------
-
-.. automodule:: NiChart_DLMUSE.CombineMasks
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-NiChart\_DLMUSE.CombineMasksInterface module
+DLMUSE pipeline
 --------------------------------------------
 
-.. automodule:: NiChart_DLMUSE.CombineMasksInterface
+.. automodule:: NiChart_DLMUSE.dlmuse_pipeline
    :members:
    :undoc-members:
    :show-inheritance:
 
-NiChart\_DLMUSE.MaskImage module
+Calculate ROI Volume module
+-----------------------------------------
+
+.. automodule:: NiChart_DLMUSE.CalcROIVol
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Mask Image
 --------------------------------
 
 .. automodule:: NiChart_DLMUSE.MaskImage
@@ -44,63 +29,31 @@ NiChart\_DLMUSE.MaskImage module
    :undoc-members:
    :show-inheritance:
 
-NiChart\_DLMUSE.MaskImageInterface module
------------------------------------------
+Relabel ROI
+--------------------------------
 
-.. automodule:: NiChart_DLMUSE.MaskImageInterface
+.. automodule:: NiChart_DLMUSE.RelabelROI
    :members:
    :undoc-members:
    :show-inheritance:
 
-NiChart\_DLMUSE.ROIRelabelInterface module
+Reorient Image
 ------------------------------------------
-
-.. automodule:: NiChart_DLMUSE.ROIRelabelInterface
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-NiChart\_DLMUSE.ROIRelabeler module
------------------------------------
-
-.. automodule:: NiChart_DLMUSE.ROIRelabeler
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-NiChart\_DLMUSE.ReorientImage module
-------------------------------------
 
 .. automodule:: NiChart_DLMUSE.ReorientImage
    :members:
    :undoc-members:
    :show-inheritance:
 
-NiChart\_DLMUSE.ReorientImageInterface module
+Segment Image
 ---------------------------------------------
 
-.. automodule:: NiChart_DLMUSE.ReorientImageInterface
+.. automodule:: NiChart_DLMUSE.SegmentImage
    :members:
    :undoc-members:
    :show-inheritance:
 
-NiChart\_DLMUSE.Structural module
----------------------------------
-
-.. automodule:: NiChart_DLMUSE.Structural
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-NiChart\_DLMUSE.nnUNetInterface module
---------------------------------------
-
-.. automodule:: NiChart_DLMUSE.nnUNetInterface
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-NiChart\_DLMUSE.utils module
+util functions
 ----------------------------
 
 .. automodule:: NiChart_DLMUSE.utils

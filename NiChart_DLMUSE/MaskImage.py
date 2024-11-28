@@ -66,10 +66,16 @@ def calc_bbox_with_padding(img: np.ndarray, perc_pad: int = 10) -> np.ndarray:
     return bcoors
 
 
-def mask_img(in_img: Any, mask_img: Any, out_img: Any) -> None:
+def mask_img(in_img: Any, mask_img: Any, out_img: str) -> None:
     """
     Applies the input mask to the input image
     Crops the image around the mask
+
+    :param in_img: the passed image
+    :param mask_img: the input mask
+    :param out_img: the output filename
+    :type out_img: str
+    :rtype: None
     """
 
     # Read input image and mask
@@ -99,9 +105,16 @@ def mask_img(in_img: Any, mask_img: Any, out_img: Any) -> None:
     nii_out.to_filename(out_img)
 
 
-def combine_masks(dlmuse_mask: Any, dlicv_mask: Any, out_img: Any) -> None:
+def combine_masks(dlmuse_mask: Any, dlicv_mask: Any, out_img: str) -> None:
     """'
     Combine icv and muse masks
+
+    :param dlmuse_mask: The passed dlmuse mask
+    :param dlicv_mask: The passed dlicv mask
+    :param out_img: the output filename
+    :type out_img: str
+
+    :rtype: None
     """
 
     # Read input images
@@ -146,6 +159,21 @@ def apply_mask_img(
 ) -> None:
     """
     Apply reorientation to all images
+
+    :param df_img: The passed dataframe
+    :type df_img: pd.DataFrame
+    :param in_dir: the input directory
+    :type in_dir: str
+    :param in_suff: the passed input suffix
+    :type in_suff: str
+    :param mask_dir: the passed mask directory
+    :type mask_dir: str
+    :param out_dir: the passed output directory
+    :type out_dir: str
+    :param out_suff: the passed output suffix
+    :type out_suff: str
+
+    :rtype: None
     """
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
@@ -170,6 +198,23 @@ def apply_combine_masks(
 ) -> None:
     """
     Apply reorientation to all images
+
+    :param df_img: the passed dataframe
+    :type df_img: pd.DataFrame
+    :param dlmuse_dir: the passed dlmuse directory
+    :type dlmuse_dir: str
+    :param dlmuse_suff: the passed dlmuse suffix
+    :type dlmuse_suff: str
+    :param dlicv_dir: the passed dlicv directory
+    :type dlicv_dir: str
+    :param dlicv_suff: the passed dlicv suffix
+    :type dlicv_suff: str
+    :param out_dir: the output directory
+    :type out_dir: str
+    :param out_suff: the output suffix
+    :type out_suff: str
+
+    :rtype: None
     """
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)

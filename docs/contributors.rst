@@ -59,6 +59,8 @@ We follow ``sphinx``'s docstring style so that the parser can detect the code co
         :rtype: int
         """
 
+``pre-commit`` will also check if you include libraries that are not needed, any extra spaces you might have, logic errors and much more.
+
 Also, as you see above, you should always add types and return types to every function and class. We only write Python 3 code. If you don't follow all of the above, ``pre-commit`` won't pass, and a maintainer won't review your pull request.
 
 **************

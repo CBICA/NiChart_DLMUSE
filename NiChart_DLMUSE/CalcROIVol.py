@@ -11,9 +11,19 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(filename="pipeline.log", encoding="utf-8", level=logging.DEBUG)
 
 
-def calc_roi_volumes(mrid: Any, in_img: Any, label_indices: Any) -> pd.DataFrame:
+def calc_roi_volumes(mrid: Any, in_img: Any, label_indices: np.ndarray) -> pd.DataFrame:
     """
     Creates a dataframe with the volumes of rois
+
+    :param mrid: the input mrid
+    :type mrid: Any
+    :param in_img: the input image
+    :type in_img: niftii image
+    :param label_indices: passed label indices
+    :type label_indices: np.ndarray
+
+    :return: Dataframe with details of images
+    :rtype: pd.DataFrame
     """
 
     # Keep input lists as arrays
@@ -56,6 +66,14 @@ def calc_roi_volumes(mrid: Any, in_img: Any, label_indices: Any) -> pd.DataFrame
 def append_derived_rois(df_in: pd.DataFrame, derived_roi_map: Any) -> pd.DataFrame:
     """
     Calculates a dataframe with the volumes of derived rois.
+
+    :param df_in: the passed dataframe
+    :type df_in: pd.DataFrame
+    :param derived_roi_map: derived roi map file
+    :type derived_roi_map: Any
+
+    :return: ROI dataframe
+    :rtype: pd.DataFrame
     """
 
     # Read derived roi map file to a dictionary

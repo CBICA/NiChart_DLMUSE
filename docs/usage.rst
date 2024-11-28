@@ -17,9 +17,24 @@ By default, our CLI runs on CPU. You can run it on GPU with CUDA or MPS just by 
 
     $ NiChart_DLMUSE -i <input path> -o <output path> -d cuda
 
+
 .. note::
 
     **MPS** Can be used if your chip supports 3d convolution(M1 chips do not support 3d convolution, thus, you can't use MPS with M1 macbooks)
+
+
+We use batch splitting and paralellization to accelerate the procedure. By default, we split the input data into
+4 subfolders. You can specify the number of subfolders with the ``-c`` or ``--cores`` option: ::
+
+    $ NiChart_DLMUSE ... -c 6
+
+This will create 6 subfolders instead of the default 4.
+
+We also support ``BIDS`` I/O in our latest stable release. In order to run NiChart DLMUSE with a BIDS folder as the input you
+need to have one T1 image under the anat subfolder. After the run NiChart DLMUSE will return the segmented images in the same
+subfolders. If you have a `BIDS` input folder you have to specify it at the CLI command: ::
+
+    $ NiChart_DLMUSE ... --bids 1
 
 For further explanation please refer to the complete CLI documentation: ::
 
