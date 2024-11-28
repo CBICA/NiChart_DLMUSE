@@ -123,7 +123,7 @@ Troubleshooting model download failures
 
 Our model download process creates several deep directory structures. If you are running on Windows and your model download process fails, it may be due to Windows file path limitations.
 
-To enable long path support in Windows 10, version 1607, and later, the registry key `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem LongPathsEnabled (Type: REG_DWORD)` must exist and be set to 1.
+To enable long path support in Windows 10, version 1607, and later, the registry key `HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\FileSystem LongPathsEnabled (Type: REG_DWORD)` must exist and be set to 1.
 
 If this affects you, we recommend re-running NiChart_DLMUSE with the `--clear_cache` flag set on the first run.
 
