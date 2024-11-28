@@ -54,6 +54,10 @@ Or from out latest stable PyPI wheel: ::
 You only need to run this step if you experience errors with CUDA while running NiChart_DLMUSE.
 Run "pip uninstall torch torchaudio torchvision".
 Then follow the `PyTorch installation instructions <https://pytorch.org/get-started/locally/>`_ for your CUDA version.
+Note that we highly recommend matching the torch version you install to the version used by NiChart_DLMUSE. For example, after installing NiChart_DLMUSE: ::
+
+   $ pip uninstall torch torchvision torchaudio
+     pip install torch==2.2.1 --index-url https://download.pytorch.org/whl/cu121
 
 ******************
 Run NiChart_DLMUSE
