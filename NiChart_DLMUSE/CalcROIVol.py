@@ -109,6 +109,17 @@ def create_roi_csv(
 ) -> None:
     """
     Creates a csv file with the results of the roi calculations
+
+    :param mrid: the input mrid
+    :type mrid: Any
+    :param in_roi: the input ROI
+    :type in_roi: Any
+    :param map_derived_roi: derived roi map file
+    :type map_derived_roi: Any
+    :param out_csv: output csv filename
+    :type out_csv: str
+
+    :rtype: None
     """
 
     # Calculate MUSE ROIs
@@ -140,6 +151,19 @@ def apply_create_roi_csv(
 ) -> None:
     """
     Apply roi volume calc to all images
+
+    :param df_img: the passed dataframe
+    :type df_img: pd.DataFrame
+    :param in_dir: the input directory
+    :type in_dir: str
+    :param in_suff: the input suffix
+    :type in_suff: str
+    :param out_dir: the output directory
+    :type out_dir: str
+    :param out_suff: the output suffix
+    :type out_suff: str
+
+    :rtype: None
     """
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
@@ -158,6 +182,19 @@ def combine_roi_csv(
 ) -> None:
     """
     Combine csv files
+
+    :param df_img: passed dataframe
+    :type df_img: pd.DataFrame
+    :param in_dir: the input directory
+    :type in_dir: str
+    :param in_suff: the input suffix
+    :type in_suff: str
+    :param out_dir: the output directory
+    :type out_dir: str
+    :param out_name: the desired output filename
+    :type out_name: str
+
+    :rtype: None
     """
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)

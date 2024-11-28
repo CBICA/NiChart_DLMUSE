@@ -45,6 +45,21 @@ def run_pipeline(
 ) -> None:
     """
     NiChart pipeline
+
+    :param in_data: the input directory
+    :type in_data: str
+    :param out_dir: the output directory
+    :type out_dir: str
+    :param device: conda/mps for GPU acceleration otherwise cpu
+    :type device: str
+    :param dlmuse_extra_args: extra arguments for DLMUSE package
+    :type dlmuse_extra_args: str
+    :param dlicv_extra_args: extra arguments for DLICV package
+    :type dlicv_extra_args: str
+    :param sub_fldr: the number of subfolders(default = 1)
+    :type sub_fldr: int
+
+    :rtype: None
     """
     logging.info(f"Starting the pipeline on folder {sub_fldr}")
     logging.info(f"Detecting input images for batch [{sub_fldr}]...")
