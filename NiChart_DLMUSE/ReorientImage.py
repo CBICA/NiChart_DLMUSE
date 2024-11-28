@@ -12,9 +12,16 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(filename="pipeline.log", encoding="utf-8", level=logging.DEBUG)
 
 
-def reorient_img(in_img: Any, ref: Any, out_img: Any) -> None:
+def reorient_img(in_img: Any, ref: Any, out_img: str) -> None:
     """
     Reorient image
+
+    :param in_img: the input image
+    :type in_img: niftii image
+    :param out_img: the desired filename for the output image
+    :type out_img: str
+
+    :rtype: None
     """
     if os.path.exists(out_img):
         logging.info("Out file exists, skip reorientation ...")
@@ -50,6 +57,15 @@ def apply_reorient_img(
 ) -> None:
     """
     Apply reorientation to all images
+
+    :param df_img: the passed dataframe
+    :type df_img: pd.DataFrame
+    :param out_dir: the output directory
+    :type out_dir: str
+    :param out_suffix: the output suffix
+    :type out_suffix: str
+
+    :rtype: None
     """
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
@@ -61,10 +77,23 @@ def apply_reorient_img(
 
 
 def apply_reorient_to_init(
-    df_img: pd.DataFrame, in_dir: str, in_suff: Any, out_dir: str, out_suff: str
+    df_img: pd.DataFrame, in_dir: str, in_suff: str, out_dir: str, out_suff: str
 ) -> None:
     """
     Apply reorientation to init img to all images
+
+    :param df_img: the passed dataframe
+    :type df_img: pd.DataFrame
+    :param in_dir: the input directory
+    :type in_dir: str
+    :param in_suff: the input suffix
+    :param in_suff: str
+    :param out_dir: the output directory
+    :type out_dir: str
+    :param out_suff: the output suffix
+    :type out_suff: str
+
+    :rtype: None
     """
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)

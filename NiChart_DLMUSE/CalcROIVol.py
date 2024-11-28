@@ -11,9 +11,19 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(filename="pipeline.log", encoding="utf-8", level=logging.DEBUG)
 
 
-def calc_roi_volumes(mrid: Any, in_img: Any, label_indices: Any) -> pd.DataFrame:
+def calc_roi_volumes(mrid: Any, in_img: Any, label_indices: np.ndarray) -> pd.DataFrame:
     """
     Creates a dataframe with the volumes of rois
+
+    :param mrid: the input mrid
+    :type mrid: Any
+    :param in_img: the input image
+    :type in_img: niftii image
+    :param label_indices: passed label indices
+    :type label_indices: np.ndarray
+
+    :return: Dataframe with details of images
+    :rtype: pd.DataFrame
     """
 
     # Keep input lists as arrays
@@ -56,6 +66,14 @@ def calc_roi_volumes(mrid: Any, in_img: Any, label_indices: Any) -> pd.DataFrame
 def append_derived_rois(df_in: pd.DataFrame, derived_roi_map: Any) -> pd.DataFrame:
     """
     Calculates a dataframe with the volumes of derived rois.
+
+    :param df_in: the passed dataframe
+    :type df_in: pd.DataFrame
+    :param derived_roi_map: derived roi map file
+    :type derived_roi_map: Any
+
+    :return: ROI dataframe
+    :rtype: pd.DataFrame
     """
 
     # Read derived roi map file to a dictionary
@@ -91,6 +109,17 @@ def create_roi_csv(
 ) -> None:
     """
     Creates a csv file with the results of the roi calculations
+
+    :param mrid: the input mrid
+    :type mrid: Any
+    :param in_roi: the input ROI
+    :type in_roi: Any
+    :param map_derived_roi: derived roi map file
+    :type map_derived_roi: Any
+    :param out_csv: output csv filename
+    :type out_csv: str
+
+    :rtype: None
     """
 
     # Calculate MUSE ROIs
@@ -122,6 +151,19 @@ def apply_create_roi_csv(
 ) -> None:
     """
     Apply roi volume calc to all images
+
+    :param df_img: the passed dataframe
+    :type df_img: pd.DataFrame
+    :param in_dir: the input directory
+    :type in_dir: str
+    :param in_suff: the input suffix
+    :type in_suff: str
+    :param out_dir: the output directory
+    :type out_dir: str
+    :param out_suff: the output suffix
+    :type out_suff: str
+
+    :rtype: None
     """
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
@@ -140,6 +182,19 @@ def combine_roi_csv(
 ) -> None:
     """
     Combine csv files
+
+    :param df_img: passed dataframe
+    :type df_img: pd.DataFrame
+    :param in_dir: the input directory
+    :type in_dir: str
+    :param in_suff: the input suffix
+    :type in_suff: str
+    :param out_dir: the output directory
+    :type out_dir: str
+    :param out_name: the desired output filename
+    :type out_name: str
+
+    :rtype: None
     """
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)

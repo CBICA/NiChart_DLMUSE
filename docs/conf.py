@@ -35,7 +35,7 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 github_username = "CBICA"
-github_repository = "github.com/CBICA/spare_score"
+github_repository = "github.com/CBICA/NiChart_DLMUSE"
 
 html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]

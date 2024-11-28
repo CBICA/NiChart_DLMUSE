@@ -11,10 +11,21 @@ def relabel_rois(
 ) -> None:
     """
     Convert labels in input roi image to new labels based on the mapping
-    print()
     The mapping file should contain numeric indices for the mapping
-    irint()
     between the input roi image (from) and output roi image (to)
+
+    :param in_img: the passed image
+    :type in_img: niftii image
+    :param roi_map: the passed roi map
+    :type roi_map: str
+    :param label_from: input roi image
+    :type label_from: Any
+    :param label_to: output roi image
+    :type label_to: Any
+    :param out_img: the desired filename for the output image
+    :type out_img: str
+
+    :rtype: None
     """
 
     # Read image
@@ -52,6 +63,25 @@ def apply_relabel_rois(
 ) -> None:
     """
     Apply relabeling to all images
+
+    :param df_img: the passed dataframe
+    :type df_img: pd.DataFrame
+    :param in_dir: the input directory
+    :type in_dir: str
+    :param in_suff: the input suffix
+    :type in_suff: str
+    :param out_dir: the output directory
+    :type out_dir: str
+    :param out_suff: the output suffix
+    :type out_suff: str
+    :param roi_map: the roi map
+    :type roi_map: Any
+    :param label_from: input roi image
+    :type label_from: Any
+    :param label_to: output roi image
+    :type label_to: Any
+
+    :rtype: None
     """
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)

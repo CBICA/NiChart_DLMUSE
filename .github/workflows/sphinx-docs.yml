@@ -1,7 +1,7 @@
 name: Deploy static content to Pages
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "spiros-dev"]
 
 jobs:
   build-docs:

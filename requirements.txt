@@ -11,3 +11,4 @@ pytest-cov
 huggingface_hub
 argparse
 pathlib
+pre-commit
