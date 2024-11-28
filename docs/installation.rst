@@ -30,7 +30,7 @@ You can build the package by running the following command: ::
 
     $ docker build -t cbica/nichart_dlmuse .
 
-.. _`Singularity/Apptainer build`
+.. _`Singularity/Apptainer build`:
 
 Singularity and Apptainer images can be built for NiChart_DLMUSE, allowing for frozen versions of the pipeline and easier
 installation for end-users. Note that the Singularity project recently underwent a rename to "Apptainer", with a commercial
@@ -43,7 +43,7 @@ After installing the container engine, run: ::
 This will take some time, but will build a containerized version of your current repo. Be aware that this includes any local changes!
 The nichart_dlmuse.sif file can be distributed via direct download, or pushed to a container registry that accepts SIF images.
 
-.. _`Manual installation`
+.. _`Manual installation`:
 
 You can manually build the package from source by running: ::
 
