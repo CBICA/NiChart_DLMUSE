@@ -51,5 +51,6 @@ You can manually build the package from source by running: ::
 
     $ cd NiChart_DLMUSE && python3 -m pip install -e .
 
-We **do not** recomment installing the package directly from source as the repository above is under heavy development and can cause
-crashes and bugs.
+.. note::
+    We **do not** recomment installing the package directly from source as the repository above is under heavy development and can cause
+    crashes and bugs.
