@@ -39,9 +39,10 @@ def run_pipeline(
     in_data: str,
     out_dir: str,
     device: str,
-    dlmuse_extra_args: str,
-    dlicv_extra_args: str,
+    dlmuse_extra_args: str = '',
+    dlicv_extra_args: str = '',
     sub_fldr: int = 1,
+    progress_bar = None,
 ) -> None:
     """
     NiChart pipeline
@@ -58,6 +59,9 @@ def run_pipeline(
     :type dlicv_extra_args: str
     :param sub_fldr: the number of subfolders(default = 1)
     :type sub_fldr: int
+    :param progress_bar: tqdm/stqdm progress bar for DLMUSE (default: None)
+    :type progress_bar: tqdm
+
 
     :rtype: None
     """
@@ -85,6 +89,9 @@ def run_pipeline(
     out_suff = SUFF_LPS
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
+    if progress_bar is not None:
+        progress_bar.update(1)
+        progress_bar.set_description("Reorienting images")
     apply_reorient_img(df_img, ref, out_dir, out_suff)
     logging.info(f"Reorient images to LPS for batch [{sub_fldr}] done")
 
@@ -96,7 +103,11 @@ def run_pipeline(
     out_suff = SUFF_DLICV
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
+    if progress_bar is not None:
+        progress_bar.update(1)
+        progress_bar.set_description("Running DLICV")
     run_dlicv(in_dir, in_suff, out_dir, out_suff, device, dlicv_extra_args)
+
     logging.info(f"Applying DLICV for batch [{sub_fldr}] done")
 
     logging.info(f"Applying mask for batch [{sub_fldr}]...")
@@ -109,7 +120,11 @@ def run_pipeline(
     out_suff = SUFF_DLICV
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
+    if progress_bar is not None:
+        progress_bar.update(1)
+        progress_bar.set_description("Applying mask")
     apply_mask_img(df_img, in_dir, in_suff, mask_dir, mask_suff, out_dir, out_suff)
+
     logging.info(f"Applying mask for batch [{sub_fldr}] done")
 
     logging.info(f"Applying DLMUSE for batch [{sub_fldr}]...")
@@ -120,7 +135,11 @@ def run_pipeline(
     out_suff = SUFF_DLMUSE
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
+    if progress_bar is not None:
+        progress_bar.update(1)
+        progress_bar.set_description("Running DLMUSE")
     run_dlmuse(in_dir, in_suff, out_dir, out_suff, device, dlmuse_extra_args)
+
     logging.info(f"Applying DLMUSE for batch [{sub_fldr}] done")
 
     logging.info(f"Relabeling DLMUSE for batch [{sub_fldr}]...")
@@ -131,6 +150,9 @@ def run_pipeline(
     out_suff = SUFF_DLMUSE
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
+    if progress_bar is not None:
+        progress_bar.update(1)
+        progress_bar.set_description("Relabeling ROIs")
     apply_relabel_rois(
         df_img,
         in_dir,
@@ -141,6 +163,7 @@ def run_pipeline(
         LABEL_FROM,
         LABEL_TO,
     )
+
     logging.info(f"Applying DLMUSE for batch [{sub_fldr}] done")
 
     logging.info(f"Combining DLICV and MUSE masks for batch [{sub_fldr}]...")
@@ -153,7 +176,11 @@ def run_pipeline(
     out_suff = SUFF_DLMUSE
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
+    if progress_bar is not None:
+        progress_bar.update(1)
+        progress_bar.set_description("Combining masks")
     apply_combine_masks(df_img, in_dir, in_suff, mask_dir, mask_suff, out_dir, out_suff)
+
     logging.info(f"Combining DLICV and MUSE masks for batch [{sub_fldr}] done")
 
     logging.info(f"Reorienting to initial orientation for batch [{sub_fldr}]...")
@@ -162,7 +189,11 @@ def run_pipeline(
     out_dir = out_dir_final
     in_suff = SUFF_DLMUSE
     out_suff = SUFF_DLMUSE
+    if progress_bar is not None:
+        progress_bar.update(1)
+        progress_bar.set_description("Revert to initial orientation")
     apply_reorient_to_init(df_img, in_dir, in_suff, out_dir, out_suff)
+
     logging.info(f"Reorienting to initial orientation for batch [{sub_fldr}] done")
 
     logging.info(f"Create ROI csv for batch [{sub_fldr}]...")
@@ -171,6 +202,9 @@ def run_pipeline(
     out_dir = out_dir_final
     in_suff = SUFF_DLMUSE
     out_suff = SUFF_ROI
+    if progress_bar is not None:
+        progress_bar.update(1)
+        progress_bar.set_description("Creating ROI CSV")
     apply_create_roi_csv(
         df_img, in_dir, in_suff, DICT_MUSE_SINGLE, DICT_MUSE_DERIVED, out_dir, out_suff
     )
@@ -182,5 +216,9 @@ def run_pipeline(
     out_dir = out_dir_final
     in_suff = SUFF_ROI
     out_name = OUT_CSV
+    if progress_bar is not None:
+        progress_bar.update(1)
+        progress_bar.set_description("Combining CSV")
     combine_roi_csv(df_img, in_dir, in_suff, out_dir, out_name)
+
     logging.info(f"Combine ROI csv for batch [{sub_fldr}] done")
