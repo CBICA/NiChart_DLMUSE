@@ -20,17 +20,17 @@
 ## docker build -t cbica/nichart_dlmuse:1.0.1 .
 
 ARG NICHART_DLMUSE_VERSION="1.0.1"
-ARG CUDA_VERSION="11.8"
-ARG TORCH_VERSION="2.4.1"
-ARG CUDNN_VERSION="9"
+ARG CUDA_VERSION="12.1"
+ARG TORCH_VERSION="2.3.1"
+ARG CUDNN_VERSION="8"
 
 ## This base image is generally the smallest with all prereqs.
 FROM pytorch/pytorch:${TORCH_VERSION}-cuda${CUDA_VERSION}-cudnn${CUDNN_VERSION}-runtime
 
 WORKDIR /app
 COPY . /app/ 
-
-RUN pip install .
+RUN grep -v -E '^(torch)' requirements.txt > requirements2.txt
+RUN pip install -r requirements2.txt && pip install --no-deps .
 RUN mkdir /dummyinput && mkdir /dummyoutput
 ## Cache DLMUSE and DLICV models with an empty job so no download is needed later
 RUN DLMUSE -i /dummyinput -o /dummyoutput && DLICV -i /dummyinput -o /dummyoutput
