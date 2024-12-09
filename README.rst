@@ -54,6 +54,10 @@ Or from out latest stable PyPI wheel: ::
 You only need to run this step if you experience errors with CUDA while running NiChart_DLMUSE.
 Run "pip uninstall torch torchaudio torchvision".
 Then follow the `PyTorch installation instructions <https://pytorch.org/get-started/locally/>`_ for your CUDA version.
+Note that we highly recommend matching the torch version you install to the version used by NiChart_DLMUSE. For example, after installing NiChart_DLMUSE: ::
+
+   $ pip uninstall torch torchvision torchaudio
+     pip install torch==2.2.1 --index-url https://download.pytorch.org/whl/cu121
 
 ******************
 Run NiChart_DLMUSE
@@ -119,7 +123,7 @@ Troubleshooting model download failures
 
 Our model download process creates several deep directory structures. If you are running on Windows and your model download process fails, it may be due to Windows file path limitations.
 
-To enable long path support in Windows 10, version 1607, and later, the registry key `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem LongPathsEnabled (Type: REG_DWORD)` must exist and be set to 1.
+To enable long path support in Windows 10, version 1607, and later, the registry key `HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\FileSystem LongPathsEnabled (Type: REG_DWORD)` must exist and be set to 1.
 
 If this affects you, we recommend re-running NiChart_DLMUSE with the `--clear_cache` flag set on the first run.
 
