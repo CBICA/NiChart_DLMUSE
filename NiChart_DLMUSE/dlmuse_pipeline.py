@@ -1,5 +1,6 @@
 import logging
 import os
+from typing import Any
 
 import pkg_resources  # type: ignore
 
@@ -39,10 +40,10 @@ def run_pipeline(
     in_data: str,
     out_dir: str,
     device: str,
-    dlmuse_extra_args: str = '',
-    dlicv_extra_args: str = '',
+    dlmuse_extra_args: str = "",
+    dlicv_extra_args: str = "",
     sub_fldr: int = 1,
-    progress_bar = None,
+    progress_bar: Any = None,
 ) -> None:
     """
     NiChart pipeline
