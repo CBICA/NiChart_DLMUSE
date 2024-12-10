@@ -349,7 +349,7 @@ def remove_subfolders(in_dir: str) -> None:
 
 def merge_output_data(in_dir: str) -> None:
     """
-    Takes all the results from the temp_working_fir and moves them into
+    Takes all the results from the temp_working_dir and moves them into
     the output folder
 
     :param in_dir: the input directory

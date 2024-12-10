@@ -9,6 +9,7 @@ from NiChart_DLMUSE.utils import (
     remove_common_suffix,
     remove_subfolders,
     split_data,
+    get_bids_prefix
 )
 
 
@@ -58,8 +59,19 @@ def testing_make_img_list() -> None:
 
 
 def testing_get_bids_prefix() -> None:
-    pass
+    temp_file = "test-1234"
+    assert get_bids_prefix(temp_file) == "1234"
+    temp_file = "test-1"
+    assert get_bids_prefix(temp_file) == "1"
+    temp_file = "test"
+    assert get_bids_prefix(temp_file) == ""
 
+    temp_folder = "test_1234"
+    assert get_bids_prefix(temp_folder, True) == "1234"
+    temp_folder = "test_1"
+    assert get_bids_prefix(temp_folder, True) == "1"
+    temp_folder = "test"
+    assert get_bids_prefix(temp_folder, True) == ""
 
 def testing_collect_T1() -> None:
     os.system("mkdir test_collect_T1")
