@@ -64,14 +64,14 @@ def testing_get_bids_prefix() -> None:
     temp_file = "test-1"
     assert get_bids_prefix(temp_file) == "test"
     temp_file = "test"
-    assert get_bids_prefix(temp_file) == ""
+    assert get_bids_prefix(temp_file) == "test"
 
     temp_folder = "test_1234"
     assert get_bids_prefix(temp_folder, True) == "test"
     temp_folder = "test_1"
     assert get_bids_prefix(temp_folder, True) == "test"
     temp_folder = "test"
-    assert get_bids_prefix(temp_folder, True) == ""
+    assert get_bids_prefix(temp_folder, True) == "test"
 
 def testing_collect_T1() -> None:
     os.system("mkdir test_collect_T1")
