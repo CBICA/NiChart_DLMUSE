@@ -53,11 +53,11 @@ Or from out latest stable PyPI wheel: ::
 (If needed for your system) Install PyTorch with compatible CUDA.
 You only need to run this step if you experience errors with CUDA while running NiChart_DLMUSE.
 Run "pip uninstall torch torchaudio torchvision".
-Then follow the `PyTorch installation instructions <https://pytorch.org/get-started/locally/>`_ for your CUDA version.
-Note that we highly recommend matching the torch version you install to the version used by NiChart_DLMUSE. For example, after installing NiChart_DLMUSE: ::
+Then follow the `PyTorch installation instructions <https://pytorch.org/get-started/locally/>`_ for your CUDA version. 
+Specific versions are needed for full compatibility. On Linux, download Torch 2.3.1, on Windows install 2.5.1. For example, after installing NiChart_DLMUSE: ::
 
    $ pip uninstall torch torchvision torchaudio
-     pip install torch==2.2.1 --index-url https://download.pytorch.org/whl/cu121
+     pip install torch==2.3.1 --index-url https://download.pytorch.org/whl/cu121
 
 ******************
 Run NiChart_DLMUSE
@@ -77,7 +77,7 @@ Docker build
 ************
 
 The package comes already pre-built as a `docker container <https://hub.docker.com/repository/docker/cbica/nichart_dlmuse/general>`_, for convenience. Please see `Usage <#usage>`_ for more information on how to use it. Alternatively, you can build the docker image
-locally, like so: ::
+locally from the source repo, like so: ::
 
   $ docker build -t cbica/nichart_dlmuse .
 
