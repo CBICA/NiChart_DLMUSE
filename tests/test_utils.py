@@ -60,16 +60,16 @@ def testing_make_img_list() -> None:
 
 def testing_get_bids_prefix() -> None:
     temp_file = "test-1234"
-    assert get_bids_prefix(temp_file) == "1234"
+    assert get_bids_prefix(temp_file) == "test"
     temp_file = "test-1"
-    assert get_bids_prefix(temp_file) == "1"
+    assert get_bids_prefix(temp_file) == "test"
     temp_file = "test"
     assert get_bids_prefix(temp_file) == ""
 
     temp_folder = "test_1234"
-    assert get_bids_prefix(temp_folder, True) == "1234"
+    assert get_bids_prefix(temp_folder, True) == "test"
     temp_folder = "test_1"
-    assert get_bids_prefix(temp_folder, True) == "1"
+    assert get_bids_prefix(temp_folder, True) == "test"
     temp_folder = "test"
     assert get_bids_prefix(temp_folder, True) == ""
 
