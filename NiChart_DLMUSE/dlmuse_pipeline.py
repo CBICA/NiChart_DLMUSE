@@ -1,8 +1,8 @@
 import logging
 import os
-from typing import Any
 import shutil
 import threading
+from typing import Any
 
 import pkg_resources  # type: ignore
 
@@ -12,8 +12,8 @@ from .RelabelROI import apply_relabel_rois
 from .ReorientImage import apply_reorient_img, apply_reorient_to_init
 from .SegmentImage import run_dlicv, run_dlmuse
 from .utils import (
-    make_img_list,
     collect_T1,
+    make_img_list,
     merge_bids_output_data,
     merge_output_data,
     remove_subfolders,
@@ -44,6 +44,7 @@ DICT_MUSE_DERIVED = pkg_resources.resource_filename(
 logger = logging.getLogger(__name__)
 logging.basicConfig(filename="pipeline.log", encoding="utf-8", level=logging.DEBUG)
 
+
 def run_pipeline(
     in_dir: str,
     out_dir: str,
@@ -52,8 +53,8 @@ def run_pipeline(
     dlmuse_extra_args: str,
     clear_cache: bool,
     bids: bool,
-    cores: str
-):
+    cores: str,
+) -> None:
     """
     NiChart pipeline
 
@@ -156,6 +157,7 @@ def run_pipeline(
             remove_subfolders(out_dir)
         else:  # No core parallelization
             run_thread(in_dir, out_dir, device, dlmuse_extra_args, dlicv_extra_args)
+
 
 def run_thread(
     in_data: str,

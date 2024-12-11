@@ -6,19 +6,8 @@ Use of this source code is governed by license located in license file: https://
 """
 
 import argparse
-import os
-import shutil
-import threading
 
 from .dlmuse_pipeline import run_pipeline
-
-from .utils import (
-    collect_T1,
-    merge_bids_output_data,
-    merge_output_data,
-    remove_subfolders,
-    split_data,
-)
 
 # VERSION = pkg_resources.require("NiChart_DLMUSE")[0].version
 VERSION = "1.0.7"
@@ -160,8 +149,9 @@ def main() -> None:
         dlmuse_extra_args,
         clear_cache,
         bids,
-        cores
+        cores,
     )
+
 
 if __name__ == "__main__":
     main()
