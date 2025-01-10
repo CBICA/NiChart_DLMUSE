@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(filename="pipeline.log", encoding="utf-8", level=logging.DEBUG)
 
 
-def run_dlmuse_pipeline(
+def run_ndlmuse_pipeline(
     in_dir: str,
     out_dir: str,
     device: str,
