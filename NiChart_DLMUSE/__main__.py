@@ -64,8 +64,7 @@ def main() -> None:
 
     # DEVICE argument
     parser.add_argument(
-        "-d",
-        "--device",
+        "-device",
         type=str,
         help="Device (cpu, cuda, or mps)",
         default=None,
