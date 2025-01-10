@@ -6,21 +6,11 @@ Use of this source code is governed by license located in license file: https://
 """
 
 import argparse
-import os
-import shutil
-import threading
 
-from .dlmuse_pipeline import run_pipeline
-from .utils import (
-    collect_T1,
-    merge_bids_output_data,
-    merge_output_data,
-    remove_subfolders,
-    split_data,
-)
+from .dlmuse_pipeline import run_dlmuse_pipeline
 
 # VERSION = pkg_resources.require("NiChart_DLMUSE")[0].version
-VERSION = "1.0.7"
+VERSION = "1.0.9"
 
 
 def main() -> None:
@@ -142,94 +132,25 @@ def main() -> None:
     device = args.device
     dlicv_extra_args = args.dlicv_args
     dlmuse_extra_args = args.dlmuse_args
+    clear_cache = args.clear_cache
+    bids = args.bids
+    cores = args.cores
 
     print()
     print("Arguments:")
     print(args)
     print()
 
-    if not os.path.isdir(out_dir):
-        print(f"Can't find {out_dir}, creating it...")
-        # os.system(f"mkdir {out_dir}")
-        os.mkdir(out_dir)
-
-    elif len(os.listdir(out_dir)) != 0:
-        print(f"Emptying output folder: {out_dir}...")
-        for root, dirs, files in os.walk(out_dir):
-            for f in files:
-                os.unlink(os.path.join(root, f))
-            for d in dirs:
-                shutil.rmtree(os.path.join(root, d))
-
-    if args.clear_cache:
-        os.system("DLICV -i ./dummy -o ./dummy --clear_cache")
-        os.system("DLMUSE -i ./dummy -o ./dummy --clear_cache")
-
-    working_dir = os.path.join(os.path.abspath(out_dir))
-
-    # Run pipeline
-    if args.bids is True:
-        if int(args.cores) > 1:
-            collect_T1(in_dir, out_dir)
-
-            no_threads = int(args.cores)
-            subfolders = split_data("raw_temp_T1", no_threads)
-            threads = []
-            for i in range(len(subfolders)):
-                curr_out_dir = out_dir + f"/split_{i}"
-                curr_thread = threading.Thread(
-                    target=run_pipeline,
-                    args=(
-                        subfolders[i],
-                        curr_out_dir,
-                        device,
-                        dlmuse_extra_args,
-                        dlicv_extra_args,
-                        i,
-                    ),
-                )
-                curr_thread.start()
-                threads.append(curr_thread)
-
-            for t in threads:
-                t.join()
-
-            merge_bids_output_data(working_dir)
-            remove_subfolders("raw_temp_T1")
-            remove_subfolders(out_dir)
-        else:  # No core parallelization
-            run_pipeline(in_dir, out_dir, device, dlmuse_extra_args, dlicv_extra_args)
-
-    else:  # Non-BIDS
-        if int(args.cores) > 1:
-            no_threads = int(args.cores)
-            subfolders = split_data(in_dir, no_threads)
-
-            threads = []
-            for i in range(len(subfolders)):
-                curr_out_dir = out_dir + f"/split_{i}"
-                curr_thread = threading.Thread(
-                    target=run_pipeline,
-                    args=(
-                        subfolders[i],
-                        curr_out_dir,
-                        device,
-                        dlmuse_extra_args,
-                        dlicv_extra_args,
-                        i,
-                    ),
-                )
-                curr_thread.start()
-                threads.append(curr_thread)
-
-            for t in threads:
-                t.join()
-
-            merge_output_data(out_dir)
-            remove_subfolders(in_dir)
-            remove_subfolders(out_dir)
-        else:  # No core parallelization
-            run_pipeline(in_dir, out_dir, device, dlmuse_extra_args, dlicv_extra_args)
+    run_dlmuse_pipeline(
+        in_dir,
+        out_dir,
+        device,
+        dlicv_extra_args,
+        dlmuse_extra_args,
+        clear_cache,
+        bids,
+        cores,
+    )
 
 
 if __name__ == "__main__":
