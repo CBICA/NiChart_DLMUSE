@@ -6,12 +6,12 @@ from typing import Any
 
 import pkg_resources  # type: ignore
 
-from .CalcROIVol import apply_create_roi_csv, combine_roi_csv
-from .MaskImage import apply_combine_masks, apply_mask_img
-from .RelabelROI import apply_relabel_rois
-from .ReorientImage import apply_reorient_img, apply_reorient_to_init
-from .SegmentImage import run_dlicv, run_dlmuse
-from .utils import (
+from NiChart_DLMUSE.CalcROIVol import apply_create_roi_csv, combine_roi_csv
+from NiChart_DLMUSE.MaskImage import apply_combine_masks, apply_mask_img
+from NiChart_DLMUSE.RelabelROI import apply_relabel_rois
+from NiChart_DLMUSE.ReorientImage import apply_reorient_img, apply_reorient_to_init
+from NiChart_DLMUSE.SegmentImage import run_dlicv, run_dlmuse
+from NiChart_DLMUSE.utils import (
     collect_T1,
     make_img_list,
     merge_bids_output_data,

@@ -7,7 +7,7 @@ Use of this source code is governed by license located in license file: https://
 
 import argparse
 
-from .dlmuse_pipeline import run_ndlmuse_pipeline
+from NiChart_DLMUSE.dlmuse_pipeline import run_ndlmuse_pipeline
 
 # VERSION = pkg_resources.require("NiChart_DLMUSE")[0].version
 VERSION = "1.0.9"
