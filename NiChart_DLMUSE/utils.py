@@ -65,7 +65,9 @@ def remove_common_suffix(list_files: list) -> list:
 
     bnames = list_files
     if len(list_files) == 1:
-        if list_files[0].endswith('_T1'): # If there is a single image with suffix _T1, remove it
+        if list_files[0].endswith(
+            "_T1"
+        ):  # If there is a single image with suffix _T1, remove it
             bnames = [x[0:-3] for x in bnames]
         return bnames
 
@@ -347,7 +349,7 @@ def remove_subfolders(in_dir: str) -> None:
 
 def merge_output_data(in_dir: str) -> None:
     """
-    Takes all the results from the temp_working_fir and moves them into
+    Takes all the results from the temp_working_dir and moves them into
     the output folder
 
     :param in_dir: the input directory

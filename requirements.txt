@@ -1,5 +1,5 @@
 # Main pipeline
-torch==2.2.1
+torch==2.3.1
 DLICV
 DLMUSE
 nibabel>=5.2
@@ -12,3 +12,6 @@ huggingface_hub
 argparse
 pathlib
 pre-commit
+
+# testing
+pandas

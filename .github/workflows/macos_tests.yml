@@ -4,25 +4,25 @@ name: macos build
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-  build:
-    runs-on: ["macos-13"]
+    build:
+        runs-on: ["macos-latest"]
 
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - name: Install spare scores
-        run: |
-          python -m pip cache purge
-          pip install -r requirements.txt
-          pip install setuptools twine wheel
-          python -m pip install .
-      - name: Run unit tests
-        run: |
-          cd tests/ && pytest --cov=../ --cov-report=xml
-      - name: Upload Coverage to Codecov
-        uses: codecov/codecov-action@v4.0.1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          slug: CBICA/NiChart_DLMUSE
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: "3.12"
+            - name: Install spare scores
+              run: |
+                  python -m pip cache purge
+                  pip install -r requirements.txt
+                  pip install setuptools twine wheel
+                  python -m pip install .
+            - name: Run unit tests
+              run: |
+                  cd tests/ && pytest --cov=../ --cov-report=xml
+            - name: Upload Coverage to Codecov
+              uses: codecov/codecov-action@v4.0.1
+              with:
+                  token: ${{ secrets.CODECOV_TOKEN }}
+                  slug: CBICA/NiChart_DLMUSE
