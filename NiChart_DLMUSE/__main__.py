@@ -127,29 +127,20 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    in_dir = args.in_dir
-    out_dir = args.out_dir
-    device = args.device
-    dlicv_extra_args = args.dlicv_args
-    dlmuse_extra_args = args.dlmuse_args
-    clear_cache = args.clear_cache
-    bids = args.bids
-    cores = args.cores
-
     print()
     print("Arguments:")
     print(args)
     print()
 
     run_ndlmuse_pipeline(
-        in_dir,
-        out_dir,
-        device,
-        dlicv_extra_args,
-        dlmuse_extra_args,
-        clear_cache,
-        bids,
-        cores,
+        args.in_dir,
+        args.out_dir,
+        args.device,
+        args.dlicv_extra_args,
+        args.dlmuse_extra_args,
+        args.clear_cache,
+        args.bids,
+        args.cores,
     )
 
 
