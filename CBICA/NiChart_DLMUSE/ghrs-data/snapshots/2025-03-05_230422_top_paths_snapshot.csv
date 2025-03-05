@@ -1,0 +1,11 @@
+url_path,views_total,views_unique
+/CBICA/NiChart_DLMUSE,24,10
+/CBICA/NiChart_DLMUSE/tree/main/NiChart_DLMUSE,5,4
+/CBICA/NiChart_DLMUSE/blob/main/NiChart_DLMUSE/shared/dicts/MUSE_ROI_complete_list.csv,3,2
+/CBICA/NiChart_DLMUSE/blob/main/NiChart_DLMUSE/shared/dicts/MUSE_ROI_complete_list.json,3,2
+/CBICA/NiChart_DLMUSE/blob/main/.pre-commit-config.yaml,3,2
+/CBICA/NiChart_DLMUSE/commits/main,2,1
+/CBICA/NiChart_DLMUSE/blob/main/NiChart_DLMUSE/__main__.py,1,1
+/CBICA/NiChart_DLMUSE/blob/main/NiChart_DLMUSE/ReorientImage.py,1,1
+/CBICA/NiChart_DLMUSE/blob/main/NiChart_DLMUSE/shared/dicts/MUSE_mapping_derived_rois.csv,1,1
+/CBICA/NiChart_DLMUSE/blob/main/setup.cfg,1,1
