@@ -1,0 +1,11 @@
+url_path,views_total,views_unique
+/CBICA/NiChart_DLMUSE,40,15
+/CBICA/NiChart_DLMUSE/tree/main/NiChart_DLMUSE,10,7
+/CBICA/NiChart_DLMUSE/tree/main/docs,9,7
+/CBICA/NiChart_DLMUSE/blob/main/NiChart_DLMUSE/shared/dicts/MUSE_ROI_complete_list.csv,5,4
+/CBICA/NiChart_DLMUSE/tree/main/NiChart_DLMUSE/shared/dicts,5,4
+/CBICA/NiChart_DLMUSE/blob/main/requirements.txt,5,3
+/CBICA/NiChart_DLMUSE/blob/main/Dockerfile,5,1
+/CBICA/NiChart_DLMUSE/blob/main/NiChart_DLMUSE/shared/dicts/MUSE_mapping_consecutive_indices.csv,4,2
+/CBICA/NiChart_DLMUSE/blob/main/NiChart_DLMUSE/shared/dicts/MUSE_mapping_derived_rois.csv,3,2
+/CBICA/NiChart_DLMUSE/tree/main/tests,3,2
