@@ -10,7 +10,7 @@ def main():
     parser = argparse.ArgumentParser(description="Wrapper", allow_abbrev=False)
     parser.add_argument("-i", "--in_dir", required=True, help="Input directory")
     parser.add_argument("-o1", "--out_segs", required=True, help="Output directory for segmentation files")
-    parser.add_argument("-o2", "--out_csv", required=True, help="Output directory for CSV files")
+    parser.add_argument("-o2", "--out_csvs", required=True, help="Output directory for CSV files")
 
     # Parse known args; leave the rest for original app
     args, extra_args = parser.parse_known_args()
