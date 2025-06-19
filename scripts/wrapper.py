@@ -1,6 +1,6 @@
 import argparse
 import shutil
-import subprocess
+import os
 import tempfile
 from pathlib import Path
 
@@ -27,8 +27,8 @@ def main():
 
         # Build command to run original application
         cmd = ["NiChart_DLMUSE", "-i", input_dir, "-o", str(tmp_output_path)] + extra_args
-
-        subprocess.run(cmd, check=True)
+        command = ' '.join(cmd)
+        os.system(command)
 
         # Copy output files
         for item in tmp_output_path.rglob("*"):
