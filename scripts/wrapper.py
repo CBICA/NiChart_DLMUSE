@@ -15,9 +15,9 @@ def main():
     # Parse known args; leave the rest for original app
     args, extra_args = parser.parse_known_args()
 
-    input_dir = args.i
-    seg_dir = Path(args.o1)
-    csv_dir = Path(args.o2)
+    input_dir = args.in_dir
+    seg_dir = Path(args.out_segs)
+    csv_dir = Path(args.out_csvs)
 
     seg_dir.mkdir(parents=True, exist_ok=True)
     csv_dir.mkdir(parents=True, exist_ok=True)
