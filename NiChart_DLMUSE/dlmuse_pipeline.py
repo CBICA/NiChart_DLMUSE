@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 
 import pkg_resources  # type: ignore
 
@@ -32,7 +33,9 @@ DICT_MUSE_DERIVED = pkg_resources.resource_filename(
 )
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(filename="pipeline.log", encoding="utf-8", level=logging.DEBUG)
+logging.basicConfig(encoding="utf-8", level=logging.DEBUG,
+                    handlers=[logging.FileHandler("pipeline.log"),
+                              logging.StreamHandler(sys.stdout)])
 
 
 def run_pipeline(
