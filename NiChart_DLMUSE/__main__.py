@@ -87,7 +87,7 @@ def main() -> None:
         "--cores",
         type=str,
         help="Number of cores",
-        default=4,
+        default=1,
         required=False,
     )
 
