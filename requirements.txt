@@ -4,6 +4,7 @@ DLICV
 DLMUSE
 nibabel>=5.2
 scipy
+SimpleITK
 
 # Developer tools
 pytest
