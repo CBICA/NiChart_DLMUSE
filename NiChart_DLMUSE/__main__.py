@@ -131,6 +131,14 @@ def main() -> None:
         help="Pass additional args to be sent to DLICV (ex. '-nps 1 -npp 1'). It is recommended to surround these args in a set of double quotes. See the DLICV documentation for details.",
     )
 
+    parser.add_argument(
+        "--refaced-data",
+        action="store_true",
+        required=False,
+        default=False,
+        help="If set, refine DLICV mask by keeping only the largest connected component (for refaced data).",
+    )
+
     # HELP argument
     help = "Show this message and exit"
     parser.add_argument("-h", "--help", action="store_true", help=help)
@@ -142,6 +150,7 @@ def main() -> None:
     device = args.device
     dlicv_extra_args = args.dlicv_args
     dlmuse_extra_args = args.dlmuse_args
+    refaced_data = args.refaced_data
 
     print()
     print("Arguments:")
@@ -185,6 +194,7 @@ def main() -> None:
                         device,
                         dlmuse_extra_args,
                         dlicv_extra_args,
+                        refaced_data,
                         i,
                     ),
                 )
@@ -198,7 +208,14 @@ def main() -> None:
             remove_subfolders("raw_temp_T1")
             remove_subfolders(out_dir)
         else:  # No core parallelization
-            run_pipeline(in_dir, out_dir, device, dlmuse_extra_args, dlicv_extra_args)
+            run_pipeline(
+                in_dir,
+                out_dir,
+                device,
+                dlmuse_extra_args,
+                dlicv_extra_args,
+                refaced_data,
+            )
 
     else:  # Non-BIDS
         if int(args.cores) > 1:
@@ -216,6 +233,7 @@ def main() -> None:
                         device,
                         dlmuse_extra_args,
                         dlicv_extra_args,
+                        refaced_data,
                         i,
                     ),
                 )
@@ -229,7 +247,14 @@ def main() -> None:
             remove_subfolders(in_dir)
             remove_subfolders(out_dir)
         else:  # No core parallelization
-            run_pipeline(in_dir, out_dir, device, dlmuse_extra_args, dlicv_extra_args)
+            run_pipeline(
+                in_dir,
+                out_dir,
+                device,
+                dlmuse_extra_args,
+                dlicv_extra_args,
+                refaced_data,
+            )
 
 
 if __name__ == "__main__":
