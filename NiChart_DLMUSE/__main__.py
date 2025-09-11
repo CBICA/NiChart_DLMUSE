@@ -38,10 +38,7 @@ def main() -> None:
         [-o, --out_dir]   The filepath of the output directory
         [-d, --device]    Device to run segmentation ('cuda' (GPU), 'cpu' (CPU) or 'mps' (Apple
                           M-series chips supporting 3D CNN))
-    optional arguments:
-        [-h, --help]    Show this help message and exit.
-        [-V, --version] Show program's version number and exit.
-        EXAMPLE USAGE:
+    EXAMPLE USAGE:
         NiChart_DLMUSE  --in_dir                     /path/to/input     \
                         --out_dir                    /path/to/output    \
     """.format(
@@ -49,7 +46,7 @@ def main() -> None:
     )
 
     parser = argparse.ArgumentParser(
-        prog=prog, usage=usage, description=description, add_help=False
+        prog=prog, usage=usage, description=description, add_help=True
     )
 
     # INDIR argument
@@ -61,7 +58,6 @@ def main() -> None:
         default=None,
         required=True,
     )
-
     # OUTDIR argument
     parser.add_argument(
         "-o",
@@ -71,7 +67,6 @@ def main() -> None:
         default=None,
         required=True,
     )
-
     # DEVICE argument
     parser.add_argument(
         "-d",
@@ -81,7 +76,6 @@ def main() -> None:
         default=None,
         required=True,
     )
-
     parser.add_argument(
         "-c",
         "--cores",
@@ -90,7 +84,6 @@ def main() -> None:
         default=1,
         required=False,
     )
-
     parser.add_argument(
         "--bids",
         type=bool,
@@ -98,15 +91,12 @@ def main() -> None:
         default=False,
         required=False,
     )
-
-    # VERSION argument
-    help = "Show the version and exit"
     parser.add_argument(
         "-V",
         "--version",
         action="version",
         version=prog + ": v{VERSION}.".format(VERSION=VERSION),
-        help=help,
+        help="Show the version and exit",
     )
     parser.add_argument(
         "--clear_cache",
@@ -132,16 +122,16 @@ def main() -> None:
     )
 
     parser.add_argument(
-        "--refaced-data",
+        "--refaced_data",
         action="store_true",
         required=False,
         default=False,
         help="If set, refine DLICV mask by keeping only the largest connected component (for refaced data).",
     )
 
-    # HELP argument
-    help = "Show this message and exit"
-    parser.add_argument("-h", "--help", action="store_true", help=help)
+    # # HELP argument
+    # help = "Show this message and exit"
+    # parser.add_argument("-h", "--help", action="store_true", help=help)
 
     args = parser.parse_args()
 
