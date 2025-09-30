@@ -44,6 +44,7 @@ def run_pipeline(
     device: str,
     dlmuse_extra_args: str = '',
     dlicv_extra_args: str = '',
+    refaced_data: bool = False,
     sub_fldr: int = 1,
     progress_bar = None,
 ) -> None:
@@ -110,6 +111,24 @@ def run_pipeline(
         progress_bar.update(1)
         progress_bar.set_description("Running DLICV")
     run_dlicv(in_dir, in_suff, out_dir, out_suff, device, dlicv_extra_args)
+
+    # If refaced data is specified, refine the masks used in the next step (s3_masked)
+    if refaced_data:
+        import SimpleITK as sitk
+
+        for _, tmp_row in df_img.iterrows():
+            img_prefix = tmp_row.img_prefix
+            fpath = os.path.join(out_dir, img_prefix + SUFF_DLICV)
+            if os.path.exists(fpath):
+                s2_dlicv_output = sitk.ReadImage(fpath)
+                # Keep only the largest connected component
+                mask_component = sitk.ConnectedComponent(s2_dlicv_output)
+                mask_sorted_component = sitk.RelabelComponent(
+                    mask_component, sortByObjectSize=True
+                )
+                final_mask = sitk.Equal(mask_sorted_component, 1)
+                # Write refined mask back in-place within s2_dlicv
+                sitk.WriteImage(final_mask, fpath)
 
     logging.info(f"Applying DLICV for batch [{sub_fldr}] done")
 

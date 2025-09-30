@@ -1,6 +1,6 @@
 import argparse
-import shutil
 import os
+import shutil
 import tempfile
 import time
 import sys
@@ -10,11 +10,19 @@ import pandas as pd
 
 # This wrapper script just adapts NiChart_DLMUSE to take two separate output args. Everything else is passed transparently
 
+
 def main():
     parser = argparse.ArgumentParser(description="Wrapper", allow_abbrev=False)
     parser.add_argument("-i", "--in_dir", required=True, help="Input directory")
-    parser.add_argument("-o1", "--out_segs", required=True, help="Output directory for segmentation files")
-    parser.add_argument("-o2", "--out_csvs", required=True, help="Output directory for CSV files")
+    parser.add_argument(
+        "-o1",
+        "--out_segs",
+        required=True,
+        help="Output directory for segmentation files",
+    )
+    parser.add_argument(
+        "-o2", "--out_csvs", required=True, help="Output directory for CSV files"
+    )
 
     # Parse known args; leave the rest for original app
     args, extra_args = parser.parse_known_args()
@@ -30,10 +38,16 @@ def main():
         tmp_output_path = Path(tmp_output)
         print(f"Input dir: {input_dir}, Seg dir: {seg_dir}, CSV dir: {csv_dir}, tmp dir: {tmp_output_path}")
         # Build command to run original application
-        cmd = ["NiChart_DLMUSE", "-i", input_dir, "-o", str(tmp_output_path)] + extra_args
-        command = ' '.join(cmd)
-        returncode = os.system(command)
 
+        cmd = [
+            "NiChart_DLMUSE",
+            "-i",
+            input_dir,
+            "-o",
+            str(tmp_output_path),
+        ] + extra_args
+        command = " ".join(cmd)
+        os.system(command)
         if returncode > 0:
             sys.exit(1)
 
@@ -67,6 +81,7 @@ def main():
     # Delete temporary output files
     if os.path.exists(os.path.join(seg_dir / "temp_working_dir")):
         shutil.rmtree(os.path.join(seg_dir / "temp_working_dir"))
+
 
 if __name__ == "__main__":
     main()
