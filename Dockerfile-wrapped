@@ -35,4 +35,5 @@ RUN mkdir /dummyinput && mkdir /dummyoutput
 ## Cache DLMUSE and DLICV models with an empty job so no download is needed later
 RUN DLMUSE -i /dummyinput -o /dummyoutput && DLICV -i /dummyinput -o /dummyoutput
 ENV MKL_SERVICE_FORCE_INTEL=1
-ENTRYPOINT ["NiChart_DLMUSE"]
+ENTRYPOINT ["python", "/app/scripts/wrapper.py"]
+
