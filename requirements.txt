@@ -1,5 +1,6 @@
 # Main pipeline
 torch==2.2.1
+python-gdcm==3.0.26
 DLICV
 DLMUSE
 nibabel>=5.2
