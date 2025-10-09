@@ -6,6 +6,11 @@ nibabel>=5.2
 scipy
 SimpleITK
 
+# Forced versions to fix compatibility issues in dependencies
+numpy==1.26.4
+nnunetv2==2.5.1
+acvl_utils==0.2.5
+blosc2==3.0.0b4
 # Developer tools
 pytest
 pytest-cov
