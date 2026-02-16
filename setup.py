@@ -1,9 +1,21 @@
 from pathlib import Path
+import ast
 
 from setuptools import find_packages, setup
 
 this_directory = Path(__file__).parent
 long_description = (this_directory / "README.rst").read_text()
+
+# Parse version file for value without import
+version_file_text = (this_directory / "NiChart_DLMUSE" / "__version__.py").read_text(encoding="utf-8")
+VERSION = next(
+    node.value.value
+    for node in ast.parse(version_file_text).body
+    if isinstance(node, ast.Assign)
+    and any(isinstance(t, ast.Name) and t.id == "VERSION" for t in node.targets)
+    and isinstance(node.value, ast.Constant)
+    and isinstance(node.value.value, str)
+)
 
 setup(
     name="NiChart_DLMUSE",

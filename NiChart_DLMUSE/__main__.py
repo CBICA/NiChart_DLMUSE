@@ -19,10 +19,7 @@ from .utils import (
     remove_subfolders,
     split_data,
 )
-
-# VERSION = pkg_resources.require("NiChart_DLMUSE")[0].version
-# The line below should be the first line in the file that starts with the string "VERSION = " (we'll use this for parsing)
-VERSION = "1.0.10"
+from .__version__ import VERSION
 
 
 def main() -> None:
