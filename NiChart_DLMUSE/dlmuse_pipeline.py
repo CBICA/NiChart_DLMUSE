@@ -115,7 +115,6 @@ def run_pipeline(
     # If refaced data is specified, refine the masks used in the next step (s3_masked)
     if refaced_data:
         import SimpleITK as sitk
-
         for _, tmp_row in df_img.iterrows():
             img_prefix = tmp_row.img_prefix
             fpath = os.path.join(out_dir, img_prefix + SUFF_DLICV)
@@ -127,8 +126,11 @@ def run_pipeline(
                     mask_component, sortByObjectSize=True
                 )
                 final_mask = sitk.Equal(mask_sorted_component, 1)
+                # Copy common meta-data
+                final_mask.CopyInformation(s2_dlicv_output)
                 # Write refined mask back in-place within s2_dlicv
                 sitk.WriteImage(final_mask, fpath)
+                sitk.WriteImage(final_mask, os.path.join(out_dir, img_prefix + '_CC_' + SUFF_DLICV))
 
     logging.info(f"Applying DLICV for batch [{sub_fldr}] done")
 
