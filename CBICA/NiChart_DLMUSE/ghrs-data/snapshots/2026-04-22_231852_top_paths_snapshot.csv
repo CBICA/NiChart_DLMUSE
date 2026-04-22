@@ -1,0 +1,11 @@
+url_path,views_total,views_unique
+/CBICA/NiChart_DLMUSE,9,8
+/CBICA/NiChart_DLMUSE/issues,5,5
+/CBICA/NiChart_DLMUSE/commits,2,2
+/CBICA/NiChart_DLMUSE/tree/main/NiChart_DLMUSE,2,1
+/CBICA/NiChart_DLMUSE/actions/workflows/pre-commit.yml,1,1
+/CBICA/NiChart_DLMUSE/blob/28ab2b600264e3ba8172295f7f68461659cb8154/Dockerfile,1,1
+/CBICA/NiChart_DLMUSE/blob/28ab2b600264e3ba8172295f7f68461659cb8154/singularity.def,1,1
+/CBICA/NiChart_DLMUSE/blob/ab716dcd3b97c1ee81ef85773d7a08ece74b402b/setup.py,1,1
+/CBICA/NiChart_DLMUSE/blob/b093442ecf9e029344067dbd716ffaf70b73536a/README.md,1,1
+/CBICA/NiChart_DLMUSE/blob/main/Dockerfile,1,1
