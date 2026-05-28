@@ -40,6 +40,7 @@ def main() -> None:
     optional arguments:
         [-h, --help]    Show this help message and exit.
         [-V, --version] Show program's version number and exit.
+        [--refaced-data] Refine DLICV mask by keeping only largest connected component (recommended)
         EXAMPLE USAGE:
         NiChart_DLMUSE  --in_dir                     /path/to/input     \
                         --out_dir                    /path/to/output    \
