@@ -1,0 +1,11 @@
+url_path,views_total,views_unique
+/CBICA/NiChart_DLMUSE,21,15
+/CBICA/NiChart_DLMUSE/tree/main/NiChart_DLMUSE,13,5
+/CBICA/NiChart_DLMUSE/tree/main,8,5
+/CBICA/NiChart_DLMUSE/tree/main/NiChart_DLMUSE/shared/dicts,5,2
+/CBICA/NiChart_DLMUSE/blob/main/NiChart_DLMUSE/CalcROIVol.py,3,2
+/CBICA/NiChart_DLMUSE/blob/main/NiChart_DLMUSE/dlmuse_pipeline.py,2,2
+/CBICA/NiChart_DLMUSE/blob/main/NiChart_DLMUSE/shared/dicts/MUSE_ROI_complete_list.csv,2,2
+/CBICA/NiChart_DLMUSE/blob/main/NiChart_DLMUSE/shared/dicts/MUSE_ROI_complete_list.json,2,2
+/CBICA/NiChart_DLMUSE/blob/main/NiChart_DLMUSE/shared/dicts/MUSE_mapping_consecutive_indices.csv,2,2
+/CBICA/NiChart_DLMUSE/blob/main/README.rst,2,2
