@@ -68,6 +68,8 @@ Example usage below: ::
     $ NiChart_DLMUSE   -i                    /path/to/input     \
                        -o                    /path/to/output    \
                        -d                    cpu/cuda/mps
+                       --refaced_data        If set, refine DLICV mask by keeping only the largest connected component (for refaced data)
+
 
 Docker/Singularity/Apptainer-based build and installation
 ---------------------------------------------------------
@@ -101,11 +103,13 @@ The nichart_dlmuse.sif file can be distributed via direct download, or pushed to
 Usage
 *****
 
+We mainly distribute the complete package in a form of Docker container in `cbica/nichart_dlmuse <https://hub.docker.com/r/cbica/nichart_dlmuse>`_. Please avoid using the locally installed package at all cost.
+
 Pre-trained nnUNet models for the skull-stripping can be found in `HuggingFace nichart/DLICV <https://huggingface.co/nichart/DLICV/tree/main>`_ and segmentation tasks
 can be found in `HuggingFace nichart/DLMUSE <https://huggingface.co/nichart/DLMUSE/tree/main>`_. Feel free to use it under the package's `license <LICENSE>`_.
 
 ******************************
-As a locally installed package
+As a locally installed package (Discouraged unless necessary)
 ******************************
 
 A complete command would be (run from the directory of the package): ::
@@ -113,6 +117,8 @@ A complete command would be (run from the directory of the package): ::
   $ NiChart_DLMUSE -i                    /path/to/input     \
                    -o                    /path/to/output    \
                    -d                    cpu/cuda/mps
+                   --refaced_data        If set, refine DLICV mask by keeping only the largest connected component (for refaced data)
+
 
 For further explanation please refer to the complete documentation: ::
 
