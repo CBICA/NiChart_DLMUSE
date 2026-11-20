@@ -120,7 +120,7 @@ def main() -> None:
         type=str,
         required=False,
         default="",
-        help="Pass additional args to be sent to DLMUSE (ex. '-nps 1 -npp 1'). It is recommended to surround these args in a set of double quotes. See the DLMUSE documentation for details.",
+        help="Pass additional args to be sent to DLMUSE (ex. '-nps 1 -npp 1'). It is recommended to surround these args in a set of double quotes. See the DLMUSE documentation for details. Note: '--disable_tta' is always passed to DLMUSE, since mirroring augmentation swaps left/right ROI labels.",
     )
 
     parser.add_argument(
