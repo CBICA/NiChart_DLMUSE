@@ -1,0 +1,11 @@
+url_path,views_total,views_unique
+/CBICA/NiChart_DLMUSE,16,12
+/CBICA/NiChart_DLMUSE/tree/main/NiChart_DLMUSE,5,5
+/CBICA/NiChart_DLMUSE/issues/90,4,2
+/CBICA/NiChart_DLMUSE/tree/main/NiChart_DLMUSE/shared/dicts,3,3
+/CBICA/NiChart_DLMUSE/blob/main/NiChart_DLMUSE/shared/dicts/MUSE_mapping_derived_rois.csv,3,2
+/CBICA/NiChart_DLMUSE/issues,3,2
+/CBICA/NiChart_DLMUSE/blob/main/requirements.txt,2,2
+/CBICA/NiChart_DLMUSE/actions/workflows/macos_build.yml,1,1
+/CBICA/NiChart_DLMUSE/actions/workflows/ubuntu_build.yml,1,1
+/CBICA/NiChart_DLMUSE/blob/main/NiChart_DLMUSE/__main__.py,1,1
