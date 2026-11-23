@@ -66,14 +66,6 @@ def run_dlmuse(
 
     :rtype: None
     """
-    # Always disable mirroring test-time augmentation for DLMUSE. The MUSE
-    # labels are lateralized (separate left/right ROIs); nnU-Net mirroring
-    # flips the image along the left-right axis and averages the predictions
-    # without swapping the left/right labels, which causes left structures
-    # to be labeled on the right hemisphere and vice versa.
-    if "--disable_tta" not in extra_args.split():
-        extra_args = f"{extra_args} --disable_tta".strip()
-
     # Call DLMUSE
     os.system(f"DLMUSE -i {in_dir} -o {out_dir} -device {device} " + extra_args)
 
