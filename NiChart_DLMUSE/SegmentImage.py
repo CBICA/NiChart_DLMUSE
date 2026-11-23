@@ -67,7 +67,7 @@ def run_dlmuse(
     :rtype: None
     """
     # Call DLMUSE
-    os.system(f"DLMUSE -i {in_dir} -o {out_dir} -device {device} " + extra_args)
+    os.system(f"DLMUSE -i {in_dir} -o {out_dir} -device {device} --qc " + extra_args)
 
     for fname in glob.glob(os.path.join(out_dir, "DLMUSE_mask_*.nii.gz")):
         new_fname = fname.replace("DLMUSE_mask_", "", 1).replace(in_suff, out_suff)
