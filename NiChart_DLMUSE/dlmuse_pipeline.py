@@ -1,8 +1,7 @@
 import logging
 import os
 import sys
-
-import pkg_resources  # type: ignore
+from importlib.resources import files
 
 from .CalcROIVol import apply_create_roi_csv, combine_roi_csv
 from .MaskImage import apply_combine_masks, apply_mask_img
@@ -20,16 +19,16 @@ OUT_CSV = "DLMUSE_Volumes.csv"
 
 REF_ORIENT = "LPS"
 
-DICT_MUSE_NNUNET_MAP = pkg_resources.resource_filename(
-    "NiChart_DLMUSE", "shared/dicts/MUSE_mapping_consecutive_indices.csv"
+DICT_MUSE_NNUNET_MAP = str(
+    files("NiChart_DLMUSE") / "shared/dicts/MUSE_mapping_consecutive_indices.csv"
 )
 LABEL_FROM = "IndexConsecutive"
 LABEL_TO = "IndexMUSE"
 
 DICT_MUSE_SINGLE = DICT_MUSE_NNUNET_MAP
 
-DICT_MUSE_DERIVED = pkg_resources.resource_filename(
-    "NiChart_DLMUSE", "shared/dicts/MUSE_mapping_derived_rois.csv"
+DICT_MUSE_DERIVED = str(
+    files("NiChart_DLMUSE") / "shared/dicts/MUSE_mapping_derived_rois.csv"
 )
 
 logger = logging.getLogger(__name__)
