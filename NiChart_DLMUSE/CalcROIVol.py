@@ -1,7 +1,7 @@
 import csv as csv
 import logging
 import os
-from typing import Any
+from typing import Any, Optional
 
 import nibabel as nib
 import numpy as np
@@ -177,11 +177,33 @@ def apply_create_roi_csv(
         create_roi_csv(mrid, in_img, dict_single_roi, dict_derived_roi, out_csv)
 
 
+def get_roi_columns(dict_derived_roi: str) -> list:
+    """
+    Column names of a per-scan ROI csv (MRID + derived ROIs, as written by create_roi_csv)
+
+    :param dict_derived_roi: derived roi dictionary file
+
+    :return: list of column names, starting with MRID
+    :rtype: list
+    """
+    with open(dict_derived_roi) as roi_map:
+        derived_cols = [str(row[0]) for row in csv.reader(roi_map, delimiter=",")]
+    return ["MRID"] + derived_cols
+
+
 def combine_roi_csv(
-    df_img: pd.DataFrame, in_dir: str, in_suff: str, out_dir: str, out_name: str
+    df_img: pd.DataFrame,
+    in_dir: str,
+    in_suff: str,
+    out_dir: str,
+    out_name: str,
+    dict_derived_roi: Optional[str] = None,
 ) -> None:
     """
     Combine csv files
+
+    Every MRID in df_img gets a row in the output. Scans without a per-scan csv
+    (e.g. dropped by QC) are kept with empty volumes.
 
     :param df_img: passed dataframe
     :type df_img: pd.DataFrame
@@ -193,6 +215,7 @@ def combine_roi_csv(
     :type out_dir: str
     :param out_name: the desired output filename
     :type out_name: str
+    :param dict_derived_roi: derived roi dictionary (used for the header if no csv exists)
 
     :rtype: None
     """
@@ -205,11 +228,27 @@ def combine_roi_csv(
     for i, tmp_row in df_img.iterrows():
         img_prefix = tmp_row.img_prefix
         in_csv = os.path.join(in_dir, img_prefix + in_suff)
+        if not os.path.isfile(in_csv):
+            logging.info("Scan has no volumes (out csv missing): " + in_csv)
+            continue
         try:
-            df_tmp = pd.read_csv(in_csv)
-            dfs.append(df_tmp)
-        except:
-            logging.info("Skip subject, out csv missing: " + in_csv)
+            dfs.append(pd.read_csv(in_csv))
+        except Exception as e:
+            logging.info(f"Skip subject, could not read csv {in_csv}: {e}")
+
     if len(dfs) > 0:
         df_out = pd.concat(dfs)
+    elif dict_derived_roi is not None:
+        df_out = pd.DataFrame(columns=get_roi_columns(dict_derived_roi))
+    else:
+        df_out = pd.DataFrame(columns=["MRID"])
+
+    # Keep one row per input MRID, in input order
+    df_out["MRID"] = df_out["MRID"].astype(str)
+    df_out = df_out.drop_duplicates("MRID", keep="last").set_index("MRID")
+    df_out = df_out.reindex(df_img.MRID.astype(str).tolist())
+    df_out.index.name = "MRID"
+    df_out = df_out.copy()
+    df_out = df_out.reset_index()
+
     df_out.to_csv(out_csv, index=False)

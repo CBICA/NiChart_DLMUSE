@@ -75,6 +75,23 @@ Example usage below: ::
                        -o                    /path/to/output    \
                        -d                    cpu/cuda/mps
                        --refaced_data        If set, refine DLICV mask by keeping only the largest connected component (for refaced data)
+                       --disable_qc          If set, disable QC (DLMUSE QC is not run, no combined QC csv is written)
+                       --drop_qc_failed      If set, cases failing DLICV or DLMUSE QC are dropped from the downstream steps
+                       --qc_csv              Path of the combined QC csv (default: <out_dir>/DLMUSE_QC.csv)
+
+Quality control
+---------------
+
+QC is enabled by default. DLICV writes ``temp_working_dir/s2_dlicv/qc_report.csv`` (``Passed``/``Failed``/``Not checked``)
+and DLMUSE (run with ``--qc``) writes ``temp_working_dir/s4_dlmuse/qc_report.csv`` (``PASS``/``WARN``/``FAIL``).
+
+* ``--disable_qc``: DLMUSE QC is not run and no combined QC csv is written.
+* ``--drop_qc_failed``: cases that fail DLICV QC (``Failed``) or DLMUSE QC (``FAIL``) are removed from all later steps.
+  ``WARN`` cases are kept. Dropped cases are still listed in ``DLMUSE_Volumes.csv`` with their MRID and empty volumes.
+  Cases whose intermediate output is missing are always skipped, whether or not this flag is set.
+* ``--qc_csv``: one row per input scan with columns
+  ``MRID, img_path, DLICV_QC_flag, DLICV_QC_log, DLMUSE_QC_status, DLMUSE_QC_issues, QC_overall, Dropped, Dropped_at_stage, Drop_reason``.
+  ``QC_overall`` is ``PASS``, ``WARN``, ``FAIL`` or ``NOT_RUN``.
 
 
 Docker/Singularity/Apptainer-based build and installation

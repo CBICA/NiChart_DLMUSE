@@ -6,12 +6,14 @@ Use of this source code is governed by license located in license file: https://
 """
 
 import argparse
+import glob
 import os
 import shutil
 import subprocess
 import threading
 
 from .dlmuse_pipeline import run_pipeline
+from .QualityControl import OUT_QC_CSV, merge_qc_csvs
 from .utils import (
     collect_T1,
     merge_bids_output_data,
@@ -41,6 +43,10 @@ def main() -> None:
         [-h, --help]    Show this help message and exit.
         [-V, --version] Show program's version number and exit.
         [--refaced-data] Refine DLICV mask by keeping only largest connected component (recommended)
+        [--disable_qc]   Disable QC (DLMUSE QC is not run, no combined QC csv is written)
+        [--drop_qc_failed] Drop QC-failed cases from the downstream steps. They are kept in
+                         DLMUSE_Volumes.csv with their MRID and empty volumes
+        [--qc_csv]       Path of the combined QC csv (default: <out_dir>/DLMUSE_QC.csv)
         EXAMPLE USAGE:
         NiChart_DLMUSE  --in_dir                     /path/to/input     \
                         --out_dir                    /path/to/output    \
@@ -139,6 +145,31 @@ def main() -> None:
         help="If set, refine DLICV mask by keeping only the largest connected component (for refaced data).",
     )
 
+    parser.add_argument(
+        "--disable_qc",
+        action="store_true",
+        required=False,
+        default=False,
+        help="Disable QC. DLMUSE QC is not run, QC reports are not read and no combined QC csv is written.",
+    )
+
+    parser.add_argument(
+        "--drop_qc_failed",
+        action="store_true",
+        required=False,
+        default=False,
+        help="Drop cases that fail DLICV or DLMUSE QC from the downstream steps. Dropped cases "
+        "are kept in DLMUSE_Volumes.csv with their MRID and empty volumes. Ignored with --disable_qc.",
+    )
+
+    parser.add_argument(
+        "--qc_csv",
+        type=str,
+        required=False,
+        default=None,
+        help="Path of the combined QC csv (one row per input scan). Default: <out_dir>/DLMUSE_QC.csv",
+    )
+
     # HELP argument
     help = "Show this message and exit"
     parser.add_argument("-h", "--help", action="store_true", help=help)
@@ -151,6 +182,12 @@ def main() -> None:
     dlicv_extra_args = args.dlicv_args
     dlmuse_extra_args = args.dlmuse_args
     refaced_data = args.refaced_data
+    qc = not args.disable_qc
+    drop_qc_failed = args.drop_qc_failed
+    if drop_qc_failed and not qc:
+        print("WARNING: --drop_qc_failed is ignored because --disable_qc is set")
+        drop_qc_failed = False
+    qc_csv = os.path.abspath(args.qc_csv or os.path.join(out_dir, OUT_QC_CSV))
 
     print()
     print("Arguments:")
@@ -197,14 +234,18 @@ def main() -> None:
                 curr_out_dir = out_dir + f"/split_{i}"
                 curr_thread = threading.Thread(
                     target=run_pipeline,
-                    args=(
-                        subfolders[i],
-                        curr_out_dir,
-                        device,
-                        dlmuse_extra_args,
-                        dlicv_extra_args,
-                        refaced_data,
-                        i,
+                    kwargs=dict(
+                        in_data=subfolders[i],
+                        out_dir=curr_out_dir,
+                        device=device,
+                        dlmuse_extra_args=dlmuse_extra_args,
+                        dlicv_extra_args=dlicv_extra_args,
+                        refaced_data=refaced_data,
+                        sub_fldr=i,
+                        qc=qc,
+                        drop_qc_failed=drop_qc_failed,
+                        # per-split QC csv; merged into qc_csv afterwards
+                        qc_csv=os.path.join(curr_out_dir, OUT_QC_CSV),
                     ),
                 )
                 curr_thread.start()
@@ -214,6 +255,10 @@ def main() -> None:
                 t.join()
 
             merge_bids_output_data(working_dir)
+            if qc:
+                merge_qc_csvs(
+                    glob.glob(os.path.join(out_dir, "split_*", OUT_QC_CSV)), qc_csv
+                )
             remove_subfolders("raw_temp_T1")
             remove_subfolders(out_dir)
         else:  # No core parallelization
@@ -224,6 +269,9 @@ def main() -> None:
                 dlmuse_extra_args,
                 dlicv_extra_args,
                 refaced_data,
+                qc=qc,
+                drop_qc_failed=drop_qc_failed,
+                qc_csv=qc_csv,
             )
 
     else:  # Non-BIDS
@@ -236,14 +284,18 @@ def main() -> None:
                 curr_out_dir = out_dir + f"/split_{i}"
                 curr_thread = threading.Thread(
                     target=run_pipeline,
-                    args=(
-                        subfolders[i],
-                        curr_out_dir,
-                        device,
-                        dlmuse_extra_args,
-                        dlicv_extra_args,
-                        refaced_data,
-                        i,
+                    kwargs=dict(
+                        in_data=subfolders[i],
+                        out_dir=curr_out_dir,
+                        device=device,
+                        dlmuse_extra_args=dlmuse_extra_args,
+                        dlicv_extra_args=dlicv_extra_args,
+                        refaced_data=refaced_data,
+                        sub_fldr=i,
+                        qc=qc,
+                        drop_qc_failed=drop_qc_failed,
+                        # per-split QC csv; merged into qc_csv afterwards
+                        qc_csv=os.path.join(curr_out_dir, OUT_QC_CSV),
                     ),
                 )
                 curr_thread.start()
@@ -252,7 +304,7 @@ def main() -> None:
             for t in threads:
                 t.join()
 
-            merge_output_data(out_dir)
+            merge_output_data(out_dir, qc_csv=qc_csv if qc else None)
             remove_subfolders(in_dir)
             remove_subfolders(out_dir)
         else:  # No core parallelization
@@ -263,6 +315,9 @@ def main() -> None:
                 dlmuse_extra_args,
                 dlicv_extra_args,
                 refaced_data,
+                qc=qc,
+                drop_qc_failed=drop_qc_failed,
+                qc_csv=qc_csv,
             )
 
 

@@ -1,6 +1,5 @@
 import glob
 import os
-import shutil
 from typing import Any
 import DLMUSE 
 import DLICV
@@ -13,6 +12,7 @@ def run_dlicv(
     out_suff: str,
     device: str,
     extra_args: str = "",
+    drop_failed: bool = False,
 ) -> None:
     """
     Run dlicv with the passed images
@@ -29,15 +29,19 @@ def run_dlicv(
     :type device: str
     :param extra_args: extra arguments for DLICV package
     :type extra_args: str
+    :param drop_failed: if True, DLICV deletes the masks of QC-failed cases
+    :type drop_failed: bool
 
     :rtype: None
     """
     # Call DLICV
-    os.system(f"DLICV -i {in_dir} -o {out_dir} -device {device} " + extra_args)
+    drop_arg = "--drop_failed " if drop_failed else ""
+    os.system(f"DLICV -i {in_dir} -o {out_dir} -device {device} {drop_arg}" + extra_args)
 
     for fname in glob.glob(os.path.join(out_dir, "label_*.nii.gz")):
         new_fname = fname.replace("label_", "", 1).replace(in_suff, out_suff)
-        shutil.copyfile(fname, new_fname)
+        # Rename instead of copy so s2_dlicv doesn't keep a duplicate mask
+        os.replace(fname, new_fname)
 
 
 def run_dlmuse(
@@ -47,6 +51,7 @@ def run_dlmuse(
     out_suff: Any,
     device: str,
     extra_args: str = "",
+    qc: bool = True,
 ) -> None:
     """
     Run dlmuse with the passed images
@@ -63,13 +68,16 @@ def run_dlmuse(
     :type device: str
     :param extra_args: extra arguments for DLMUSE package
     :type extra_args: str
+    :param qc: if True, run DLMUSE QC (writes <out_dir>/qc_report.csv)
+    :type qc: bool
 
     :rtype: None
     """
     # Call DLMUSE
-    os.system(f"DLMUSE -i {in_dir} -o {out_dir} -device {device} --qc " + extra_args)
+    qc_arg = "--qc " if qc else ""
+    os.system(f"DLMUSE -i {in_dir} -o {out_dir} -device {device} {qc_arg}" + extra_args)
 
     for fname in glob.glob(os.path.join(out_dir, "DLMUSE_mask_*.nii.gz")):
         new_fname = fname.replace("DLMUSE_mask_", "", 1).replace(in_suff, out_suff)
-        # os.rename(fname, new_fname)
-        shutil.copyfile(fname, new_fname)
+        # Rename instead of copy so s4_dlmuse doesn't keep a duplicate mask
+        os.replace(fname, new_fname)
