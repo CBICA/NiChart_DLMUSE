@@ -347,13 +347,15 @@ def remove_subfolders(in_dir: str) -> None:
             shutil.rmtree(path)
 
 
-def merge_output_data(in_dir: str) -> None:
+def merge_output_data(in_dir: str, qc_csv: Optional[str] = None) -> None:
     """
     Takes all the results from the temp_working_fir and moves them into
     the output folder
 
     :param in_dir: the input directory
     :type in_dir: str
+    :param qc_csv: if set, merge the per-split combined QC csvs into this file
+    :type qc_csv: str
 
     :rtype: None
     """
@@ -376,6 +378,7 @@ def merge_output_data(in_dir: str) -> None:
         "s6_combined",
     ]
     found_dlmuse_dfs = []
+    found_qc_csvs = []
     for dir in subdirs:
         if dir in ignored_subdirs:
             continue
@@ -407,9 +410,26 @@ def merge_output_data(in_dir: str) -> None:
             shutil.move(file, pathlib.Path(in_dir))
 
         for file in (pathlib.Path(in_dir) / dir).glob("*_DLMUSE_Volumes.csv"):
-            df = pd.read_csv(file)
-            found_dlmuse_dfs.append(df)
             shutil.move(file, pathlib.Path(in_dir))
 
-    final_dlmuse_df = pd.concat(found_dlmuse_dfs).reset_index(drop=True)
-    final_dlmuse_df.to_csv(pathlib.Path(in_dir) / "DLMUSE_Volumes.csv", index=False)
+        # Use each split's combined csv: it lists every input MRID, including
+        # cases dropped by QC (empty volumes)
+        split_csv = pathlib.Path(in_dir) / dir / "DLMUSE_Volumes.csv"
+        if os.path.isdir(pathlib.Path(in_dir) / dir) and split_csv.is_file():
+            found_dlmuse_dfs.append(pd.read_csv(split_csv))
+
+        split_qc = pathlib.Path(in_dir) / dir / "DLMUSE_QC.csv"
+        if os.path.isdir(pathlib.Path(in_dir) / dir) and split_qc.is_file():
+            found_qc_csvs.append(str(split_qc))
+
+    if found_dlmuse_dfs:
+        final_dlmuse_df = pd.concat(found_dlmuse_dfs).reset_index(drop=True)
+        final_dlmuse_df.to_csv(pathlib.Path(in_dir) / "DLMUSE_Volumes.csv", index=False)
+    else:
+        logging.warning("No DLMUSE_Volumes.csv found in any split")
+
+    if qc_csv is not None:
+        from .QualityControl import merge_qc_csvs
+
+        if merge_qc_csvs(found_qc_csvs, qc_csv) is None:
+            logging.warning("No QC csv found in any split")

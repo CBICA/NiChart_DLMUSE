@@ -1,11 +1,24 @@
 import logging
 import os
 import sys
+from importlib.resources import files
+from typing import Optional
 
-import pkg_resources  # type: ignore
+import pandas as pd
 
 from .CalcROIVol import apply_create_roi_csv, combine_roi_csv
 from .MaskImage import apply_combine_masks, apply_mask_img
+from .QualityControl import (
+    DLICV_FAIL,
+    DLMUSE_FAIL,
+    OUT_QC_CSV,
+    QC_REPORT_NAME,
+    failed_prefixes,
+    filter_cases,
+    read_dlicv_qc,
+    read_dlmuse_qc,
+    write_combined_qc,
+)
 from .RelabelROI import apply_relabel_rois
 from .ReorientImage import apply_reorient_img, apply_reorient_to_init
 from .SegmentImage import run_dlicv, run_dlmuse
@@ -14,22 +27,23 @@ from .utils import make_img_list
 # Config vars
 SUFF_LPS = "_LPS.nii.gz"
 SUFF_DLICV = "_DLICV.nii.gz"
+SUFF_BRAINMASK = "_BrainMask.nii.gz"
 SUFF_DLMUSE = "_DLMUSE.nii.gz"
 SUFF_ROI = "_DLMUSE_Volumes.csv"
 OUT_CSV = "DLMUSE_Volumes.csv"
 
 REF_ORIENT = "LPS"
 
-DICT_MUSE_NNUNET_MAP = pkg_resources.resource_filename(
-    "NiChart_DLMUSE", "shared/dicts/MUSE_mapping_consecutive_indices.csv"
+DICT_MUSE_NNUNET_MAP = str(
+    files("NiChart_DLMUSE") / "shared/dicts/MUSE_mapping_consecutive_indices.csv"
 )
 LABEL_FROM = "IndexConsecutive"
 LABEL_TO = "IndexMUSE"
 
 DICT_MUSE_SINGLE = DICT_MUSE_NNUNET_MAP
 
-DICT_MUSE_DERIVED = pkg_resources.resource_filename(
-    "NiChart_DLMUSE", "shared/dicts/MUSE_mapping_derived_rois.csv"
+DICT_MUSE_DERIVED = str(
+    files("NiChart_DLMUSE") / "shared/dicts/MUSE_mapping_derived_rois.csv"
 )
 
 logger = logging.getLogger(__name__)
@@ -47,6 +61,9 @@ def run_pipeline(
     refaced_data: bool = False,
     sub_fldr: int = 1,
     progress_bar = None,
+    qc: bool = True,
+    drop_qc_failed: bool = False,
+    qc_csv: Optional[str] = None,
 ) -> None:
     """
     NiChart pipeline
@@ -65,6 +82,13 @@ def run_pipeline(
     :type sub_fldr: int
     :param progress_bar: tqdm/stqdm progress bar for DLMUSE (default: None)
     :type progress_bar: tqdm
+    :param qc: read DLICV/DLMUSE QC reports and write a combined QC csv (default: True)
+    :type qc: bool
+    :param drop_qc_failed: drop QC-failed cases from downstream steps; they stay in
+                           DLMUSE_Volumes.csv with empty volumes (default: False)
+    :type drop_qc_failed: bool
+    :param qc_csv: path of the combined QC csv (default: <out_dir>/DLMUSE_QC.csv)
+    :type qc_csv: str
 
 
     :rtype: None
@@ -74,6 +98,15 @@ def run_pipeline(
     # Detect input images
     df_img = make_img_list(in_data)
     logging.info(f"Detecting input images for batch [{sub_fldr}] done")
+
+    if drop_qc_failed and not qc:
+        logging.warning("drop_qc_failed is ignored because QC is disabled")
+        drop_qc_failed = False
+
+    # Cases still moving through the pipeline (QC may remove some)
+    df_active = df_img.copy()
+    dropped: dict = {}
+    df_dlicv_qc = df_dlmuse_qc = None
 
     # Set init paths and envs
     out_dir = os.path.abspath(out_dir)
@@ -110,7 +143,10 @@ def run_pipeline(
     if progress_bar is not None:
         progress_bar.update(1)
         progress_bar.set_description("Running DLICV")
-    run_dlicv(in_dir, in_suff, out_dir, out_suff, device, dlicv_extra_args)
+    run_dlicv(
+        in_dir, in_suff, out_dir, out_suff, device, dlicv_extra_args,
+        drop_failed=drop_qc_failed,
+    )
 
     # If refaced data is specified, refine the masks used in the next step (s3_masked)
     if refaced_data:
@@ -130,6 +166,15 @@ def run_pipeline(
                 # Write refined mask back in-place within s2_dlicv
                 sitk.WriteImage(final_mask, fpath)
 
+    # DLICV QC: drop failed cases (if requested) and cases without a mask
+    failed: set = set()
+    if qc:
+        df_dlicv_qc = read_dlicv_qc(os.path.join(out_dir, QC_REPORT_NAME), SUFF_LPS)
+        failed = failed_prefixes(df_dlicv_qc, "DLICV_QC_flag", DLICV_FAIL)
+    df_active = filter_cases(
+        df_active, failed, out_dir, SUFF_DLICV, "DLICV", drop_qc_failed, dropped
+    )
+
     logging.info(f"Applying DLICV for batch [{sub_fldr}] done")
 
     logging.info(f"Applying mask for batch [{sub_fldr}]...")
@@ -139,13 +184,13 @@ def run_pipeline(
     out_dir = os.path.join(working_dir, "s3_masked")
     in_suff = SUFF_LPS
     mask_suff = SUFF_DLICV
-    out_suff = SUFF_DLICV
+    out_suff = SUFF_BRAINMASK
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
     if progress_bar is not None:
         progress_bar.update(1)
         progress_bar.set_description("Applying mask")
-    apply_mask_img(df_img, in_dir, in_suff, mask_dir, mask_suff, out_dir, out_suff)
+    apply_mask_img(df_active, in_dir, in_suff, mask_dir, mask_suff, out_dir, out_suff)
 
     logging.info(f"Applying mask for batch [{sub_fldr}] done")
 
@@ -153,14 +198,30 @@ def run_pipeline(
     # Apply DLMUSE
     in_dir = os.path.join(working_dir, "s3_masked")
     out_dir = os.path.join(working_dir, "s4_dlmuse")
-    in_suff = SUFF_DLICV
+    in_suff = SUFF_BRAINMASK
     out_suff = SUFF_DLMUSE
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
     if progress_bar is not None:
         progress_bar.update(1)
         progress_bar.set_description("Running DLMUSE")
-    run_dlmuse(in_dir, in_suff, out_dir, out_suff, device, dlmuse_extra_args)
+    if len(df_active) > 0:
+        run_dlmuse(
+            in_dir, in_suff, out_dir, out_suff, device, dlmuse_extra_args, qc=qc
+        )
+    else:
+        logging.warning(f"No cases left for DLMUSE in batch [{sub_fldr}]")
+
+    # DLMUSE QC: drop failed cases (if requested) and cases without a segmentation
+    failed = set()
+    if qc:
+        df_dlmuse_qc = read_dlmuse_qc(
+            os.path.join(out_dir, QC_REPORT_NAME), SUFF_BRAINMASK
+        )
+        failed = failed_prefixes(df_dlmuse_qc, "DLMUSE_QC_status", DLMUSE_FAIL)
+    df_active = filter_cases(
+        df_active, failed, out_dir, SUFF_DLMUSE, "DLMUSE", drop_qc_failed, dropped
+    )
 
     logging.info(f"Applying DLMUSE for batch [{sub_fldr}] done")
 
@@ -176,7 +237,7 @@ def run_pipeline(
         progress_bar.update(1)
         progress_bar.set_description("Relabeling ROIs")
     apply_relabel_rois(
-        df_img,
+        df_active,
         in_dir,
         in_suff,
         out_dir,
@@ -201,7 +262,7 @@ def run_pipeline(
     if progress_bar is not None:
         progress_bar.update(1)
         progress_bar.set_description("Combining masks")
-    apply_combine_masks(df_img, in_dir, in_suff, mask_dir, mask_suff, out_dir, out_suff)
+    apply_combine_masks(df_active, in_dir, in_suff, mask_dir, mask_suff, out_dir, out_suff)
 
     logging.info(f"Combining DLICV and MUSE masks for batch [{sub_fldr}] done")
 
@@ -214,7 +275,7 @@ def run_pipeline(
     if progress_bar is not None:
         progress_bar.update(1)
         progress_bar.set_description("Revert to initial orientation")
-    apply_reorient_to_init(df_img, in_dir, in_suff, out_dir, out_suff)
+    apply_reorient_to_init(df_active, in_dir, in_suff, out_dir, out_suff)
 
     logging.info(f"Reorienting to initial orientation for batch [{sub_fldr}] done")
 
@@ -228,7 +289,7 @@ def run_pipeline(
         progress_bar.update(1)
         progress_bar.set_description("Creating ROI CSV")
     apply_create_roi_csv(
-        df_img, in_dir, in_suff, DICT_MUSE_SINGLE, DICT_MUSE_DERIVED, out_dir, out_suff
+        df_active, in_dir, in_suff, DICT_MUSE_SINGLE, DICT_MUSE_DERIVED, out_dir, out_suff
     )
     logging.info(f"Create ROI csv for batch [{sub_fldr}] done")
 
@@ -241,6 +302,22 @@ def run_pipeline(
     if progress_bar is not None:
         progress_bar.update(1)
         progress_bar.set_description("Combining CSV")
-    combine_roi_csv(df_img, in_dir, in_suff, out_dir, out_name)
+    # All input MRIDs are kept; dropped cases have empty volumes
+    combine_roi_csv(
+        df_img, in_dir, in_suff, out_dir, out_name, dict_derived_roi=DICT_MUSE_DERIVED
+    )
 
     logging.info(f"Combine ROI csv for batch [{sub_fldr}] done")
+
+    # Combined QC csv (one row per input scan)
+    if qc:
+        if qc_csv is None:
+            qc_csv = os.path.join(out_dir_final, OUT_QC_CSV)
+        empty = pd.DataFrame()
+        write_combined_qc(
+            df_img,
+            df_dlicv_qc if df_dlicv_qc is not None else empty,
+            df_dlmuse_qc if df_dlmuse_qc is not None else empty,
+            dropped,
+            qc_csv,
+        )

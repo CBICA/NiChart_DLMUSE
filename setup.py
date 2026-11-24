@@ -19,7 +19,7 @@ VERSION = next(
 
 setup(
     name="NiChart_DLMUSE",
-    version="1.0.10",
+    version="1.1.0",
     description="Run NiChart_DLMUSE on your data (currently only structural pipeline is supported).",
     long_description=long_description,
     long_description_content_type="text/markdown",
